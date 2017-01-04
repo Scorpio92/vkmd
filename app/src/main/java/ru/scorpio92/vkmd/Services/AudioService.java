@@ -46,6 +46,7 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     private final String LOG_TAG = "AudioService";
 
     private boolean isStarted = false;
+    private boolean mMainActivityIsStopped;
 
     private MyBinder binder = new MyBinder();
 
@@ -120,6 +121,7 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
         runNewTrackPlaying();
 
         isStarted = true;
+        mMainActivityIsStopped = false;
 
         return Service.START_NOT_STICKY;
     }
@@ -313,8 +315,11 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
                     .setContentTitle(track.ARTIST)
                     .setContentText(track.TITLE)
                     .setSmallIcon(R.drawable.track)
-                    .setPriority(Notification.PRIORITY_MAX)
-                    .setContentIntent(pendingIntent);
+                    .setPriority(Notification.PRIORITY_MAX);
+
+            if(mMainActivityIsStopped) {
+                builder.setContentIntent(pendingIntent);
+            }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 builder.addAction(R.drawable.prev, "Prev", pendingIntentPrev).setColor(Color.BLACK);
@@ -397,18 +402,12 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
         return isStarted;
     }
 
-    public boolean setLoop() {
-        loopActivated = !loopActivated;
-        return loopActivated;
-    }
-
-    public boolean setRandomMode() {
-        randomMode = !randomMode;
-        return randomMode;
-    }
-
-    public boolean getRandomMode() {
-        return randomMode;
+    public void setMainActivityIsStopped (boolean b) {
+        mMainActivityIsStopped = b;
+        if(isStarted) {
+            Log.w(LOG_TAG, "setMainActivityIsStopped: " + b + ", sentNotificationInForeground");
+            sentNotificationInForeground();
+        }
     }
 
     //music control
@@ -545,6 +544,20 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
         }
         runNewTrackPlaying();
         return PLAY_NEXT_OK;
+    }
+
+    public boolean setLoop() {
+        loopActivated = !loopActivated;
+        return loopActivated;
+    }
+
+    public boolean setRandomMode() {
+        randomMode = !randomMode;
+        return randomMode;
+    }
+
+    public boolean getRandomMode() {
+        return randomMode;
     }
 
 

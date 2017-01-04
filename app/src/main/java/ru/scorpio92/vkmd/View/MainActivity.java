@@ -163,25 +163,33 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
         }
     }
 
-    void initAndStartBindingWithAudioService() {
+    void initAndStartBindingWithAudioService(final boolean isOnResume) {
         sConn = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder binder) {
                 Log.w(LOG_TAG, "AudioService onServiceConnected");
                 audioService = ((AudioService.MyBinder) binder).getService();
-                if (audioService.isStarted()) {
-                    Log.w(LOG_TAG, "AudioService is running");
-                    if (adapter == null) {
-                        Log.w(LOG_TAG, "trackList == null, get tracks from service");
-                        initAdapter(audioService.getTrackList());
+                if(isOnResume) {
+                    audioService.setMainActivityIsStopped(false);
+                    if (audioService.isStarted()) {
+                        Log.w(LOG_TAG, "AudioService is running");
+                        if (adapter == null) {
+                            Log.w(LOG_TAG, "trackList == null, get tracks from service");
+                            initAdapter(audioService.getTrackList());
+                        }
+                        showFooterFragment(true);
+                    } else {
+                        Log.w(LOG_TAG, "AudioService is not running");
+                        if (adapter == null) {
+                            Log.w(LOG_TAG, "trackList == null, get tracks from intent");
+                            initAdapter((TrackList) getIntent().getParcelableExtra("TrackList"));
+                        }
+                        showFooterFragment(false);
                     }
-                    showFooterFragment(true);
                 } else {
-                    Log.w(LOG_TAG, "AudioService is not running");
-                    if (adapter == null) {
-                        Log.w(LOG_TAG, "trackList == null, get tracks from intent");
-                        initAdapter((TrackList) getIntent().getParcelableExtra("TrackList"));
+                    if (audioService.isStarted()) {
+                        Log.w(LOG_TAG, "AudioService is running, say AudioService that MainActivity stopped");
+                        audioService.setMainActivityIsStopped(true);
                     }
-                    showFooterFragment(false);
                 }
 
                 try {
@@ -620,13 +628,17 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
 
         showFooterFragment(false);
 
-        initAndStartBindingWithAudioService();
+        initAndStartBindingWithAudioService(true);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        Log.w(LOG_TAG, "onStop");
 
+        initAndStartBindingWithAudioService(false);
+
+        /*
         try {
             if(sConn != null) {
                 unbindService(sConn);
@@ -635,8 +647,7 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
 
         sConn = null;
         audioService = null;
-
-        Log.w(LOG_TAG, "onStop");
+        */
     }
 
     @Override
