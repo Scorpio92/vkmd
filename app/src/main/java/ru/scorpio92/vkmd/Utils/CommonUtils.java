@@ -88,7 +88,7 @@ public class CommonUtils {
     }*/
 
     public static boolean isOnline() {
-        final int TEST_CONNECTION_TIMEOUT = 300;
+        final int TEST_CONNECTION_TIMEOUT = 1234;
         final boolean[] b = new boolean[1];
 
         Thread thread = new Thread(new Runnable() {
