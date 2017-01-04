@@ -155,71 +155,44 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                 adapter = new TracksListAdapter(MainActivity.this, trackList);
                 tracksList.setAdapter(adapter);
             } else {
-                Log.w(LOG_TAG, "initAdapter, relogin");
-                initAndStartBindingWithAudioService(true);
+                relogin();
             }
         } catch (Exception e) {
-            Log.w(LOG_TAG, "initAdapter, relogin");
-            initAndStartBindingWithAudioService(true);
+            e.printStackTrace();
+            relogin();
         }
     }
 
-    void initAndStartBindingWithAudioService(final boolean relogin) {
+    void initAndStartBindingWithAudioService() {
         sConn = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder binder) {
                 Log.w(LOG_TAG, "AudioService onServiceConnected");
                 audioService = ((AudioService.MyBinder) binder).getService();
-                if(!relogin) {
-                    if (audioService.isStarted()) {
-                        Log.w(LOG_TAG, "AudioService is running");
-                        if (adapter == null) {
-                            Log.w(LOG_TAG, "trackList == null, get tracks from service");
-                            initAdapter(audioService.getTrackList());
-                        }
-                        showFooterFragment(true);
-                    } else {
-                        Log.w(LOG_TAG, "AudioService is not running");
-                        if (adapter == null) {
-                            Log.w(LOG_TAG, "trackList == null, get tracks from intent");
-                            initAdapter((TrackList) getIntent().getParcelableExtra("TrackList"));
-                        }
-                        showFooterFragment(false);
+                if (audioService.isStarted()) {
+                    Log.w(LOG_TAG, "AudioService is running");
+                    if (adapter == null) {
+                        Log.w(LOG_TAG, "trackList == null, get tracks from service");
+                        initAdapter(audioService.getTrackList());
                     }
-
-                    try {
-                        Log.w(LOG_TAG, "unbindService");
-                        unbindService(sConn);
-                        sConn = null;
-                        audioService = null;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
+                    showFooterFragment(true);
                 } else {
-                    audioService.stopService(MainActivity.this);
+                    Log.w(LOG_TAG, "AudioService is not running");
+                    if (adapter == null) {
+                        Log.w(LOG_TAG, "trackList == null, get tracks from intent");
+                        initAdapter((TrackList) getIntent().getParcelableExtra("TrackList"));
+                    }
+                    showFooterFragment(false);
+                }
 
-                    try {
-                        Log.w(LOG_TAG, "unbindService, relogin");
+                try {
+                    Log.w(LOG_TAG, "unbindService");
+                    if(sConn != null) {
                         unbindService(sConn);
                         sConn = null;
-                        audioService = null;
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
-
-                    try {
-                        if(br != null)
-                            unregisterReceiver(br);
-                    } catch (Exception e) {e.printStackTrace();}
-
-                    br = null;
-
-                    finish();
-
-                    Intent intent = new Intent(MainActivity.this, AuthActivity.class);
-                    intent.putExtra("autoCheckMediaLibrary", false);
-                    intent.putExtra("isRelogin", true);
-                    startActivity(intent);
+                    audioService = null;
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 
@@ -342,7 +315,7 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        initAndStartBindingWithAudioService(true);
+                        relogin();
                     }
                 });
 
@@ -356,6 +329,36 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
 
         final AlertDialog dialog = alertDialog.create();
         dialog.show();
+    }
+
+    void relogin() {
+        Log.w(LOG_TAG, "relogin!!!");
+
+        audioService.stopService(MainActivity.this);
+
+        try {
+            if(sConn != null) {
+                unbindService(sConn);
+                sConn = null;
+            }
+            audioService = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            if(br != null)
+                unregisterReceiver(br);
+        } catch (Exception e) {e.printStackTrace();}
+
+        br = null;
+
+        MainActivity.this.finish();
+
+        Intent intent = new Intent(MainActivity.this, AuthActivity.class);
+        intent.putExtra("autoCheckMediaLibrary", false);
+        intent.putExtra("isRelogin", true);
+        startActivity(intent);
     }
 
     void showSearchDialog() {
@@ -617,7 +620,7 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
 
         showFooterFragment(false);
 
-        initAndStartBindingWithAudioService(false);
+        initAndStartBindingWithAudioService();
     }
 
     @Override
