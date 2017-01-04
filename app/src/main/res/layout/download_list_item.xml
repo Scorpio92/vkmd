@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:descendantFocusability="blocksDescendants"
+    android:clickable="false"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <CheckBox
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:id="@+id/objectSelector" />
+
+    <ImageView
+        android:id="@+id/trackIcon"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/track"
+        android:background="@android:color/transparent"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/trackName"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textIsSelectable="false"
+        android:clickable="false"
+        android:textSize="14sp"
+        android:textColor="@android:color/black"
+        android:maxLines="1" />
+
+</TableRow>

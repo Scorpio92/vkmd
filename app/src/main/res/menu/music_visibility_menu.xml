@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/visibility_all"
+        android:title="@string/visibility_all"/>
+    <item
+        android:id="@+id/visibility_not_downloaded"
+        android:title="@string/visibility_not_downloaded"/>
+    <item
+        android:id="@+id/visibility_downloaded"
+        android:title="@string/visibility_downloaded"/>
+</menu>

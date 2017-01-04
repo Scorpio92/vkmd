@@ -1,0 +1,132 @@
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tableLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:focusableInTouchMode="true" >
+
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/tracksSelector"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:src="@drawable/add_check"
+            android:background="@android:color/transparent"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/stop_download"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:src="@drawable/stop"
+            android:background="@android:color/transparent"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/start_pause_download"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:src="@drawable/play"
+            android:background="@android:color/transparent"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/delete_from_download"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:src="@drawable/delete_forever"
+            android:background="@android:color/transparent"
+            android:layout_weight="1" />
+
+    </TableRow>
+
+
+    <View
+        android:layout_height="1dp"
+        android:background="@android:color/black" />
+
+
+    <LinearLayout
+        android:id="@+id/currentDownloadContainer"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/generalDownloadProgressText"
+            android:textSize="14sp"
+            android:gravity="center_horizontal" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/currentDownloadTrack"
+            android:textSize="14sp"
+            android:gravity="center_horizontal" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/downloadProgress"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/currentDownloadTrackPercent"
+                android:textSize="14sp"
+                android:gravity="center_horizontal"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"/>
+
+        </TableRow>
+
+    </LinearLayout>
+
+
+    <View
+        android:layout_height="1dp"
+        android:background="@android:color/black" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1">
+
+        <ListView
+            android:id="@+id/downloadList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:dividerHeight="0dp"
+            android:divider="@null"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_height="1dp"
+        android:background="@android:color/black" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/track_for_download_count"
+        android:textSize="14sp"
+        android:paddingLeft="10dp" />
+
+    <View
+        android:layout_height="1dp"
+        android:background="@android:color/black" />
+
+</TableLayout>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="methodsItems">
+        <item>@string/methodsItemsUID</item>
+        <item>@string/methodsItemsGID</item>
+        <item>@string/methodsItemsLP</item>
+        <item>@string/methodsItemsOffline</item>
+    </string-array>
+</resources>

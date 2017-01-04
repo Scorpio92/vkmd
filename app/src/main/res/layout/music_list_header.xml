@@ -1,0 +1,53 @@
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:focusableInTouchMode="true" >
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageButton
+            android:id="@+id/relogin"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/relogin"
+            android:background="@android:color/transparent"
+            android:layout_weight="1"/>
+
+        <ImageButton
+            android:id="@+id/search"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/search"
+            android:background="@android:color/transparent"
+            android:layout_weight="1"/>
+
+        <ImageButton
+            android:id="@+id/musicVisibility"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/visibility"
+            android:background="@android:color/transparent"
+            android:layout_weight="1"/>
+
+        <ImageButton
+            android:id="@+id/sort"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/sort"
+            android:background="@android:color/transparent"
+            android:layout_weight="1"/>
+
+        <ImageButton
+            android:id="@+id/moreActions"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/more"
+            android:background="@android:color/transparent"
+            android:layout_weight="1"
+            android:visibility="visible"/>
+
+    </TableRow>
+
+</TableLayout>
