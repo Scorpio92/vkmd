@@ -93,9 +93,9 @@ public class TrackList implements Parcelable {
         return null;
     }
 
-    public Track containsTrack(String fullName) {
+    public Track containsTrack(String name) {
         for (Track track:tracks) {
-            if(track.getFullTrackName().equals(fullName))
+            if(track.getFullTrackName().equals(name) || track.getShortTrackName().equals(name))
                 return track;
         }
         return null;

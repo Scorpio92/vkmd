@@ -13,6 +13,7 @@ public class Settings extends PreferenceActivity {
 
     public static final String SETTING_VKMD_FOLDER_KEY = "settings_vkmd_dir";
     public static final String SETTING_AUTO_OPEN_SAVED_KEY = "settings_auto_open_saved";
+    public static final String SETTING_AUTO_SCAN_SAVED_KEY = "settings_auto_scan_saved";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)

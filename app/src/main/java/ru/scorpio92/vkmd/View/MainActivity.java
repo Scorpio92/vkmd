@@ -454,7 +454,10 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                         adapter.changeTrackListMode(TracksListAdapter.SHOW_NOT_DOWNLOADED_TRACKS);
                         break;
                     case R.id.visibility_downloaded:
-                        new ScanForSavedTracks(MainActivity.this, adapter.getTrackListBackup());
+                        if(CommonUtils.getBooleanSetting(MainActivity.this, Settings.SETTING_AUTO_SCAN_SAVED_KEY, false))
+                            new ScanForSavedTracks(MainActivity.this, adapter.getTrackListBackup());
+                        else
+                            adapter.changeTrackListMode(TracksListAdapter.SHOW_DOWNLOADED_TRACKS);
                         break;
                 }
 

@@ -8,6 +8,13 @@
         android:defaultValue="true">
     </CheckBoxPreference>
 
+    <CheckBoxPreference
+        android:title="@string/settings_auto_scan_saved"
+        android:summary="@string/settings_auto_scan_saved_summary"
+        android:key="settings_auto_scan_saved"
+        android:defaultValue="false">
+    </CheckBoxPreference>
+
     <EditTextPreference
         android:title="@string/settings_vkmd_dir"
         android:summary="@string/settings_vkmd_dir_summary"
