@@ -149,18 +149,8 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
     }
 
     void initAdapter(TrackList trackList) {
-        try {
-            if(trackList.getAllTracks().size() > 0) {
-                Log.w(LOG_TAG, "init new adapter");
-                adapter = new TracksListAdapter(MainActivity.this, trackList);
-                tracksList.setAdapter(adapter);
-            } else {
-                relogin();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            relogin();
-        }
+        adapter = new TracksListAdapter(MainActivity.this, trackList);
+        tracksList.setAdapter(adapter);
     }
 
     void initAndStartBindingWithAudioService(final boolean isOnResume) {
@@ -181,7 +171,17 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                         Log.w(LOG_TAG, "AudioService is not running");
                         if (adapter == null) {
                             Log.w(LOG_TAG, "trackList == null, get tracks from intent");
-                            initAdapter((TrackList) getIntent().getParcelableExtra("TrackList"));
+                            TrackList trackList = (TrackList) getIntent().getParcelableExtra("TrackList");
+                            try {
+                                if (trackList.getAllTracks().size() > 0) {
+                                    initAdapter(trackList);
+                                } else {
+                                    relogin();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                relogin();
+                            }
                         }
                         showFooterFragment(false);
                     }
@@ -341,8 +341,6 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
 
     void relogin() {
         Log.w(LOG_TAG, "relogin!!!");
-
-        audioService.stopService(MainActivity.this);
 
         try {
             if(sConn != null) {
