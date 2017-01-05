@@ -29,6 +29,7 @@ import ru.scorpio92.vkmd.Interfaces.OperationsCallbacks;
 import ru.scorpio92.vkmd.Operations.GetToken;
 import ru.scorpio92.vkmd.Operations.GetTrackListByOwnerID;
 import ru.scorpio92.vkmd.Operations.GetTrackListFromResponseOrDB;
+import ru.scorpio92.vkmd.Operations.GetUserIdByUserName;
 import ru.scorpio92.vkmd.R;
 import ru.scorpio92.vkmd.Services.AudioService;
 import ru.scorpio92.vkmd.Types.Track;
@@ -37,7 +38,7 @@ import ru.scorpio92.vkmd.Utils.CommonUtils;
 import ru.scorpio92.vkmd.Utils.VKMDUtils;
 
 
-public class AuthActivity extends Activity implements OperationsCallbacks {
+public class AuthActivity extends Activity implements OperationsCallbacks, GetUserIdByUserName.GetUserIdByUserNameCallback {
 
     String LOG_TAG = "AuthActivity";
 
@@ -74,14 +75,16 @@ public class AuthActivity extends Activity implements OperationsCallbacks {
                     case 0:
                         GET_TRACK_LIST_METHOD = GET_TRACK_LIST_METHOD_BY_UID;
                         uidTableRow.setVisibility(View.VISIBLE);
-                        uid_login.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        //uid_login.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        uid_login.setInputType(InputType.TYPE_CLASS_TEXT);
                         uid_login.setHint(getString(R.string.user_id_hint));
                         passwordTableRow.setVisibility(View.GONE);
                         break;
                     case 1:
                         GET_TRACK_LIST_METHOD = GET_TRACK_LIST_METHOD_BY_GID;
                         uidTableRow.setVisibility(View.VISIBLE);
-                        uid_login.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        //uid_login.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        uid_login.setInputType(InputType.TYPE_CLASS_TEXT);
                         uid_login.setHint(getString(R.string.group_id_hint));
                         passwordTableRow.setVisibility(View.GONE);
                         break;
@@ -140,12 +143,14 @@ public class AuthActivity extends Activity implements OperationsCallbacks {
                         }
                     }
 
+                    boolean getByNumericID = false;
                     if(GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_UID || GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_GID) {
                         try {
                             Integer.valueOf(USER_ID);
+                            getByNumericID = true;
                         } catch (Exception e) {
-                            Toast.makeText(AuthActivity.this, R.string.string_not_is_id, Toast.LENGTH_SHORT).show();
-                            return;
+                            //Toast.makeText(AuthActivity.this, R.string.string_not_is_id, Toast.LENGTH_SHORT).show();
+                            //return;
                         }
                     }
 
@@ -157,7 +162,11 @@ public class AuthActivity extends Activity implements OperationsCallbacks {
                     switch (GET_TRACK_LIST_METHOD) {
                         case GET_TRACK_LIST_METHOD_BY_UID:
                         case GET_TRACK_LIST_METHOD_BY_GID:
-                            new GetTrackListByOwnerID(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
+                            if(getByNumericID) {
+                                new GetTrackListByOwnerID(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
+                            } else {
+                                new GetUserIdByUserName(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
+                            }
                             break;
                         case GET_TRACK_LIST_METHOD_BY_LP:
                             new GetToken(AuthActivity.this, USER_ID, password.getText().toString().trim());
@@ -357,5 +366,26 @@ public class AuthActivity extends Activity implements OperationsCallbacks {
     @Override
     public void onScanTaskComplete(ArrayList<Track> tracks) {
 
+    }
+
+    @Override
+    public void onGetUserIDByUserName(String id, int responseCode) {
+        switch (responseCode) {
+            case GetTrackListByOwnerID.GET_MUSIC_LIST_STATUS_OK:
+                Log.w(LOG_TAG, "user id: " + id);
+                USER_ID = id;
+                Toast.makeText(this, getString(R.string.get_user_id_ok) + " " + USER_ID, Toast.LENGTH_SHORT).show();
+                new GetTrackListByOwnerID(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
+                break;
+            case GetTrackListByOwnerID.GET_MUSIC_LIST_STATUS_FAIL:
+                Log.w(LOG_TAG, "user id: fail");
+                lock_unlock_GUI(false);
+                Toast.makeText(this, getString(R.string.get_user_id_fail), Toast.LENGTH_SHORT).show();
+                break;
+            case GetTrackListByOwnerID.GET_MUSIC_LIST_NO_INTERNET:
+                lock_unlock_GUI(false);
+                Toast.makeText(this, R.string.problems_with_internet, Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
 }
