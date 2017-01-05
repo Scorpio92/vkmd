@@ -17,6 +17,7 @@ import cz.msebera.android.httpclient.params.HttpConnectionParams;
 import cz.msebera.android.httpclient.params.HttpParams;
 import ru.scorpio92.vkmd.Interfaces.OperationsCallbacks;
 import ru.scorpio92.vkmd.Utils.CommonUtils;
+import ru.scorpio92.vkmd.Utils.InternetUtils;
 
 /**
  * Created by scorpio92 on 03.11.16.
@@ -24,12 +25,13 @@ import ru.scorpio92.vkmd.Utils.CommonUtils;
 
 //https://vk.com/dev/audio.get
 
-public class GetTrackListByOwnerID {
+public class GetTrackListByOwnerID implements InternetUtils.InternetConnectionCallback {
 
     public static final int GET_MUSIC_LIST_STATUS_OK = 0;
     public static final int GET_MUSIC_LIST_STATUS_FAIL = 1;
     public static final int GET_MUSIC_LIST_NO_INTERNET = 2;
 
+    private final int TIMEOUT = 15000;
     private final String versionAPI = "3.0";
     private final String maxTracksCount = "2000";
 
@@ -43,15 +45,15 @@ public class GetTrackListByOwnerID {
         this.USER_ID = USER_ID;
         this.ACCESS_TOKEN = ACCESS_TOKEN;
         RESPONSE = "";
-        try {
-            if(CommonUtils.isOnline())
-                new Task().execute();
-            else
-                callback.onGetTrackListComplete(GET_MUSIC_LIST_NO_INTERNET, RESPONSE);
-        } catch (Exception e) {
-            e.printStackTrace();
-            callback.onGetTrackListComplete(GET_MUSIC_LIST_STATUS_FAIL, RESPONSE);
-        }
+        new InternetUtils().checkInternetConnectionAsync(GetTrackListByOwnerID.this);
+    }
+
+    @Override
+    public void onCheckComplete(boolean result) {
+        if(result)
+            new Task().execute();
+        else
+            callback.onGetTrackListComplete(GET_MUSIC_LIST_NO_INTERNET, RESPONSE);
     }
 
     private class Task extends AsyncTask<Void, Void, Integer> {
@@ -64,7 +66,7 @@ public class GetTrackListByOwnerID {
             try {
                 HttpGet httpget = new HttpGet("https://api.vk.com/method/audio.get?oid=" + USER_ID + "&need_user=0&count=" + maxTracksCount + "&offset=0&access_token=" + ACCESS_TOKEN + "&v=" + versionAPI);
                 HttpParams httpParams = new BasicHttpParams();
-                HttpConnectionParams.setConnectionTimeout(httpParams, 15000);
+                HttpConnectionParams.setConnectionTimeout(httpParams, TIMEOUT);
                 HttpClient httpclient = new DefaultHttpClient(httpParams);
                 HttpResponse response = httpclient.execute(httpget);
                 HttpEntity entity = response.getEntity();

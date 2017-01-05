@@ -76,49 +76,6 @@ public class CommonUtils {
         fileOrDirectory.delete();
     }
 
-    /*public static boolean isOnline() {
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        } catch(Exception e) { e.printStackTrace(); }
-
-        return false;
-    }*/
-
-    public static boolean isOnline() {
-        final int TEST_CONNECTION_TIMEOUT = 1234;
-        final boolean[] b = new boolean[1];
-
-        Thread thread = new Thread(new Runnable() {
-            public void run() {
-                try {
-                    Log.w("isOnline", "test connection started with timeout: " + TEST_CONNECTION_TIMEOUT + " ms");
-                    HttpURLConnection urlc = (HttpURLConnection) (new URL("http://www.google.com").openConnection());
-                    urlc.setRequestProperty("User-Agent", "Test");
-                    urlc.setRequestProperty("Connection", "close");
-                    urlc.setConnectTimeout(TEST_CONNECTION_TIMEOUT);
-                    urlc.connect();
-                    b[0] = (urlc.getResponseCode() == 200);
-                    Log.w("isOnline", "test connection ended with result: " + b[0]);
-                } catch (Exception e) {e.printStackTrace();}//do time consuming operations
-            }
-        });
-
-        try {
-            b[0] = false;
-            thread.start();
-            Log.w("isOnline", "start test connection wait");
-            Thread.sleep(TEST_CONNECTION_TIMEOUT + 1);
-            Log.w("isOnline", "end test connection wait");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return b[0];
-    }
-
     public static boolean getBooleanSetting(Context context, String key, boolean defaultValue) {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(key, defaultValue);
     }

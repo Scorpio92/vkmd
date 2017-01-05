@@ -20,12 +20,13 @@ import cz.msebera.android.httpclient.params.HttpParams;
 import ru.scorpio92.vkmd.Constants;
 import ru.scorpio92.vkmd.Interfaces.OperationsCallbacks;
 import ru.scorpio92.vkmd.Utils.CommonUtils;
+import ru.scorpio92.vkmd.Utils.InternetUtils;
 
 /**
  * Created by scorpio92 on 03.11.16.
  */
 
-public class GetToken {
+public class GetToken implements InternetUtils.InternetConnectionCallback {
 
     public static final int GET_TOKEN_STATUS_OK = 0;
     public static final int GET_TOKEN_STATUS_FAIL = 1;
@@ -44,15 +45,15 @@ public class GetToken {
         this.callback = callback;
         GENERATE_TOKEN_URL = Constants.GENERATE_TOKEN_URL.concat("&username=" + user).concat("&password=" + password);
         RESPONSE = "";
-        try {
-            if(CommonUtils.isOnline())
-                new Task().execute();
-            else
-                callback.onGetTokenComplete(GET_TOKEN_NO_INTERNET, null, null);
-        } catch (Exception e) {
-            e.printStackTrace();
-            callback.onGetTokenComplete(GET_TOKEN_STATUS_FAIL, null, null);
-        }
+        new InternetUtils().checkInternetConnectionAsync(GetToken.this);
+    }
+
+    @Override
+    public void onCheckComplete(boolean result) {
+        if(result)
+            new Task().execute();
+        else
+            callback.onGetTokenComplete(GET_TOKEN_NO_INTERNET, null, null);
     }
 
     private class Task extends AsyncTask<Void, Void, Integer> {
