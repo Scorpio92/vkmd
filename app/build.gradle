@@ -5,10 +5,10 @@ android {
     buildToolsVersion "24.0.2"
     defaultConfig {
         applicationId "ru.scorpio92.vkmd"
-        minSdkVersion 16
+        minSdkVersion 15
         targetSdkVersion 24
-        versionCode 6
-        versionName "1.0.5"
+        versionCode 7
+        versionName "1.0.6"
     }
     buildTypes {
         release {
