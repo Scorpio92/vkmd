@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">vkmd</string>
+    <string name="app_name">kmd</string>
     <string name="title_activity_result">ResultActivity</string>
     <string name="select_auth_method">Как получаем аудиозаписи?</string>
     <string name="methodsItemsUID">По id пользователя</string>
@@ -61,14 +61,14 @@
     <string name="no_tracks_for_download">Не найдено треков для загрузки!</string>
     <string name="settings_auto_open_saved">Открывать сохраненные</string>
     <string name="settings_auto_open_saved_summary">При открытии программы автоматически показывать сохраненные треки. Интернет соединение не требуется</string>
-    <string name="settings_vkmd_dir">Директория загрузок</string>
-    <string name="settings_vkmd_dir_summary">Директория на карте памяти, куда будут сохраняться загруженные треки. По-умолчанию: /sdcard/vkmd</string>
+    <string name="settings_kmd_dir">Директория загрузок</string>
+    <string name="settings_kmd_dir_summary">Директория на карте памяти, куда будут сохраняться загруженные треки. По-умолчанию: /sdcard/kmd</string>
     <string name="about_title">О приложении</string>
     <string name="about_current_version">Текущая версия</string>
     <string name="problems_with_internet">Проверьте соединение с сетью интернет</string>
     <string name="about_general_futures">Основные возможности</string>
     <string name="author_site">www.scorpio92.ru</string>
-    <string name="about_short_info">VKMD (VK Music Downloader) - Open Source приложение, предназначенное для прослушивания и скачивания аудиозаписей с vk.com\n\nАвтор: scorpio92</string>
+    <string name="about_short_info">KMD - Open Source приложение, предназначенное для прослушивания и скачивания аудиозаписей с сайта вконтакте\n\nАвтор: scorpio92</string>
     <string name="about_full_info">* Получение списка всех доступных (как и в официальном приложении) аудиозаписей по идентификатору пользователя (группы), по логину-паролю пользователя. Пароль НЕ сохраняется на устройстве и не передается третьим лицам.\n\n* Возможность прослушивания сохраненных аудиозаписей офлайн\n\n* Удобный менеджер загрузки, работающий в фоновом режиме\n\n* Прослушивание аудиозаписей в фоновом режиме\n\n* Сортировка, поиск по аудиозаписям, изменение режима просмотра аудиозаписей (все, только скачанные, только не скачанные)\n\n* Возможность проигрывания аудиозаписей в произвольном порядке, в режиме повтора</string>
     <string name="settings_auto_scan_saved">Автоматическое сканирование</string>
     <string name="settings_auto_scan_saved_summary">При выборе режима отображения аудиозаписей \"Сохраненные\", автоматически сканируется директория загрузок по-умолчанию. Если в ней есть аудиозаписи из списка аудиозаписей пользователя, информация о данных сохраненных аудиозаписях обновляется и аудиозапись помечается как скачанная. Внимание! Данную опцию не рекомендуется включать для постоянного использования</string>

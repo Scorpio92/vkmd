@@ -30,7 +30,7 @@
         android:background="@android:color/black" />
 
     <fragment
-        class="ru.scorpio92.vkmd.View.MusicListFooterFragment"
+        class="ru.scorpio92.kmd.View.MusicListFooterFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/footer" />

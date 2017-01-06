@@ -16,10 +16,10 @@
     </CheckBoxPreference>
 
     <EditTextPreference
-        android:title="@string/settings_vkmd_dir"
-        android:summary="@string/settings_vkmd_dir_summary"
-        android:key="settings_vkmd_dir"
-        android:defaultValue="vkmd">
+        android:title="@string/settings_kmd_dir"
+        android:summary="@string/settings_kmd_dir_summary"
+        android:key="settings_kmd_dir"
+        android:defaultValue="kmd">
     </EditTextPreference>
 
 </PreferenceScreen>

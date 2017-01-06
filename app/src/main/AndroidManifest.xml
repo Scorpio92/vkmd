@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ru.scorpio92.vkmd">
+    package="ru.scorpio92.kmd">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -11,12 +11,12 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/vkmd"
+        android:icon="@mipmap/kmd"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".View.AuthActivity">
+        <activity android:name="ru.scorpio92.kmd.View.AuthActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -24,59 +24,59 @@
         </activity>
 
         <activity
-            android:name=".View.MainActivity"
+            android:name="ru.scorpio92.kmd.View.MainActivity"
             android:label="@string/app_name" >
         </activity>
 
         <activity
-            android:name=".View.DownloadManagerActivity"
+            android:name="ru.scorpio92.kmd.View.DownloadManagerActivity"
             android:label="@string/app_name" >
         </activity>
 
         <activity
-            android:name=".View.Settings"
+            android:name="ru.scorpio92.kmd.View.Settings"
             android:label="@string/app_name" >
         </activity>
 
         <activity
-            android:name=".View.About"
+            android:name="ru.scorpio92.kmd.View.About"
             android:label="@string/app_name" >
         </activity>
 
         <service
             android:enabled="true"
-            android:name=".Services.AudioService">
+            android:name="ru.scorpio92.kmd.Services.AudioService">
         </service>
 
         <service
             android:enabled="true"
-            android:name=".Services.DownloadService">
+            android:name="ru.scorpio92.kmd.Services.DownloadService">
         </service>
 
-        <receiver android:name=".Receivers.AudioServiceNotificationReceiver">
+        <receiver android:name="ru.scorpio92.kmd.Receivers.AudioServiceNotificationReceiver">
             <intent-filter>
-                <action android:name="ru.scorpio92.vkmd.Services.AudioService.PREV"/>
-                <action android:name="ru.scorpio92.vkmd.Services.AudioService.PLAY_PAUSE"/>
-                <action android:name="ru.scorpio92.vkmd.Services.AudioService.NEXT"/>
-                <action android:name="ru.scorpio92.vkmd.Services.AudioService.STOP"/>
+                <action android:name="ru.scorpio92.kmd.Services.AudioService.PREV"/>
+                <action android:name="ru.scorpio92.kmd.Services.AudioService.PLAY_PAUSE"/>
+                <action android:name="ru.scorpio92.kmd.Services.AudioService.NEXT"/>
+                <action android:name="ru.scorpio92.kmd.Services.AudioService.STOP"/>
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".Receivers.DownloadServiceNotificationReceiver">
+        <receiver android:name="ru.scorpio92.kmd.Receivers.DownloadServiceNotificationReceiver">
             <intent-filter>
-                <action android:name="ru.scorpio92.vkmd.Services.DownloadService.PLAY_PAUSE"/>
-                <action android:name="ru.scorpio92.vkmd.Services.DownloadService.STOP"/>
-                <action android:name="ru.scorpio92.vkmd.Services.DownloadService.RESCAN"/>
+                <action android:name="ru.scorpio92.kmd.Services.DownloadService.PLAY_PAUSE"/>
+                <action android:name="ru.scorpio92.kmd.Services.DownloadService.STOP"/>
+                <action android:name="ru.scorpio92.kmd.Services.DownloadService.RESCAN"/>
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".Receivers.HeadsetPlugReceiver">
+        <receiver android:name="ru.scorpio92.kmd.Receivers.HeadsetPlugReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.HEADSET_PLUG"/>
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".Receivers.LockScreenReceiver">
+        <receiver android:name="ru.scorpio92.kmd.Receivers.LockScreenReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON"/>
             </intent-filter>
