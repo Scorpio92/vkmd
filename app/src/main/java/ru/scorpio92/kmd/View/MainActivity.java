@@ -40,6 +40,7 @@ import ru.scorpio92.kmd.Operations.UpdateDownloadInfo;
 import ru.scorpio92.kmd.R;
 import ru.scorpio92.kmd.Services.AudioService;
 import ru.scorpio92.kmd.Services.DownloadService;
+import ru.scorpio92.kmd.Services.StoreService;
 import ru.scorpio92.kmd.Types.Track;
 import ru.scorpio92.kmd.Types.TrackList;
 import ru.scorpio92.kmd.Utils.CommonUtils;
@@ -58,6 +59,7 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
     ActivityWatcher activityWatcher;
 
     ServiceConnection sConn;
+    ServiceConnection sConnStoreService;
     AudioService audioService;
 
     BroadcastReceiver br;
@@ -168,22 +170,11 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                         }
                         showFooterFragment(true);
                     } else {
-                        Log.w(LOG_TAG, "AudioService is not running");
-                        if (adapter == null) {
-                            Log.w(LOG_TAG, "trackList == null, get tracks from intent");
-                            TrackList trackList = (TrackList) getIntent().getParcelableExtra("TrackList");
-                            try {
-                                if (trackList.getAllTracks().size() > 0) {
-                                    initAdapter(trackList);
-                                } else {
-                                    relogin();
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                relogin();
-                            }
-                        }
                         showFooterFragment(false);
+                        if (adapter == null) {
+                            Log.w(LOG_TAG, "trackList == null, get tracks from store service");
+                            getTracksFromStoreService();
+                        }
                     }
                 } else {
                     if (audioService.isStarted()) {
@@ -210,6 +201,43 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
         };
 
         bindService(new Intent(this, AudioService.class), sConn, BIND_AUTO_CREATE);
+    }
+
+    void getTracksFromStoreService() {
+        sConnStoreService = new ServiceConnection() {
+            public void onServiceConnected(ComponentName name, IBinder binder) {
+                Log.w(LOG_TAG, "StoreService onServiceConnected");
+                StoreService storeService = ((StoreService.MyBinder) binder).getService();
+                TrackList trackList = new TrackList(storeService.getTrackList().getAllTracks());
+
+                try {
+                    Log.w(LOG_TAG, "unbindService");
+                    unbindService(sConnStoreService);
+                    sConnStoreService = null;
+                    storeService = null;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                stopService(new Intent(MainActivity.this, StoreService.class));
+
+                try {
+                    if (trackList.getAllTracks().size() > 0) {
+                        initAdapter(trackList);
+                    } else {
+                        relogin();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    relogin();
+                }
+            }
+
+            public void onServiceDisconnected(ComponentName name) {
+                Log.w(LOG_TAG, "StoreService onServiceDisconnected");
+            }
+        };
+
+        bindService(new Intent(this, StoreService.class), sConnStoreService, BIND_AUTO_CREATE);
     }
 
     void registerDownloadBroadcastReceiver() {

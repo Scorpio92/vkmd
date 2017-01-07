@@ -26,18 +26,20 @@ import java.util.ArrayList;
 import ru.scorpio92.kmd.Constants;
 import ru.scorpio92.kmd.Interfaces.OperationsCallbacks;
 import ru.scorpio92.kmd.Operations.GetToken;
+import ru.scorpio92.kmd.Operations.GetTrackCount;
 import ru.scorpio92.kmd.Operations.GetTrackListByOwnerID;
 import ru.scorpio92.kmd.Operations.GetTrackListFromResponseOrDB;
 import ru.scorpio92.kmd.Operations.GetUserIdByUserName;
 import ru.scorpio92.kmd.R;
 import ru.scorpio92.kmd.Services.AudioService;
+import ru.scorpio92.kmd.Services.StoreService;
 import ru.scorpio92.kmd.Types.Track;
 import ru.scorpio92.kmd.Types.TrackList;
 import ru.scorpio92.kmd.Utils.CommonUtils;
 import ru.scorpio92.kmd.Utils.KMDUtils;
 
 
-public class AuthActivity extends Activity implements OperationsCallbacks, GetUserIdByUserName.GetUserIdByUserNameCallback {
+public class AuthActivity extends Activity implements OperationsCallbacks, GetUserIdByUserName.GetUserIdByUserNameCallback, GetTrackCount.GetTrackCountCallback {
 
     String LOG_TAG = "AuthActivity";
 
@@ -59,6 +61,14 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
 
     ServiceConnection sConn;
     AudioService audioService;
+
+    ServiceConnection sConnStoreService;
+    StoreService storeService;
+
+    private String token;
+    private int tracksCount;
+    private int currentOffset;
+    private TrackList generalTrackList;
 
 
     void initGUI() {
@@ -161,10 +171,12 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
                     switch (GET_TRACK_LIST_METHOD) {
                         case GET_TRACK_LIST_METHOD_BY_UID:
                         case GET_TRACK_LIST_METHOD_BY_GID:
+                            token = Constants.ACCESS_TOKEN_PUBLIC;
                             if(getByNumericID) {
-                                new GetTrackListByOwnerID(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
+                                //new GetTrackListByOwnerID(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
+                                new GetTrackCount(AuthActivity.this, USER_ID, token);
                             } else {
-                                new GetUserIdByUserName(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
+                                new GetUserIdByUserName(AuthActivity.this, USER_ID, token);
                             }
                             break;
                         case GET_TRACK_LIST_METHOD_BY_LP:
@@ -228,7 +240,9 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
                         if(USER_ID != null) {
                             uid_login.setText(USER_ID);
                             autoEnter.setChecked(true);
-                            new GetTrackListByOwnerID(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
+                            //new GetTrackListByOwnerID(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
+                            token = Constants.ACCESS_TOKEN_PUBLIC;
+                            new GetTrackCount(AuthActivity.this, USER_ID, token);
                         } else {
                             lock_unlock_GUI(false);
                         }
@@ -273,12 +287,38 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
         }
     }
 
-    void showMainActivity(TrackList tracks) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("TrackList", tracks);
-        startActivity(intent);
-        finish();
+    void showMainActivity(final TrackList tracks) {
+
+        startService(new Intent(AuthActivity.this, StoreService.class));
+
+        sConnStoreService = new ServiceConnection() {
+            public void onServiceConnected(ComponentName name, IBinder binder) {
+                Log.w(LOG_TAG, "StoreService onServiceConnected");
+                storeService = ((StoreService.MyBinder) binder).getService();
+                storeService.setTrackList(tracks);
+
+                try {
+                    Log.w(LOG_TAG, "unbindService");
+                    unbindService(sConnStoreService);
+                    sConnStoreService = null;
+                    storeService = null;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                startActivity(new Intent(AuthActivity.this, MainActivity.class));
+                finish();
+            }
+
+            public void onServiceDisconnected(ComponentName name) {
+                Log.w(LOG_TAG, "StoreService onServiceDisconnected");
+            }
+        };
+
+        bindService(new Intent(AuthActivity.this, StoreService.class), sConnStoreService, BIND_AUTO_CREATE);
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -297,7 +337,9 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
         switch (status) {
             case GetToken.GET_TOKEN_STATUS_OK:
                 Log.w(LOG_TAG, "token is " + token + " user_id is " + userID);
-                new GetTrackListByOwnerID(AuthActivity.this, userID, token);
+                //new GetTrackListByOwnerID(AuthActivity.this, userID, token);
+                this.token = token;
+                new GetTrackCount(AuthActivity.this, USER_ID, token);
                 break;
             case GetToken.GET_TOKEN_STATUS_FAIL:
                 Log.w(LOG_TAG, "onGetTokenFailed");
@@ -335,11 +377,18 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
 
     @Override
     public void onResponseParseComplete(TrackList tracks) {
-        if(!tracks.getAllTracks().isEmpty()) {
-            showMainActivity(tracks);
-        } else {
+        generalTrackList.getAllTracks().addAll(tracks.getAllTracks());
+        if(tracks.getAllTracks().isEmpty() && currentOffset == 0) {
             lock_unlock_GUI(false);
             Toast.makeText(this, R.string.problems_with_parsing_response, Toast.LENGTH_SHORT).show();
+        } else {
+            currentOffset = currentOffset + GetTrackListByOwnerID.DEFAULT_TRACKS_COUNT;
+            if(currentOffset < tracksCount) {
+                Log.w(LOG_TAG, "GetTrackListByOwnerID, currentOffset: " + currentOffset);
+                new GetTrackListByOwnerID(AuthActivity.this, USER_ID, token, currentOffset);
+            }  else {
+                showMainActivity(generalTrackList);
+            }
         }
     }
 
@@ -374,7 +423,8 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
                 Log.w(LOG_TAG, "user id: " + id);
                 USER_ID = id;
                 Toast.makeText(this, getString(R.string.get_user_id_ok) + " " + USER_ID, Toast.LENGTH_SHORT).show();
-                new GetTrackListByOwnerID(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
+                //new GetTrackListByOwnerID(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
+                new GetTrackCount(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
                 break;
             case GetTrackListByOwnerID.GET_MUSIC_LIST_STATUS_FAIL:
                 Log.w(LOG_TAG, "user id: fail");
@@ -386,5 +436,29 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
                 Toast.makeText(this, R.string.problems_with_internet, Toast.LENGTH_SHORT).show();
                 break;
         }
+    }
+
+    @Override
+    public void onGetTrackCount(int count, int responseCode) {
+        switch (responseCode) {
+            case GetTrackCount.GET_TRACKS_COUNT_STATUS_OK:
+                Log.w(LOG_TAG, "count tracks: " + count);
+                tracksCount = count;
+                currentOffset = 0;
+                generalTrackList = new TrackList();
+                Log.w(LOG_TAG, "GetTrackListByOwnerID, currentOffset: " + currentOffset);
+                new GetTrackListByOwnerID(AuthActivity.this, USER_ID, token, currentOffset);
+                break;
+            case GetTrackCount.GET_TRACKS_COUNT_STATUS_FAIL:
+                Log.w(LOG_TAG, "user id: fail");
+                lock_unlock_GUI(false);
+                Toast.makeText(this, getString(R.string.problems_with_parsing_response), Toast.LENGTH_SHORT).show();
+                break;
+            case GetTrackCount.GET_TRACKS_COUNT_NO_INTERNET:
+                lock_unlock_GUI(false);
+                Toast.makeText(this, R.string.problems_with_internet, Toast.LENGTH_SHORT).show();
+                break;
+        }
+
     }
 }
