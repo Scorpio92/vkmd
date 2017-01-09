@@ -153,7 +153,7 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
                     }
 
                     boolean getByNumericID = false;
-                    if(GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_UID || GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_GID) {
+                    if(GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_UID) {
                         try {
                             Integer.valueOf(USER_ID);
                             getByNumericID = true;
@@ -163,8 +163,15 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
                         }
                     }
 
-                    if(GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_GID) //если получаем список по id группы передаем отрицательное значение
-                        USER_ID = "-" + USER_ID;
+                    if(GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_GID) {
+                        try {
+                            Integer.valueOf(USER_ID);
+                            USER_ID = "-" + USER_ID;
+                        } catch (Exception e) {
+                            Toast.makeText(AuthActivity.this, R.string.string_not_is_id, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
 
                     lock_unlock_GUI(true);
 
