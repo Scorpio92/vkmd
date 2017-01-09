@@ -37,7 +37,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/online_search"
-        android:id="@+id/onlineSearch"
-        android:visibility="gone"/>
+        android:id="@+id/onlineSearch"/>
 
 </LinearLayout>

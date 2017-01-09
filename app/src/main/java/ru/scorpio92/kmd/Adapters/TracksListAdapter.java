@@ -43,6 +43,7 @@ public class TracksListAdapter extends BaseAdapter {
     public static final int SHOW_DOWNLOADED_TRACKS = 2;
     public static final int SHOW_TRACKS_BY_ARTIST = 3;
     public static final int SHOW_TRACKS_BY_TITLE = 4;
+    //public static final int SHOW_SEARCH_RESULT_TRACKS = 5;
     private String searchString;
 
 
@@ -248,6 +249,11 @@ public class TracksListAdapter extends BaseAdapter {
                 selectedTracksID.add(i);
             }
         }
+        notifyDataSetChanged();
+    }
+
+    public void showOnlineSearchResult(TrackList trackList) {
+        this.trackList = new TrackList(trackList.getAllTracks());
         notifyDataSetChanged();
     }
 }

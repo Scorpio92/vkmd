@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -32,10 +33,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import ru.scorpio92.kmd.Adapters.TracksListAdapter;
+import ru.scorpio92.kmd.Constants;
 import ru.scorpio92.kmd.Interfaces.ActivityWatcher;
 import ru.scorpio92.kmd.Interfaces.FooterFragmentWatcher;
 import ru.scorpio92.kmd.Interfaces.OperationsCallbacks;
+import ru.scorpio92.kmd.Operations.GetTrackListFromResponseOrDB;
 import ru.scorpio92.kmd.Operations.ScanForSavedTracks;
+import ru.scorpio92.kmd.Operations.SearchTracks;
 import ru.scorpio92.kmd.Operations.UpdateDownloadInfo;
 import ru.scorpio92.kmd.R;
 import ru.scorpio92.kmd.Services.AudioService;
@@ -45,7 +49,7 @@ import ru.scorpio92.kmd.Types.Track;
 import ru.scorpio92.kmd.Types.TrackList;
 import ru.scorpio92.kmd.Utils.CommonUtils;
 
-public class MainActivity extends Activity implements OperationsCallbacks, TracksListAdapter.TracksListAdapterCallbacks, FooterFragmentWatcher {
+public class MainActivity extends Activity implements OperationsCallbacks, TracksListAdapter.TracksListAdapterCallbacks, FooterFragmentWatcher, SearchTracks.SearchTracksCallback {
 
     final String LOG_TAG = "MainActivity";
 
@@ -429,6 +433,7 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
         final RadioGroup searchByGroup = (RadioGroup) dialoglayout.findViewById(R.id.searchByGroup);
         final RadioButton searchByTrackNameRadio = (RadioButton) dialoglayout.findViewById(R.id.searchByTrackNameRadio);
         final RadioButton searchByArtistRadio = (RadioButton) dialoglayout.findViewById(R.id.searchByArtistRadio);
+        final CheckBox onlineSearch = (CheckBox) dialoglayout.findViewById(R.id.onlineSearch);
 
         alertDialog.setPositiveButton(getString(R.string.search_button),
                 new DialogInterface.OnClickListener() {
@@ -448,11 +453,15 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
             @Override
             public void onClick(View v) {
                 if(searchInput.getText().toString().trim().length() > 0) {
-                    if(searchByGroup.getCheckedRadioButtonId() == searchByArtistRadio.getId())
-                        adapter.changeTrackListMode(TracksListAdapter.SHOW_TRACKS_BY_ARTIST, searchInput.getText().toString().trim());
-                    if(searchByGroup.getCheckedRadioButtonId() == searchByTrackNameRadio.getId())
-                        adapter.changeTrackListMode(TracksListAdapter.SHOW_TRACKS_BY_TITLE, searchInput.getText().toString().trim());
+                    if(onlineSearch.isChecked()) {
+                        new SearchTracks(MainActivity.this, searchInput.getText().toString().trim(), Constants.ACCESS_TOKEN_PUBLIC);
+                    } else {
+                        if (searchByGroup.getCheckedRadioButtonId() == searchByArtistRadio.getId())
+                            adapter.changeTrackListMode(TracksListAdapter.SHOW_TRACKS_BY_ARTIST, searchInput.getText().toString().trim());
+                        if (searchByGroup.getCheckedRadioButtonId() == searchByTrackNameRadio.getId())
+                            adapter.changeTrackListMode(TracksListAdapter.SHOW_TRACKS_BY_TITLE, searchInput.getText().toString().trim());
 
+                    }
                     dialog.cancel();
                 } else {
                     Toast.makeText(MainActivity.this, R.string.empty_field_warning, Toast.LENGTH_SHORT).show();
@@ -601,7 +610,10 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
 
     @Override
     public void onResponseParseComplete(TrackList tracks) {
-
+        if(!tracks.getAllTracks().isEmpty()) {
+            Log.w(LOG_TAG, "show online search result");
+            adapter.showOnlineSearchResult(tracks);
+        }
     }
 
     @Override
@@ -710,6 +722,23 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
             if(br != null)
                 unregisterReceiver(br);
         } catch (Exception e) {e.printStackTrace();}
+
+    }
+
+    @Override
+    public void onSearchTracksComplete(int code, String response) {
+        switch (code) {
+            case SearchTracks.SEARCH_TRACKS_STATUS_OK:
+                Log.w(LOG_TAG, response);
+                new GetTrackListFromResponseOrDB(GetTrackListFromResponseOrDB.IS_GET_TRACKLIST_FROM_RESPONSE, MainActivity.this, response);
+                break;
+            case SearchTracks.SEARCH_TRACKS_STATUS_FAIL:
+                Toast.makeText(this, R.string.problems_with_parsing_response, Toast.LENGTH_SHORT).show();
+                break;
+            case SearchTracks.SEARCH_TRACKS_NO_INTERNET:
+                Toast.makeText(this, R.string.problems_with_internet, Toast.LENGTH_SHORT).show();
+                break;
+        }
 
     }
 }
