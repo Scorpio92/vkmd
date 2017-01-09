@@ -13,6 +13,7 @@ import java.net.URL;
 public class InternetUtils {
 
     private final String LOG_TAG = "InternetUtils";
+    private final String TEST_HOST = "https://www.vk.com";
     private final int DEFAULT_CONNECTION_TIMEOUT = 9999; //ms
 
     private InternetConnectionCallback callback;
@@ -46,7 +47,7 @@ public class InternetUtils {
         try {
             if(connection_timeout > 0) {
                 Log.w(LOG_TAG, "test connection started with timeout: " + connection_timeout + " ms");
-                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://www.google.com").openConnection());
+                HttpURLConnection urlc = (HttpURLConnection) (new URL(TEST_HOST).openConnection());
                 urlc.setRequestProperty("User-Agent", "Test");
                 urlc.setRequestProperty("Connection", "close");
                 urlc.setConnectTimeout(connection_timeout);
