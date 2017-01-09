@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +49,7 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
     ServiceConnection sConn;
 
     TextView currentTrackName, timePlay, timeDuration;
-    ProgressBar progressBar;
+    SeekBar progressBar;
     ImageButton repeatButton, previousButton, stopButton, pauseButton, playButton, nextButton, moreButton;
 
     FooterFragmentWatcher footerFragmentWatcher;
@@ -60,7 +61,7 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
         currentTrackName = (TextView) view.findViewById(R.id.currentTrackName);
         timePlay = (TextView) view.findViewById(R.id.timePlay);
         timeDuration = (TextView) view.findViewById(R.id.timeDuration);
-        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+        progressBar = (SeekBar) view.findViewById(R.id.progressBar);
         repeatButton = (ImageButton) view.findViewById(R.id.repeatButton);
         previousButton = (ImageButton) view.findViewById(R.id.previousButton);
         stopButton = (ImageButton) view.findViewById(R.id.stopButton);
@@ -68,6 +69,24 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
         playButton = (ImageButton) view.findViewById(R.id.playButton);
         nextButton = (ImageButton) view.findViewById(R.id.nextButton);
         moreButton = (ImageButton) view.findViewById(R.id.moreButton);
+
+        progressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Log.w(LOG_TAG, "onStopTrackingTouch " + seekBar.getProgress());
+                audioService.seekTo(seekBar.getProgress());
+            }
+        });
 
         repeatButton.setOnClickListener(new View.OnClickListener() {
             @Override

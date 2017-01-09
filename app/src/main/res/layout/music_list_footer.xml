@@ -42,8 +42,15 @@
                 android:gravity="center_horizontal"
                 android:padding="10dp" />
 
-            <ProgressBar
+            <!--<ProgressBar
                 style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/progressBar"
+                android:layout_weight="1"
+                android:paddingTop="10dp" />-->
+
+            <android.support.v7.widget.AppCompatSeekBar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/progressBar"

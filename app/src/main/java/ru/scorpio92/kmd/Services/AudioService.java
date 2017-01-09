@@ -560,6 +560,13 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
         return randomMode;
     }
 
+    public void seekTo(int value) {
+        Log.w(LOG_TAG, "seekTo " + value);
+        try {
+            mediaPlayer.seekTo(value);
+        } catch (Exception e) {e.printStackTrace();}
+    }
+
 
     class TimerTask extends java.util.TimerTask {
 
