@@ -25,6 +25,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -71,6 +72,8 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
     private final int BIND_WITH_AUDIO_SERVICE_ON_RESUME = 0;
     private final int BIND_WITH_AUDIO_SERVICE_ON_STOP = 1;
     private final int BIND_WITH_AUDIO_SERVICE_ON_MANUAL_RELOGIN = 2;
+
+    AlertDialog searchDialog;
 
 
     void initGUI() {
@@ -133,7 +136,8 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                     fragmentManager.beginTransaction()
                             .show(fragmentManager.findFragmentById(R.id.footer))
                             .commit();
-                    activityWatcher.onItemSelected(adapter.getTrackListBackup(), adapter.getTrackList().getAllTracks().get(i).ID);
+                    //activityWatcher.onItemSelected(adapter.getTrackListBackup(), adapter.getTrackList().getAllTracks().get(i).ID);
+                    activityWatcher.onItemSelected(adapter.getTrackList(), adapter.getTrackList().getAllTracks().get(i).ID);
                 } catch (Exception e) {e.printStackTrace();}
 
             }
@@ -434,6 +438,7 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
         final RadioButton searchByTrackNameRadio = (RadioButton) dialoglayout.findViewById(R.id.searchByTrackNameRadio);
         final RadioButton searchByArtistRadio = (RadioButton) dialoglayout.findViewById(R.id.searchByArtistRadio);
         final CheckBox onlineSearch = (CheckBox) dialoglayout.findViewById(R.id.onlineSearch);
+        final ProgressBar searchProgress = (ProgressBar) dialoglayout.findViewById(R.id.searchProgress);
 
         alertDialog.setPositiveButton(getString(R.string.search_button),
                 new DialogInterface.OnClickListener() {
@@ -445,27 +450,57 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                     }
                 });
 
-        final AlertDialog dialog = alertDialog.create();
-        //dialog.setCancelable(false);
-        dialog.show();
+        alertDialog.setNegativeButton(getString(android.R.string.no),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Do nothing here because we override this button later to change the close behaviour.
+                        //However, we still need this because on older versions of Android unless we
+                        //pass a handler the button doesn't get instantiated
+                    }
+                });
 
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+        //final AlertDialog dialog = alertDialog.create();
+        searchDialog = alertDialog.create();
+        //dialog.setCancelable(false);
+        searchDialog.show();
+
+        searchDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(searchInput.getText().toString().trim().length() > 0) {
                     if(onlineSearch.isChecked()) {
-                        new SearchTracks(MainActivity.this, searchInput.getText().toString().trim(), Constants.ACCESS_TOKEN_PUBLIC);
+                        searchInput.setEnabled(false);
+                        //searchByGroup.setEnabled(false);
+                        searchByTrackNameRadio.setEnabled(false);
+                        searchByArtistRadio.setEnabled(false);
+                        onlineSearch.setEnabled(false);
+                        searchProgress.setVisibility(View.VISIBLE);
+                        if (searchByGroup.getCheckedRadioButtonId() == searchByArtistRadio.getId())
+                            new SearchTracks(MainActivity.this, searchInput.getText().toString().trim(), true, Constants.ACCESS_TOKEN_PUBLIC);
+                        if (searchByGroup.getCheckedRadioButtonId() == searchByTrackNameRadio.getId())
+                            new SearchTracks(MainActivity.this, searchInput.getText().toString().trim(), false, Constants.ACCESS_TOKEN_PUBLIC);
                     } else {
                         if (searchByGroup.getCheckedRadioButtonId() == searchByArtistRadio.getId())
                             adapter.changeTrackListMode(TracksListAdapter.SHOW_TRACKS_BY_ARTIST, searchInput.getText().toString().trim());
                         if (searchByGroup.getCheckedRadioButtonId() == searchByTrackNameRadio.getId())
                             adapter.changeTrackListMode(TracksListAdapter.SHOW_TRACKS_BY_TITLE, searchInput.getText().toString().trim());
 
+                        searchDialog.cancel();
+
                     }
-                    dialog.cancel();
+                    //dialog.cancel();
                 } else {
+                    searchProgress.setVisibility(View.INVISIBLE);
                     Toast.makeText(MainActivity.this, R.string.empty_field_warning, Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        searchDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchDialog.cancel();
             }
         });
     }
@@ -730,7 +765,7 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
         switch (code) {
             case SearchTracks.SEARCH_TRACKS_STATUS_OK:
                 Log.w(LOG_TAG, response);
-                new GetTrackListFromResponseOrDB(GetTrackListFromResponseOrDB.IS_GET_TRACKLIST_FROM_RESPONSE, MainActivity.this, response);
+                new GetTrackListFromResponseOrDB(GetTrackListFromResponseOrDB.IS_GET_TRACKLIST_FROM_ONLINE_SEARCH_RESPONSE, MainActivity.this, response);
                 break;
             case SearchTracks.SEARCH_TRACKS_STATUS_FAIL:
                 Toast.makeText(this, R.string.problems_with_parsing_response, Toast.LENGTH_SHORT).show();
@@ -740,5 +775,10 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                 break;
         }
 
+        if(searchDialog != null) {
+            try {
+                searchDialog.cancel();
+            } catch (Exception e) {e.printStackTrace();}
+        }
     }
 }

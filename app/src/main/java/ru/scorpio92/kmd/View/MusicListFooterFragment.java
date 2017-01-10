@@ -288,14 +288,13 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
     }
 
     void startNewPlay(TrackList trackList, boolean startService, int trackID) {
+        audioService.setTrackList(trackList);
+        audioService.setCurrentTrackID(trackID);
         if(startService) {
             Log.w(LOG_TAG, "startNewPlay with startService");
-            audioService.setTrackList(trackList);
-            audioService.setCurrentTrackID(trackID);
             getActivity().getBaseContext().startService(new Intent(getActivity().getBaseContext(), AudioService.class));
         } else {
             Log.w(LOG_TAG, "startNewPlay without startService");
-            audioService.setCurrentTrackID(trackID);
             audioService.runNewTrackPlaying();
         }
 
@@ -370,7 +369,7 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
         } else {
             Log.w(LOG_TAG, "audioService is running");
             if(trackID != audioService.getCurrentTrackID()) {
-                startNewPlay(null, false, trackID);
+                startNewPlay(trackList, false, trackID);
             }
         }
 

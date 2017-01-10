@@ -7,6 +7,7 @@ import com.loopj.android.http.HttpGet;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
@@ -33,13 +34,15 @@ public class SearchTracks implements InternetUtils.InternetConnectionCallback {
 
     private SearchTracksCallback callback;
     private String searchString;
+    private String performer_only;
     private String ACCESS_TOKEN;
     private String RESPONSE;
 
 
-    public SearchTracks(SearchTracksCallback callback, String searchString, String ACCESS_TOKEN) {
+    public SearchTracks(SearchTracksCallback callback, String searchString, boolean search_by_artist, String ACCESS_TOKEN) {
         this.callback = callback;
         this.searchString = searchString;
+        this.performer_only = Integer.toString((search_by_artist) ? 1 : 0);
         this.ACCESS_TOKEN = ACCESS_TOKEN;
         RESPONSE = "";
         new InternetUtils().checkInternetConnectionAsync(SearchTracks.this);
@@ -61,7 +64,7 @@ public class SearchTracks implements InternetUtils.InternetConnectionCallback {
             StringBuilder sb = new StringBuilder();
 
             try {
-                HttpGet httpget = new HttpGet("https://api.vk.com/method/audio.search?q=" + searchString + "&count=" + DEFAULT_TRACKS_COUNT + "&v=" + versionAPI + "&access_token=" + ACCESS_TOKEN);
+                HttpGet httpget = new HttpGet("https://api.vk.com/method/audio.search?q=" + URLEncoder.encode(searchString, "UTF-8") + "&performer_only=" + performer_only + "&count=" + DEFAULT_TRACKS_COUNT + "&v=" + versionAPI + "&access_token=" + ACCESS_TOKEN);
                 HttpParams httpParams = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParams, CONNECTION_TIMEOUT);
                 HttpClient httpclient = new DefaultHttpClient(httpParams);

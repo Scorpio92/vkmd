@@ -39,4 +39,13 @@
         android:text="@string/online_search"
         android:id="@+id/onlineSearch"/>
 
+    <ProgressBar
+        android:gravity="center_vertical|center_horizontal"
+        android:paddingTop="@dimen/paddingOtherAndOther"
+        android:visibility="invisible"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/searchProgress" />
+
 </LinearLayout>

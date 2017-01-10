@@ -23,8 +23,9 @@ import ru.scorpio92.kmd.Utils.DBUtils;
 public class GetTrackListFromResponseOrDB {
 
     public static final int IS_GET_TRACKLIST_FROM_RESPONSE = 0;
-    public static final int IS_GET_SAVED_TRACKLIST_FROM_DB = 1;
-    public static final int IS_GET_TRACKLIST_FOR_DOWNLOAD_FROM_DB = 2;
+    public static final int IS_GET_TRACKLIST_FROM_ONLINE_SEARCH_RESPONSE = 1;
+    public static final int IS_GET_SAVED_TRACKLIST_FROM_DB = 2;
+    public static final int IS_GET_TRACKLIST_FOR_DOWNLOAD_FROM_DB = 3;
     private int operation;
 
     private Context context;
@@ -51,22 +52,33 @@ public class GetTrackListFromResponseOrDB {
 
         @Override
         protected Void doInBackground(Void... params) {
+            TrackList savedTracks = new TrackList();
+            JSONObject dataJsonObj;
+            JSONArray responseJA = null;
+            int startIdx = 0;
+
             try {
                 switch (operation) {
+                    case IS_GET_TRACKLIST_FROM_ONLINE_SEARCH_RESPONSE:
+                        startIdx = 1;
                     case IS_GET_TRACKLIST_FROM_RESPONSE:
 
-                        TrackList savedTracks = getTracksFromDB();
+                        Log.w("GetTrackListFromResponseOrDB", "startIdx: " + startIdx);
+                        savedTracks = getTracksFromDB();
 
-                        JSONObject dataJsonObj = new JSONObject(response);
+                        dataJsonObj = new JSONObject(response);
 
                         //v3.0
                         //{"response":[{"aid":456239053,"owner_id":385867856,"artist":"Scorpions","title":"Moment Of Glory","duration":307,"url":"https:\/\/cs5-2v4.vk-cdn.net\/p11\/ecbe6f86e31292.mp3?extra=PYXvNJyUHiPWsAXwRQXngtZaE1bGEpnYGTD-YaiZ4a0CwVV0RLpPsFHIh3FU31gS5-A0SteYTlxe4vJ5eMd2deALqffCN0O_0vN4QuBwhADA_upgabffl4vzTKSAQHsKD3uPhcDn-PYXEXqk","lyrics_id":"3998451","genre":1},
 
-                        JSONArray response = dataJsonObj.getJSONArray("response");
+                        //v5.59
+                        //{"response":{"count":40,"items":[{"id":456239053,"owner_id":385867856,"artist":"Scorpions","title":"Moment Of Glory","duration":307,"date":1477827108,"url":"https:\/\/cs5-2v4.vk-cdn.net\/p11\/ecbe6f86e31292.mp3?extra=PYXvNJyUHiPWsAXwRQXngtZaE1bGEpnYGTD-YaiZ4a0CwVV0RLpPsFHIh3FU31gS5-A0SteYTlxe4vJ5eMd2deALqffCN0O_0vN4QuBwhADA_upgabffl4vzTKSAQHsKD3uPhcDn-PYXEXqk","lyrics_id":3998451,"genre_id":1},
 
-                        for (int i = 0; i < response.length(); i++) {
+                        responseJA = dataJsonObj.getJSONArray("response");
+
+                        for (int i = startIdx; i < responseJA.length(); i++) {
                             try {
-                                JSONObject trackJSON = response.getJSONObject(i);
+                                JSONObject trackJSON = responseJA.getJSONObject(i);
                                 String oid = trackJSON.getString("owner_id").trim();
                                 String aid = trackJSON.getString("aid").trim();
                                 String artist = trackJSON.getString("artist").trim();
@@ -80,20 +92,10 @@ public class GetTrackListFromResponseOrDB {
                                 else
                                     tracks.addTrack(new Track(Integer.parseInt(oid), Integer.parseInt(aid), artist, title, Integer.parseInt(duration), url, null, false));
                             } catch (Exception e) {
-                                Log.w("GetTrackListFromResponseOrDB", response.getJSONObject(i).toString());
+                                Log.w("GetTrackListFromResponseOrDB", responseJA.getJSONObject(i).toString());
                                 e.printStackTrace();
                             }
                         }
-
-
-                        //v5.59
-                        //{"response":{"count":40,"items":[{"id":456239053,"owner_id":385867856,"artist":"Scorpions","title":"Moment Of Glory","duration":307,"date":1477827108,"url":"https:\/\/cs5-2v4.vk-cdn.net\/p11\/ecbe6f86e31292.mp3?extra=PYXvNJyUHiPWsAXwRQXngtZaE1bGEpnYGTD-YaiZ4a0CwVV0RLpPsFHIh3FU31gS5-A0SteYTlxe4vJ5eMd2deALqffCN0O_0vN4QuBwhADA_upgabffl4vzTKSAQHsKD3uPhcDn-PYXEXqk","lyrics_id":3998451,"genre_id":1},
-                        /*
-                        JSONObject trackJSON = dataJsonObj.getJSONObject("response");
-                        JSONArray items = trackJSON.getJSONArray("items");
-
-                        Log.w("test", Integer.toString(items.length()));
-                        */
                         break;
 
                     case IS_GET_SAVED_TRACKLIST_FROM_DB:
@@ -113,6 +115,7 @@ public class GetTrackListFromResponseOrDB {
             super.onPostExecute(result);
             switch (operation) {
                 case IS_GET_TRACKLIST_FROM_RESPONSE:
+                case IS_GET_TRACKLIST_FROM_ONLINE_SEARCH_RESPONSE:
                     callback.onResponseParseComplete(tracks);
                     break;
                 case IS_GET_SAVED_TRACKLIST_FROM_DB:
