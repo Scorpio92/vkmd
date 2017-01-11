@@ -648,6 +648,8 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
         if(!tracks.getAllTracks().isEmpty()) {
             Log.w(LOG_TAG, "show online search result");
             adapter.showOnlineSearchResult(tracks);
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.nothing_founded, Toast.LENGTH_SHORT).show();
         }
     }
 
