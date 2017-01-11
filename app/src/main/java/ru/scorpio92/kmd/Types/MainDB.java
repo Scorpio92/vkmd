@@ -14,7 +14,7 @@ import java.io.File;
 
 public class MainDB extends SQLiteOpenHelper implements BaseColumns {
 
-    private static String DB_PATH = null;
+    public static String DB_PATH = null;
     private static final String DEFAULT_DB_FOLDER = System.getenv("EXTERNAL_STORAGE") + "/kmd/databases";
     private static final String MAIN_DATABASE_NAME = "main.db";
     private static final int MAIN_DATABASE_VERSION = 1;
@@ -58,6 +58,7 @@ public class MainDB extends SQLiteOpenHelper implements BaseColumns {
 
     public MainDB(Context context) {
         super(context, checkDBWorkDir(), null, MAIN_DATABASE_VERSION);
+        Log.w("MainDB", "DB_PATH: " + DB_PATH);
     }
 
     @Override
@@ -73,7 +74,7 @@ public class MainDB extends SQLiteOpenHelper implements BaseColumns {
         onCreate(sqLiteDatabase);
     }
 
-    private static String checkDBWorkDir() {
+    public static String checkDBWorkDir() {
         if(DB_PATH == null) {
             Log.w("MainDB", "checkDBWorkDir");
             File workDir = new File(DEFAULT_DB_FOLDER);

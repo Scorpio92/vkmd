@@ -35,6 +35,7 @@ import ru.scorpio92.kmd.Operations.GetUserIdByUserName;
 import ru.scorpio92.kmd.R;
 import ru.scorpio92.kmd.Services.AudioService;
 import ru.scorpio92.kmd.Services.StoreService;
+import ru.scorpio92.kmd.Types.MainDB;
 import ru.scorpio92.kmd.Types.Track;
 import ru.scorpio92.kmd.Types.TrackList;
 import ru.scorpio92.kmd.Utils.CommonUtils;
@@ -44,6 +45,8 @@ import ru.scorpio92.kmd.Utils.KMDUtils;
 public class AuthActivity extends Activity implements OperationsCallbacks, GetUserIdByUserName.GetUserIdByUserNameCallback, GetTrackCount.GetTrackCountCallback {
 
     String LOG_TAG = "AuthActivity";
+
+    private final int SDCARD_PERMISSIONS_REQUST_CODE = 666;
 
     public static final int GET_TRACK_LIST_METHOD_BY_UID = 0;
     public static final int GET_TRACK_LIST_METHOD_BY_GID = 1;
@@ -72,6 +75,18 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
     private int currentOffset;
     private TrackList generalTrackList;
 
+
+    void onCreateInit() {
+        Log.w(LOG_TAG, "onCreateInit");
+
+        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
+
+        GET_TRACK_LIST_METHOD = GET_TRACK_LIST_METHOD_BY_UID; //по-умолчанию получаем записи по uid
+
+        initGUI();
+
+        initAndStartBindingWithAudioService();
+    }
 
     void initGUI() {
 
@@ -219,8 +234,6 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
         final boolean settings_auto_open_saved = CommonUtils.getBooleanSetting(AuthActivity.this, Settings.SETTING_AUTO_OPEN_SAVED_KEY, false);
         final boolean isRelogin = getIntent().getBooleanExtra("isRelogin", false);
 
-        initGUI();
-
         //при первом запуске блокируем гуи и проверяем, есть ли в БД инф о полученных ранее аудио
         lock_unlock_GUI(true);
 
@@ -331,13 +344,34 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
         return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.w(LOG_TAG, "onRequestPermissionsResult");
+        Log.w(LOG_TAG, "requestCode: " + requestCode);
+        int result = 0;
+        for (int i=0; i<grantResults.length; i++) {
+            Log.w(LOG_TAG, "grantResult: " + grantResults[i] + " for permission: " + permissions[i]);
+            result += grantResults[i];
+        }
+        Log.w(LOG_TAG, "final result: " + result);
+        if(requestCode == SDCARD_PERMISSIONS_REQUST_CODE && result == 0) {
+            Log.w(LOG_TAG, "app have grants for SD r/w, set DB_PATH to null for re-check");
+            MainDB.DB_PATH = null;
+            MainDB.checkDBWorkDir();
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.sd_permissions_warning, Toast.LENGTH_LONG).show();
+            finish();
+        }
+    }
+
     @TargetApi(23)
     protected void askPermissions() {
         String[] permissions = {
                 "android.permission.READ_EXTERNAL_STORAGE",
                 "android.permission.WRITE_EXTERNAL_STORAGE"
         };
-        int requestCode = 200;
+        int requestCode = SDCARD_PERMISSIONS_REQUST_CODE;
         requestPermissions(permissions, requestCode);
     }
 
@@ -348,11 +382,7 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
         super.onCreate(savedInstanceState);
         setContentView(R.layout.auth_activity);
 
-        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
-
-        GET_TRACK_LIST_METHOD = GET_TRACK_LIST_METHOD_BY_UID; //по-умолчанию получаем записи по uid
-
-        initAndStartBindingWithAudioService();
+        onCreateInit();
 
         if (shouldAskPermissions()) {
             askPermissions();
