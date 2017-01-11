@@ -74,6 +74,7 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
     private final int BIND_WITH_AUDIO_SERVICE_ON_MANUAL_RELOGIN = 2;
 
     AlertDialog searchDialog;
+    boolean stopSearch;
 
 
     void initGUI() {
@@ -307,7 +308,7 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
     }
 
 
-    protected boolean shouldAskPermissions() {
+    /*protected boolean shouldAskPermissions() {
         return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
     }
 
@@ -319,7 +320,7 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
         };
         int requestCode = 200;
         requestPermissions(permissions, requestCode);
-    }
+    }*/
 
     void showTrackContextMenu(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);
@@ -470,12 +471,14 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
             public void onClick(View v) {
                 if(searchInput.getText().toString().trim().length() > 0) {
                     if(onlineSearch.isChecked()) {
+                        stopSearch = false;
                         searchInput.setEnabled(false);
                         //searchByGroup.setEnabled(false);
                         searchByTrackNameRadio.setEnabled(false);
                         searchByArtistRadio.setEnabled(false);
                         onlineSearch.setEnabled(false);
                         searchProgress.setVisibility(View.VISIBLE);
+                        v.setEnabled(false); //блокируем конпку Поиск
                         if (searchByGroup.getCheckedRadioButtonId() == searchByArtistRadio.getId())
                             new SearchTracks(MainActivity.this, searchInput.getText().toString().trim(), true, Constants.ACCESS_TOKEN_PUBLIC);
                         if (searchByGroup.getCheckedRadioButtonId() == searchByTrackNameRadio.getId())
@@ -500,6 +503,8 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
         searchDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.w(LOG_TAG, "online search stopped");
+                stopSearch = true;
                 searchDialog.cancel();
             }
         });
@@ -631,9 +636,9 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
 
         registerDownloadBroadcastReceiver();
 
-        if (shouldAskPermissions()) {
+        /*if (shouldAskPermissions()) {
             askPermissions();
-        }
+        }*/
     }
 
     @Override
@@ -772,23 +777,29 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
 
     @Override
     public void onSearchTracksComplete(int code, String response) {
-        switch (code) {
-            case SearchTracks.SEARCH_TRACKS_STATUS_OK:
-                Log.w(LOG_TAG, response);
-                new GetTrackListFromResponseOrDB(GetTrackListFromResponseOrDB.IS_GET_TRACKLIST_FROM_ONLINE_SEARCH_RESPONSE, MainActivity.this, response);
-                break;
-            case SearchTracks.SEARCH_TRACKS_STATUS_FAIL:
-                Toast.makeText(this, R.string.problems_with_parsing_response, Toast.LENGTH_SHORT).show();
-                break;
-            case SearchTracks.SEARCH_TRACKS_NO_INTERNET:
-                Toast.makeText(this, R.string.problems_with_internet, Toast.LENGTH_SHORT).show();
-                break;
-        }
+        if(!stopSearch) {
+            switch (code) {
+                case SearchTracks.SEARCH_TRACKS_STATUS_OK:
+                    Log.w(LOG_TAG, response);
+                    new GetTrackListFromResponseOrDB(GetTrackListFromResponseOrDB.IS_GET_TRACKLIST_FROM_ONLINE_SEARCH_RESPONSE, MainActivity.this, response);
+                    break;
+                case SearchTracks.SEARCH_TRACKS_STATUS_FAIL:
+                    Toast.makeText(this, R.string.problems_with_parsing_response, Toast.LENGTH_SHORT).show();
+                    break;
+                case SearchTracks.SEARCH_TRACKS_NO_INTERNET:
+                    Toast.makeText(this, R.string.problems_with_internet, Toast.LENGTH_SHORT).show();
+                    break;
+            }
 
-        if(searchDialog != null) {
-            try {
-                searchDialog.cancel();
-            } catch (Exception e) {e.printStackTrace();}
+            if (searchDialog != null) {
+                try {
+                    searchDialog.cancel();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            Log.w(LOG_TAG, "ignore online search result");
         }
     }
 }

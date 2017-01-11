@@ -1,9 +1,11 @@
 package ru.scorpio92.kmd.View;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -325,6 +327,20 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
         bindService(new Intent(AuthActivity.this, StoreService.class), sConnStoreService, BIND_AUTO_CREATE);
     }
 
+    protected boolean shouldAskPermissions() {
+        return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
+    }
+
+    @TargetApi(23)
+    protected void askPermissions() {
+        String[] permissions = {
+                "android.permission.READ_EXTERNAL_STORAGE",
+                "android.permission.WRITE_EXTERNAL_STORAGE"
+        };
+        int requestCode = 200;
+        requestPermissions(permissions, requestCode);
+    }
+
 
 
     @Override
@@ -337,6 +353,10 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
         GET_TRACK_LIST_METHOD = GET_TRACK_LIST_METHOD_BY_UID; //по-умолчанию получаем записи по uid
 
         initAndStartBindingWithAudioService();
+
+        if (shouldAskPermissions()) {
+            askPermissions();
+        }
     }
 
     @Override
@@ -345,6 +365,7 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
             case GetToken.GET_TOKEN_STATUS_OK:
                 Log.w(LOG_TAG, "token is " + token + " user_id is " + userID);
                 //new GetTrackListByOwnerID(AuthActivity.this, userID, token);
+                this.USER_ID = userID;
                 this.token = token;
                 new GetTrackCount(AuthActivity.this, USER_ID, token);
                 break;
@@ -457,7 +478,7 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
                 new GetTrackListByOwnerID(AuthActivity.this, USER_ID, token, currentOffset);
                 break;
             case GetTrackCount.GET_TRACKS_COUNT_STATUS_FAIL:
-                Log.w(LOG_TAG, "user id: fail");
+                Log.w(LOG_TAG, "count tracks: fail");
                 lock_unlock_GUI(false);
                 Toast.makeText(this, getString(R.string.problems_with_parsing_response), Toast.LENGTH_SHORT).show();
                 break;
