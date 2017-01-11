@@ -551,6 +551,9 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                         else
                             adapter.changeTrackListMode(TracksListAdapter.SHOW_DOWNLOADED_TRACKS);
                         break;
+                    case R.id.visibility_all_downloaded:
+                        new GetTrackListFromResponseOrDB(GetTrackListFromResponseOrDB.IS_GET_SAVED_TRACKLIST_FROM_DB, MainActivity.this, null);
+                        break;
                 }
 
                 return true;
@@ -655,7 +658,12 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
 
     @Override
     public void onGetSavedTracksComplete(TrackList tracks) {
-
+        if(!tracks.getAllTracks().isEmpty()) {
+            Log.w(LOG_TAG, "show all saved tracks");
+            adapter.showAllSavedTracks(tracks);
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.nothing_founded, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

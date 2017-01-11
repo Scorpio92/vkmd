@@ -44,6 +44,7 @@ public class TracksListAdapter extends BaseAdapter {
     public static final int SHOW_TRACKS_BY_ARTIST = 3;
     public static final int SHOW_TRACKS_BY_TITLE = 4;
     public static final int SHOW_SEARCH_RESULT_TRACKS = 5;
+    public static final int SHOW_ALL_SAVED_TRACKS = 6;
     private String searchString;
 
 
@@ -229,17 +230,19 @@ public class TracksListAdapter extends BaseAdapter {
                 break;
             case SHOW_TRACKS_BY_ARTIST:
                 if(searchString != null)
-                    trackList = new TrackList(trackListBackup.getTracksByContainsInArtist(searchString));
+                    trackList = new TrackList(trackList.getTracksByContainsInArtist(searchString));
                 else
                     trackList = new TrackList(trackListBackup.getAllTracks());
                 break;
             case SHOW_TRACKS_BY_TITLE:
                 if(searchString != null)
-                    trackList = new TrackList(trackListBackup.getTracksByContainsInTitle(searchString));
+                    trackList = new TrackList(trackList.getTracksByContainsInTitle(searchString));
                 else
                     trackList = new TrackList(trackListBackup.getAllTracks());
                 break;
             case SHOW_SEARCH_RESULT_TRACKS:
+                break;
+            case SHOW_ALL_SAVED_TRACKS:
                 break;
         }
     }
@@ -257,6 +260,12 @@ public class TracksListAdapter extends BaseAdapter {
     public void showOnlineSearchResult(TrackList trackList) {
         this.trackList = new TrackList(trackList.getAllTracks());
         CURRENT_TRACK_LIST_MODE = SHOW_SEARCH_RESULT_TRACKS;
+        notifyDataSetChanged();
+    }
+
+    public void showAllSavedTracks(TrackList trackList) {
+        this.trackList = new TrackList(trackList.getAllTracks());
+        CURRENT_TRACK_LIST_MODE = SHOW_ALL_SAVED_TRACKS;
         notifyDataSetChanged();
     }
 }

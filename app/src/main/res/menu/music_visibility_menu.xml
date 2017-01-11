@@ -9,4 +9,7 @@
     <item
         android:id="@+id/visibility_downloaded"
         android:title="@string/visibility_downloaded"/>
+    <item
+        android:id="@+id/visibility_all_downloaded"
+        android:title="@string/visibility_all_downloaded"/>
 </menu>
