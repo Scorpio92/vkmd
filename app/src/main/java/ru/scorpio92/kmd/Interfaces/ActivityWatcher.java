@@ -1,5 +1,6 @@
 package ru.scorpio92.kmd.Interfaces;
 
+import ru.scorpio92.kmd.Types.MultiTrackList;
 import ru.scorpio92.kmd.Types.TrackList;
 
 /**
@@ -7,6 +8,6 @@ import ru.scorpio92.kmd.Types.TrackList;
  */
 
 public interface ActivityWatcher {
-    void onItemSelected(TrackList trackList, int trackID);
+    void onItemSelected(MultiTrackList multiTrackList, int trackID);
     void onFooterRestore();
 }

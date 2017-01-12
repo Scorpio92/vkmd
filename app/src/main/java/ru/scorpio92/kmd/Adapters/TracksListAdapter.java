@@ -14,6 +14,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import ru.scorpio92.kmd.R;
+import ru.scorpio92.kmd.Types.MultiTrackList;
 import ru.scorpio92.kmd.Types.Track;
 import ru.scorpio92.kmd.Types.TrackList;
 import ru.scorpio92.kmd.Utils.CommonUtils;
@@ -27,8 +28,9 @@ public class TracksListAdapter extends BaseAdapter {
     private Context context;
     private TracksListAdapterCallbacks callback;
 
-    private TrackList trackList;
-    private TrackList trackListBackup;
+    private MultiTrackList multiTrackList;
+    //private TrackList trackList;
+    //private TrackList trackListBackup;
     private ArrayList<Integer> selectedTracksID;
 
     private int CURRENT_LIST_ITEM_MODE;
@@ -48,24 +50,30 @@ public class TracksListAdapter extends BaseAdapter {
     private String searchString;
 
 
-    public TracksListAdapter(Context context, TrackList trackList) {
+    public TracksListAdapter(Context context, MultiTrackList multiTrackList) {
         this.context = context;
         callback = (TracksListAdapterCallbacks) context;
-
-        this.trackList = trackList;
-        trackListBackup = new TrackList(trackList.getAllTracks());
+        //this.trackList = trackList;
+        //trackList = multiTrackList.getCurrentTrackList(MultiTrackList.CURRENT_TRACKLIST);
+        //trackListBackup = new TrackList(trackList.getAllTracks());
+        //trackListBackup = multiTrackList.getCurrentTrackList(MultiTrackList.MAIN_TRACKLIST);
+        this.multiTrackList = new MultiTrackList(multiTrackList);
         selectedTracksID = new ArrayList<>();
 
         CURRENT_TRACK_LIST_MODE = SHOW_ALL_TRACKS;
         CURRENT_LIST_ITEM_MODE = ON_STOP_TRACK;
     }
 
-    public TrackList getTrackList() {
-        return trackList;
+    public MultiTrackList getMultiTrackList() {
+        return multiTrackList;
     }
 
-    public TrackList getTrackListBackup() {
-        return trackListBackup;
+    public TrackList getCurrentTrackList() {
+        return multiTrackList.getTrackList(MultiTrackList.CURRENT_TRACKLIST);
+    }
+
+    public TrackList getMainTrackList() {
+        return multiTrackList.getTrackList(MultiTrackList.MAIN_TRACKLIST);
     }
 
     public ArrayList<Integer> getSelectedTracksID() {
@@ -74,7 +82,7 @@ public class TracksListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return trackList.getAllTracks().size();
+        return multiTrackList.getTrackList(MultiTrackList.CURRENT_TRACKLIST).getAllTracks().size();
     }
 
     @Override
@@ -109,7 +117,7 @@ public class TracksListAdapter extends BaseAdapter {
             holder = (ViewHolder) rowView.getTag();
         }
 
-        Track track = trackList.getAllTracks().get(i);
+        Track track = multiTrackList.getTrackList(MultiTrackList.CURRENT_TRACKLIST).getAllTracks().get(i);
 
         if(selectedTracksID.size() > 0) {
             if (!selectedTracksID.contains(i)) {
@@ -220,25 +228,34 @@ public class TracksListAdapter extends BaseAdapter {
     private void getTrackListByParam() {
         switch (CURRENT_TRACK_LIST_MODE) {
             case SHOW_DOWNLOADED_TRACKS:
-                trackList = new TrackList(trackListBackup.getDownloadedTracks());
+                //trackList = new TrackList(trackListBackup.getDownloadedTracks());
+                multiTrackList.replaceTrackList(MultiTrackList.CURRENT_TRACKLIST, new TrackList(multiTrackList.getTrackList(MultiTrackList.MAIN_TRACKLIST).getDownloadedTracks()));
                 break;
             case SHOW_NOT_DOWNLOADED_TRACKS:
-                trackList = new TrackList(trackListBackup.getNotDownloadedTracks());
+                //trackList = new TrackList(trackListBackup.getNotDownloadedTracks());
+                multiTrackList.replaceTrackList(MultiTrackList.CURRENT_TRACKLIST, new TrackList(multiTrackList.getTrackList(MultiTrackList.MAIN_TRACKLIST).getNotDownloadedTracks()));
                 break;
             case SHOW_ALL_TRACKS:
-                trackList = new TrackList(trackListBackup.getAllTracks());
+                //trackList = new TrackList(trackListBackup.getAllTracks());
+                multiTrackList.replaceTrackList(MultiTrackList.CURRENT_TRACKLIST, new TrackList(multiTrackList.getTrackList(MultiTrackList.MAIN_TRACKLIST).getAllTracks()));
                 break;
             case SHOW_TRACKS_BY_ARTIST:
-                if(searchString != null)
-                    trackList = new TrackList(trackList.getTracksByContainsInArtist(searchString));
-                else
-                    trackList = new TrackList(trackListBackup.getAllTracks());
+                if(searchString != null) {
+                    //trackList = new TrackList(trackList.getTracksByContainsInArtist(searchString));
+                    multiTrackList.replaceTrackList(MultiTrackList.CURRENT_TRACKLIST, new TrackList(multiTrackList.getTrackList(MultiTrackList.MAIN_TRACKLIST).getTracksByContainsInArtist(searchString)));
+                } else {
+                    //trackList = new TrackList(trackListBackup.getAllTracks());
+                    multiTrackList.replaceTrackList(MultiTrackList.CURRENT_TRACKLIST, new TrackList(multiTrackList.getTrackList(MultiTrackList.MAIN_TRACKLIST).getAllTracks()));
+                }
                 break;
             case SHOW_TRACKS_BY_TITLE:
-                if(searchString != null)
-                    trackList = new TrackList(trackList.getTracksByContainsInTitle(searchString));
-                else
-                    trackList = new TrackList(trackListBackup.getAllTracks());
+                if(searchString != null) {
+                    //trackList = new TrackList(trackList.getTracksByContainsInTitle(searchString));
+                    multiTrackList.replaceTrackList(MultiTrackList.CURRENT_TRACKLIST, new TrackList(multiTrackList.getTrackList(MultiTrackList.MAIN_TRACKLIST).getTracksByContainsInTitle(searchString)));
+                } else {
+                    //trackList = new TrackList(trackListBackup.getAllTracks());
+                    multiTrackList.replaceTrackList(MultiTrackList.CURRENT_TRACKLIST, new TrackList(multiTrackList.getTrackList(MultiTrackList.MAIN_TRACKLIST).getAllTracks()));
+                }
                 break;
             case SHOW_SEARCH_RESULT_TRACKS:
                 break;
@@ -250,7 +267,7 @@ public class TracksListAdapter extends BaseAdapter {
     public void setSelection(boolean selectAllTracks) {
         selectedTracksID.clear();
         if(selectAllTracks) {
-            for (int i = 0; i < trackList.getAllTracks().size(); i++) {
+            for (int i = 0; i < multiTrackList.getTrackList(MultiTrackList.CURRENT_TRACKLIST).getAllTracks().size(); i++) {
                 selectedTracksID.add(i);
             }
         }
@@ -258,13 +275,15 @@ public class TracksListAdapter extends BaseAdapter {
     }
 
     public void showOnlineSearchResult(TrackList trackList) {
-        this.trackList = new TrackList(trackList.getAllTracks());
+        //this.trackList = new TrackList(trackList.getAllTracks());
+        multiTrackList.replaceTrackList(MultiTrackList.CURRENT_TRACKLIST, trackList);
         CURRENT_TRACK_LIST_MODE = SHOW_SEARCH_RESULT_TRACKS;
         notifyDataSetChanged();
     }
 
     public void showAllSavedTracks(TrackList trackList) {
-        this.trackList = new TrackList(trackList.getAllTracks());
+        //this.trackList = new TrackList(trackList.getAllTracks());
+        multiTrackList.replaceTrackList(MultiTrackList.CURRENT_TRACKLIST, trackList);
         CURRENT_TRACK_LIST_MODE = SHOW_ALL_SAVED_TRACKS;
         notifyDataSetChanged();
     }

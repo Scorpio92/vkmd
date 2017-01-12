@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +29,7 @@ import ru.scorpio92.kmd.Interfaces.FooterFragmentWatcher;
 import ru.scorpio92.kmd.Operations.UpdateDownloadInfo;
 import ru.scorpio92.kmd.R;
 import ru.scorpio92.kmd.Services.AudioService;
+import ru.scorpio92.kmd.Types.MultiTrackList;
 import ru.scorpio92.kmd.Types.Track;
 import ru.scorpio92.kmd.Types.TrackList;
 
@@ -201,13 +201,13 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
         getActivity().registerReceiver(br, intFilt);
     }
 
-    void initAndStartBindingWithAudioService(final TrackList trackList, final boolean startPlayAfterServiceConnected) {
+    void initAndStartBindingWithAudioService(final MultiTrackList multiTrackList, final boolean startPlayAfterServiceConnected) {
         sConn = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder binder) {
                 Log.w(LOG_TAG, "AudioService onServiceConnected");
                 audioService = ((AudioService.MyBinder) binder).getService();
                 if(startPlayAfterServiceConnected) {
-                    startNewPlay(trackList, true, trackID);
+                    startNewPlay(multiTrackList, true, trackID);
                 } else {
                     setGuiForPlay();
                     footerFragmentWatcher.onStartPlay(audioService.getCurrentTrackID());
@@ -287,8 +287,8 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
         }
     }
 
-    void startNewPlay(TrackList trackList, boolean startService, int trackID) {
-        audioService.setTrackList(trackList);
+    void startNewPlay(MultiTrackList multiTrackList, boolean startService, int trackID) {
+        audioService.setMultiTrackList(multiTrackList);
         audioService.setCurrentTrackID(trackID);
         if(startService) {
             Log.w(LOG_TAG, "startNewPlay with startService");
@@ -354,7 +354,7 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
     }
 
     @Override
-    public void onItemSelected(TrackList trackList, int trackID) {
+    public void onItemSelected(MultiTrackList multiTrackList, int trackID) {
 
         this.trackID = trackID;
 
@@ -365,11 +365,11 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
             registerBroadcastReceiver();
 
             //создаем биндинг к сервису и запускаем его автоматически после инициализации соединения
-            initAndStartBindingWithAudioService(trackList, true);
+            initAndStartBindingWithAudioService(multiTrackList, true);
         } else {
             Log.w(LOG_TAG, "audioService is running");
             if(trackID != audioService.getCurrentTrackID()) {
-                startNewPlay(trackList, false, trackID);
+                startNewPlay(multiTrackList, false, trackID);
             }
         }
 

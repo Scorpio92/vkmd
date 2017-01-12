@@ -33,6 +33,7 @@ import java.util.Timer;
 import ru.scorpio92.kmd.R;
 import ru.scorpio92.kmd.Receivers.HeadsetPlugReceiver;
 import ru.scorpio92.kmd.Receivers.LockScreenReceiver;
+import ru.scorpio92.kmd.Types.MultiTrackList;
 import ru.scorpio92.kmd.Types.Track;
 import ru.scorpio92.kmd.Types.TrackList;
 import ru.scorpio92.kmd.View.MainActivity;
@@ -71,7 +72,7 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
 
     private int currentTrackID;
 
-    private TrackList trackList;
+    private MultiTrackList multiTrackList;
 
     private Timer mTimer;
     private TimerTask mTimerTask;
@@ -280,7 +281,7 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
                 switch (action) {
 
                     case DownloadService.ACTION_DOWNLOAD_TRACK_FINISH:
-                        if(trackList.setPathAfterDownload(track))
+                        if(multiTrackList.getTrackList(MultiTrackList.CURRENT_TRACKLIST).setPathAfterDownload(track))
                             Log.w(LOG_TAG, "track was added to service TrackList after download");
                         break;
                 }
@@ -374,12 +375,12 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
         }
     }
 
-    public void setTrackList(TrackList trackList) {
-        this.trackList = trackList;
+    public void setMultiTrackList(MultiTrackList multiTrackList) {
+       this.multiTrackList = new MultiTrackList(multiTrackList);
     }
 
-    public TrackList getTrackList() {
-        return trackList;
+    public MultiTrackList getMultiTrackList() {
+        return multiTrackList;
     }
 
     public MediaPlayer getMediaPlayer() {
@@ -395,7 +396,7 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     }
 
     public Track getCurrentTrack() {
-        return trackList.containsTrack(currentTrackID);
+        return multiTrackList.getTrackList(MultiTrackList.CURRENT_TRACKLIST).containsTrack(currentTrackID);
     }
 
     public boolean isStarted() {
@@ -505,9 +506,9 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     }
 
     public int prevTrack() {
-        int currentTrackPositionInTrackList = trackList.getTrackPositionByID(currentTrackID);
+        int currentTrackPositionInTrackList = multiTrackList.getTrackList(MultiTrackList.CURRENT_TRACKLIST).getTrackPositionByID(currentTrackID);
         if(currentTrackPositionInTrackList > 0) {
-            currentTrackID = trackList.getAllTracks().get(currentTrackPositionInTrackList-1).ID;
+            currentTrackID = multiTrackList.getTrackList(MultiTrackList.CURRENT_TRACKLIST).getAllTracks().get(currentTrackPositionInTrackList-1).ID;
             runNewTrackPlaying();
             return PLAY_PREV_OK;
         }
@@ -532,11 +533,11 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     public int nextTrack() {
         if(!loopActivated) {
             if(randomMode) {
-                currentTrackID = trackList.getAllTracks().get(new Random().nextInt(trackList.getAllTracks().size())).ID;
+                currentTrackID = multiTrackList.getTrackList(MultiTrackList.CURRENT_TRACKLIST).getAllTracks().get(new Random().nextInt(multiTrackList.getTrackList(MultiTrackList.CURRENT_TRACKLIST).getAllTracks().size())).ID;
             } else {
-                int currentTrackPositionInTrackList = trackList.getTrackPositionByID(currentTrackID);
-                if (currentTrackPositionInTrackList < trackList.getAllTracks().size() - 1) {
-                    currentTrackID = trackList.getAllTracks().get(currentTrackPositionInTrackList + 1).ID;
+                int currentTrackPositionInTrackList = multiTrackList.getTrackList(MultiTrackList.CURRENT_TRACKLIST).getTrackPositionByID(currentTrackID);
+                if (currentTrackPositionInTrackList < multiTrackList.getTrackList(MultiTrackList.CURRENT_TRACKLIST).getAllTracks().size() - 1) {
+                    currentTrackID = multiTrackList.getTrackList(MultiTrackList.CURRENT_TRACKLIST).getAllTracks().get(currentTrackPositionInTrackList + 1).ID;
                 } else {
                     return PLAY_NEXT_END_LIST;
                 }

@@ -1,7 +1,6 @@
 package ru.scorpio92.kmd.View;
 
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
@@ -11,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AlertDialog;
@@ -46,6 +44,7 @@ import ru.scorpio92.kmd.R;
 import ru.scorpio92.kmd.Services.AudioService;
 import ru.scorpio92.kmd.Services.DownloadService;
 import ru.scorpio92.kmd.Services.StoreService;
+import ru.scorpio92.kmd.Types.MultiTrackList;
 import ru.scorpio92.kmd.Types.Track;
 import ru.scorpio92.kmd.Types.TrackList;
 import ru.scorpio92.kmd.Utils.CommonUtils;
@@ -133,12 +132,12 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 try {
-                    Log.w(LOG_TAG, "setOnItemClickListener " + adapter.getTrackList().getAllTracks().get(i).LOCAL_PATH);
+                    Log.w(LOG_TAG, "setOnItemClickListener " + adapter.getCurrentTrackList().getAllTracks().get(i).LOCAL_PATH);
                     fragmentManager.beginTransaction()
                             .show(fragmentManager.findFragmentById(R.id.footer))
                             .commit();
-                    //activityWatcher.onItemSelected(adapter.getTrackListBackup(), adapter.getTrackList().getAllTracks().get(i).ID);
-                    activityWatcher.onItemSelected(adapter.getTrackList(), adapter.getTrackList().getAllTracks().get(i).ID);
+                    //activityWatcher.onItemSelected(adapter.getMainTrackList(), adapter.getMultiTrackList().getAllTracks().get(i).ID);
+                    activityWatcher.onItemSelected(adapter.getMultiTrackList(), adapter.getCurrentTrackList().getAllTracks().get(i).ID);
                 } catch (Exception e) {e.printStackTrace();}
 
             }
@@ -163,8 +162,8 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
         selectedInfo = (TextView) findViewById(R.id.selectedInfo);
     }
 
-    void initAdapter(TrackList trackList) {
-        adapter = new TracksListAdapter(MainActivity.this, trackList);
+    void initAdapter(MultiTrackList multiTrackList) {
+        adapter = new TracksListAdapter(MainActivity.this, multiTrackList);
         tracksList.setAdapter(adapter);
     }
 
@@ -181,7 +180,7 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                             Log.w(LOG_TAG, "AudioService is running");
                             if (adapter == null) {
                                 Log.w(LOG_TAG, "trackList == null, get tracks from service");
-                                initAdapter(audioService.getTrackList());
+                                initAdapter(audioService.getMultiTrackList());
                             }
                             showFooterFragment(true);
                         } else {
@@ -247,7 +246,7 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
 
                     try {
                         if (trackList.getAllTracks().size() > 0) {
-                            initAdapter(trackList);
+                            initAdapter(new MultiTrackList(trackList));
                         } else {
                             relogin(false);
                         }
@@ -286,8 +285,8 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                     case DownloadService.ACTION_DOWNLOAD_TRACK_FINISH:
                         try {
                             if(adapter != null) {
-                                adapter.getTrackListBackup().setPathAfterDownload(track); //для сервиса
-                                if (adapter.getTrackList().setPathAfterDownload(track)) {
+                                adapter.getMainTrackList().setPathAfterDownload(track); //для сервиса
+                                if (adapter.getCurrentTrackList().setPathAfterDownload(track)) {
                                     adapter.notifyDataSetChanged2();
                                 }
                             }
@@ -349,15 +348,15 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                         break;
                     case R.id.download_selected:
                         selectedIDs = new ArrayList<>(adapter.getSelectedTracksID());
-                        new UpdateDownloadInfo(MainActivity.this, adapter.getTrackList().getTracksArrayByArrayID(selectedIDs), UpdateDownloadInfo.ACTION_INSERT);
+                        new UpdateDownloadInfo(MainActivity.this, adapter.getCurrentTrackList().getTracksArrayByArrayID(selectedIDs), UpdateDownloadInfo.ACTION_INSERT);
                         adapter.getSelectedTracksID().clear();
                         adapter.notifyDataSetChanged2();
                         showSelectedTracksCount();
                         break;
                     case R.id.delete_selected:
                         selectedIDs = new ArrayList<>(adapter.getSelectedTracksID());
-                        new UpdateDownloadInfo(MainActivity.this, adapter.getTrackList().getTracksArrayByArrayID(selectedIDs), UpdateDownloadInfo.ACTION_DELETE);
-                        adapter.getTrackList().setWasDownloadedToFalse(selectedIDs);
+                        new UpdateDownloadInfo(MainActivity.this, adapter.getCurrentTrackList().getTracksArrayByArrayID(selectedIDs), UpdateDownloadInfo.ACTION_DELETE);
+                        adapter.getCurrentTrackList().setWasDownloadedToFalse(selectedIDs);
                         adapter.getSelectedTracksID().clear();
                         adapter.notifyDataSetChanged2();
                         showSelectedTracksCount();
@@ -525,11 +524,11 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                 switch (item.getItemId()) {
 
                     case R.id.sort_by_artist:
-                        adapter.getTrackList().sortByArtists();
+                        adapter.getCurrentTrackList().sortByArtists();
                         adapter.notifyDataSetChanged2();
                         break;
                     case R.id.sort_by_track_name:
-                        adapter.getTrackList().sortByTrackName();
+                        adapter.getCurrentTrackList().sortByTrackName();
                         adapter.notifyDataSetChanged2();
                         break;
                 }
@@ -557,7 +556,7 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                         break;
                     case R.id.visibility_downloaded:
                         if(CommonUtils.getBooleanSetting(MainActivity.this, Settings.SETTING_AUTO_SCAN_SAVED_KEY, false))
-                            new ScanForSavedTracks(MainActivity.this, adapter.getTrackListBackup());
+                            new ScanForSavedTracks(MainActivity.this, adapter.getMainTrackList());
                         else
                             adapter.changeTrackListMode(TracksListAdapter.SHOW_DOWNLOADED_TRACKS);
                         break;
@@ -618,7 +617,7 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
 
     void showSelectedTracksCount() {
         if(adapter != null) {
-            selectedInfo.setText(getString(R.string.selected) + adapter.getSelectedTracksID().size() + getString(R.string.from) + adapter.getTrackList().getAllTracks().size());
+            selectedInfo.setText(getString(R.string.selected) + adapter.getSelectedTracksID().size() + getString(R.string.from) + adapter.getCurrentTrackList().getAllTracks().size());
             if (adapter.getSelectedTracksID().size() > 0)
                 selectedInfo.setVisibility(View.VISIBLE);
             else
@@ -701,7 +700,7 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
         if(!tracks.isEmpty()) {
             Log.w(LOG_TAG, Integer.toString(tracks.size()));
             for(Track track : tracks) {
-                adapter.getTrackListBackup().setPathAfterDownload(track);
+                adapter.getMainTrackList().setPathAfterDownload(track);
             }
         }
         adapter.changeTrackListMode(TracksListAdapter.SHOW_DOWNLOADED_TRACKS);

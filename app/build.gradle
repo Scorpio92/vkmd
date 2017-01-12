@@ -7,8 +7,8 @@ android {
         applicationId 'ru.scorpio92.kmd'
         minSdkVersion 15
         targetSdkVersion 24
-        versionCode 9
-        versionName "1.5.2"
+        versionCode 10
+        versionName "1.5.3"
     }
     buildTypes {
         release {
