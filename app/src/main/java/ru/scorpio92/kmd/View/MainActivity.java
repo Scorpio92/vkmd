@@ -232,25 +232,30 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
             public void onServiceConnected(ComponentName name, IBinder binder) {
                 Log.w(LOG_TAG, "StoreService onServiceConnected");
                 StoreService storeService = ((StoreService.MyBinder) binder).getService();
-                TrackList trackList = new TrackList(storeService.getTrackList().getAllTracks());
-
                 try {
-                    Log.w(LOG_TAG, "unbindService");
-                    unbindService(sConnStoreService);
-                    sConnStoreService = null;
-                    storeService = null;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                stopService(new Intent(MainActivity.this, StoreService.class));
+                    TrackList trackList = new TrackList(storeService.getTrackList().getAllTracks());
 
-                try {
-                    if (trackList.getAllTracks().size() > 0) {
-                        initAdapter(trackList);
-                    } else {
+                    try {
+                        Log.w(LOG_TAG, "unbindService");
+                        unbindService(sConnStoreService);
+                        sConnStoreService = null;
+                        storeService = null;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    stopService(new Intent(MainActivity.this, StoreService.class));
+
+                    try {
+                        if (trackList.getAllTracks().size() > 0) {
+                            initAdapter(trackList);
+                        } else {
+                            relogin(false);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                         relogin(false);
                     }
-                } catch (Exception e) {
+                } catch(Exception e) {
                     e.printStackTrace();
                     relogin(false);
                 }
