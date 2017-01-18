@@ -36,6 +36,7 @@ import ru.scorpio92.kmd.Constants;
 import ru.scorpio92.kmd.Interfaces.ActivityWatcher;
 import ru.scorpio92.kmd.Interfaces.FooterFragmentWatcher;
 import ru.scorpio92.kmd.Interfaces.OperationsCallbacks;
+import ru.scorpio92.kmd.Operations.AddTrack;
 import ru.scorpio92.kmd.Operations.GetTrackListFromResponseOrDB;
 import ru.scorpio92.kmd.Operations.ScanForSavedTracks;
 import ru.scorpio92.kmd.Operations.SearchTracks;
@@ -233,6 +234,8 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                 StoreService storeService = ((StoreService.MyBinder) binder).getService();
                 try {
                     TrackList trackList = new TrackList(storeService.getTrackList().getAllTracks());
+                    trackList.setOwnerID(Integer.toString(storeService.getTrackList().getOwnerID()));
+                    trackList.setToken(storeService.getTrackList().getToken());
 
                     try {
                         Log.w(LOG_TAG, "unbindService");
@@ -806,4 +809,5 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
             Log.w(LOG_TAG, "ignore online search result");
         }
     }
+
 }

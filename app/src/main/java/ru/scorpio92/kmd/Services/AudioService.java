@@ -73,6 +73,8 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     private int currentTrackID;
 
     private MultiTrackList multiTrackList;
+    private int ownerID;
+    private String token;
 
     private Timer mTimer;
     private TimerTask mTimerTask;
@@ -376,7 +378,9 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     }
 
     public void setMultiTrackList(MultiTrackList multiTrackList) {
-       this.multiTrackList = new MultiTrackList(multiTrackList);
+        this.multiTrackList = new MultiTrackList(multiTrackList);
+        ownerID = this.multiTrackList.getTrackList(MultiTrackList.MAIN_TRACKLIST).getOwnerID();
+        token = this.multiTrackList.getTrackList(MultiTrackList.MAIN_TRACKLIST).getToken();
     }
 
     public MultiTrackList getMultiTrackList() {
@@ -410,6 +414,15 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
             sentNotificationInForeground();
         }
     }
+
+    public int getOwnerID() {
+        return ownerID;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
 
     //music control
     public void stopTrackPlaying() {

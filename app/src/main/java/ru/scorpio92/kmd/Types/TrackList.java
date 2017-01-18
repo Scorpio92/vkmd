@@ -14,17 +14,25 @@ import java.util.Comparator;
 
 public class TrackList implements Parcelable {
 
+    private int ownerID;
+    private String token;
     private ArrayList<Track> tracks;
 
     public TrackList() {
         tracks = new ArrayList<>();
+        ownerID = -1;
+        token = "";
     }
 
     public TrackList(ArrayList<Track> tracks) {
         this.tracks = tracks;
+        ownerID = -1;
+        token = "";
     }
 
     public TrackList(Parcel in) {
+        ownerID = in.readInt();
+        token = in.readString();
         tracks = in.createTypedArrayList(Track.CREATOR);
     }
 
@@ -163,6 +171,8 @@ public class TrackList implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int i) {
+        dest.writeInt(ownerID);
+        dest.writeString(token);
         dest.writeTypedList(tracks);
     }
 
@@ -178,4 +188,25 @@ public class TrackList implements Parcelable {
             return new TrackList[size];
         }
     };
+
+    public void setOwnerID(String ownerID) {
+        try {
+            this.ownerID = Integer.valueOf(ownerID);
+        } catch (Exception e) {
+            this.ownerID = -1;
+        }
+
+    }
+
+    public int getOwnerID() {
+        return ownerID;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getToken() {
+        return token;
+    }
 }

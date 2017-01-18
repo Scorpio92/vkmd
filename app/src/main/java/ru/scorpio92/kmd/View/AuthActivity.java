@@ -445,6 +445,11 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
                 Log.w(LOG_TAG, "GetTrackListByOwnerID, currentOffset: " + currentOffset);
                 new GetTrackListByOwnerID(AuthActivity.this, USER_ID, token, currentOffset);
             }  else {
+                if(GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_LP) {
+                    Log.w(LOG_TAG, "LP get method. save ownerId: " + USER_ID + " and token: " + token + " to TrackList");
+                    generalTrackList.setOwnerID(USER_ID);
+                    generalTrackList.setToken(token);
+                }
                 showMainActivity(generalTrackList);
             }
         }

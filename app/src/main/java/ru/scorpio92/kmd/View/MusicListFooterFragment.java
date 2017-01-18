@@ -24,8 +24,10 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import ru.scorpio92.kmd.Constants;
 import ru.scorpio92.kmd.Interfaces.ActivityWatcher;
 import ru.scorpio92.kmd.Interfaces.FooterFragmentWatcher;
+import ru.scorpio92.kmd.Operations.AddTrack;
 import ru.scorpio92.kmd.Operations.UpdateDownloadInfo;
 import ru.scorpio92.kmd.R;
 import ru.scorpio92.kmd.Services.AudioService;
@@ -40,7 +42,7 @@ import static ru.scorpio92.kmd.Utils.CommonUtils.getHumanTimeFromMilliseconds;
  * Created by scorpio92 on 23.10.16.
  */
 
-public class MusicListFooterFragment extends Fragment implements ActivityWatcher {
+public class MusicListFooterFragment extends Fragment implements ActivityWatcher, AddTrack.AddTrackCallback {
 
     final String LOG_TAG = "MusicListFooterFragment";
 
@@ -229,6 +231,10 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
         PopupMenu popupMenu = new PopupMenu(getActivity(), v);
         popupMenu.inflate(R.menu.more_button_footer_menu);
 
+        MenuItem add_track = popupMenu.getMenu().findItem(R.id.add_this_track);
+        Log.w("showMoreButtonDialog", "audioService.getOwnerID() " + audioService.getOwnerID() + " audioService.getToken() " + audioService.getToken());
+        add_track.setVisible(audioService.getOwnerID() != audioService.getCurrentTrack().OWNER_ID && !audioService.getToken().equals(""));
+
         MenuItem random_mode = popupMenu.getMenu().findItem(R.id.random_mode);
         random_mode.setChecked(audioService.getRandomMode());
 
@@ -238,6 +244,9 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
 
                 switch (item.getItemId()) {
 
+                    case R.id.add_this_track:
+                        new AddTrack((AddTrack.AddTrackCallback) getActivity(), audioService.getCurrentTrack(), audioService.getToken());
+                        break;
                     case R.id.download_its_track:
                         ArrayList<Track> tracks = new ArrayList<>();
                         tracks.add(audioService.getCurrentTrack());
@@ -385,5 +394,21 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
         initAndStartBindingWithAudioService(null, false);
     }
 
+    @Override
+    public void OnAddTrack(int code, int trackID) {
+        switch (code) {
+            case AddTrack.ADD_TRACK_STATUS_OK:
+                Log.w(LOG_TAG, "track with ID " + trackID + " was added to user tracks");
+                Toast.makeText(getActivity(), R.string.track_was_added, Toast.LENGTH_SHORT).show();
+
+                break;
+            case AddTrack.ADD_TRACK_STATUS_FAIL:
+                Toast.makeText(getActivity(), R.string.problems_with_parsing_response, Toast.LENGTH_SHORT).show();
+                break;
+            case AddTrack.ADD_TRACK_NO_INTERNET:
+                Toast.makeText(getActivity(), R.string.problems_with_internet, Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
 
 }

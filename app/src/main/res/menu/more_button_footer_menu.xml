@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/add_this_track"
+        android:title="@string/add_this_track" />
+    <item
         android:id="@+id/download_its_track"
         android:title="@string/download_its_track" />
     <item
