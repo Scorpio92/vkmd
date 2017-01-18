@@ -14,6 +14,8 @@ import java.util.Comparator;
 
 public class TrackList implements Parcelable {
 
+    public static final String EMPTY_TOKEN = "";
+
     private int ownerID;
     private String token;
     private ArrayList<Track> tracks;
@@ -21,13 +23,13 @@ public class TrackList implements Parcelable {
     public TrackList() {
         tracks = new ArrayList<>();
         ownerID = -1;
-        token = "";
+        token = EMPTY_TOKEN;
     }
 
     public TrackList(ArrayList<Track> tracks) {
         this.tracks = tracks;
         ownerID = -1;
-        token = "";
+        token = EMPTY_TOKEN;
     }
 
     public TrackList(Parcel in) {
@@ -91,6 +93,10 @@ public class TrackList implements Parcelable {
 
     public void addTrack(Track track) {
         tracks.add(track);
+    }
+
+    public void addTrackToTop(Track track) {
+        tracks.add(0, track);
     }
 
     public Track containsTrack(int trackID) {

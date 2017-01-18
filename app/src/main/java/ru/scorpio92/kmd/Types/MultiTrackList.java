@@ -44,7 +44,7 @@ public class MultiTrackList {
             return null;
     }
 
-    private HashMap getHashMap () {
+    private HashMap<Integer, TrackList> getHashMap () {
         return map;
     }
 }

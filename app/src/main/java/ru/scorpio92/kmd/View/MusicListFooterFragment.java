@@ -232,8 +232,8 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
         popupMenu.inflate(R.menu.more_button_footer_menu);
 
         MenuItem add_track = popupMenu.getMenu().findItem(R.id.add_this_track);
-        Log.w("showMoreButtonDialog", "audioService.getOwnerID() " + audioService.getOwnerID() + " audioService.getToken() " + audioService.getToken());
-        add_track.setVisible(audioService.getOwnerID() != audioService.getCurrentTrack().OWNER_ID && !audioService.getToken().equals(""));
+        Track track = audioService.getMultiTrackList().getTrackList(MultiTrackList.MAIN_TRACKLIST).containsTrack(audioService.getCurrentTrack().getFullTrackName());
+        add_track.setVisible(track == null && !audioService.getToken().equals(TrackList.EMPTY_TOKEN));
 
         MenuItem random_mode = popupMenu.getMenu().findItem(R.id.random_mode);
         random_mode.setChecked(audioService.getRandomMode());
@@ -245,7 +245,7 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
                 switch (item.getItemId()) {
 
                     case R.id.add_this_track:
-                        new AddTrack((AddTrack.AddTrackCallback) getActivity(), audioService.getCurrentTrack(), audioService.getToken());
+                        new AddTrack(MusicListFooterFragment.this, audioService.getCurrentTrack(), audioService.getToken());
                         break;
                     case R.id.download_its_track:
                         ArrayList<Track> tracks = new ArrayList<>();
@@ -395,12 +395,12 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
     }
 
     @Override
-    public void OnAddTrack(int code, int trackID) {
+    public void OnAddTrack(int code, Track track) {
         switch (code) {
             case AddTrack.ADD_TRACK_STATUS_OK:
-                Log.w(LOG_TAG, "track with ID " + trackID + " was added to user tracks");
+                Log.w(LOG_TAG, "track with ID " + track.ID + " was added to user tracks");
+                audioService.getMultiTrackList().getTrackList(MultiTrackList.MAIN_TRACKLIST).addTrackToTop(track);
                 Toast.makeText(getActivity(), R.string.track_was_added, Toast.LENGTH_SHORT).show();
-
                 break;
             case AddTrack.ADD_TRACK_STATUS_FAIL:
                 Toast.makeText(getActivity(), R.string.problems_with_parsing_response, Toast.LENGTH_SHORT).show();
