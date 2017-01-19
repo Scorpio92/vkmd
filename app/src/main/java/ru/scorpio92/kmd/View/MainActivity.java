@@ -134,7 +134,6 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 try {
-                    Log.w(LOG_TAG, "setOnItemClickListener " + adapter.getCurrentTrackList().getAllTracks().get(i).LOCAL_PATH);
                     fragmentManager.beginTransaction()
                             .show(fragmentManager.findFragmentById(R.id.footer))
                             .commit();
@@ -153,7 +152,7 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                 }
                 adapter.notifyDataSetChanged2();
                 if(adapter.getSelectedTracksID().size() > 0) {
-                    showTrackContextMenu(view);
+                    showTrackContextMenu(view, i);
                     showSelectedTracksCount();
                 }
 
@@ -330,9 +329,33 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
         requestPermissions(permissions, requestCode);
     }*/
 
-    void showTrackContextMenu(View v) {
+    void showTrackContextMenu(View v, final int i) {
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.inflate(R.menu.track_operations_menu);
+
+        MenuItem add_this_track = popupMenu.getMenu().findItem(R.id.add_this_track);
+        MenuItem delete_from_my_audios = popupMenu.getMenu().findItem(R.id.delete_from_my_audios);
+
+        final Track currentTrack = adapter.getCurrentTrackList().getAllTracks().get(i);
+        final String token = adapter.getMainTrackList().getToken();
+        if(adapter.getSelectedTracksID().size() == 1) {
+            if(!token.equals(TrackList.EMPTY_TOKEN)) {
+                Track track = adapter.getMainTrackList().containsTrack(currentTrack.getFullTrackName());
+                if(track == null) {
+                    add_this_track.setVisible(true);
+                    delete_from_my_audios.setVisible(false);
+                } else {
+                    add_this_track.setVisible(false);
+                    delete_from_my_audios.setVisible(true);
+                }
+            } else {
+                add_this_track.setVisible(false);
+                delete_from_my_audios.setVisible(false);
+            }
+        } else {
+            add_this_track.setVisible(false);
+            delete_from_my_audios.setVisible(false);
+        }
 
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -357,13 +380,20 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                         adapter.notifyDataSetChanged2();
                         showSelectedTracksCount();
                         break;
-                    case R.id.delete_selected:
+                    case R.id.add_this_track:
+                        new AddTrack(MainActivity.this, currentTrack, token);
+                        break;
+                    case R.id.delete_selected_from_cache:
                         selectedIDs = new ArrayList<>(adapter.getSelectedTracksID());
                         new UpdateDownloadInfo(MainActivity.this, adapter.getCurrentTrackList().getTracksArrayByArrayID(selectedIDs), UpdateDownloadInfo.ACTION_DELETE);
                         adapter.getCurrentTrackList().setWasDownloadedToFalse(selectedIDs);
                         adapter.getSelectedTracksID().clear();
                         adapter.notifyDataSetChanged2();
                         showSelectedTracksCount();
+                        break;
+                    case R.id.delete_from_my_audios:
+                        new DeleteTrack(MainActivity.this, currentTrack, token);
+                        break;
                 }
 
                 return true;
@@ -737,6 +767,15 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
     }
 
     @Override
+    public void onDeleteTrackFromAdapter(boolean needDeleteFromAdapter, Track track) {
+        if(needDeleteFromAdapter) {
+            adapter.getCurrentTrackList().removeTrack(track);
+            adapter.getMainTrackList().removeTrack(track);
+        }
+        adapter.notifyDataSetChanged2();
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         Log.w(LOG_TAG, "onPause");
@@ -831,13 +870,15 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
 
     @Override
     public void OnDeleteTrack(int code, Track track) {
+        adapter.getSelectedTracksID().clear();
         switch (code) {
             case DeleteTrack.DELETE_TRACK_STATUS_OK:
                 Log.w(LOG_TAG, "track with ID " + track.ID + " was deleted from user tracks");
                 //audioService.getMultiTrackList().getTrackList(MultiTrackList.MAIN_TRACKLIST).removeTrack(track);
-                adapter.getCurrentTrackList().removeTrack(track);
-                adapter.notifyDataSetChanged2();
+                //adapter.getCurrentTrackList().removeTrack(track);
+                //adapter.notifyDataSetChanged2();
                 Toast.makeText(this, R.string.track_was_deleted, Toast.LENGTH_SHORT).show();
+                activityWatcher.onDeleteTrack(track);
                 break;
             case DeleteTrack.DELETE_TRACK_STATUS_FAIL:
                 Toast.makeText(this, R.string.problems_with_parsing_response, Toast.LENGTH_SHORT).show();

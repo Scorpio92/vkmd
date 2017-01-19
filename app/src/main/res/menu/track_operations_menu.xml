@@ -9,8 +9,13 @@
     <item
         android:id="@+id/download_selected"
         android:title="@string/download_selected"/>
-
     <item
-        android:id="@+id/delete_selected"
-        android:title="@string/delete_selected"/>
+        android:id="@+id/add_this_track"
+        android:title="@string/add_this_track"/>
+    <item
+        android:id="@+id/delete_selected_from_cache"
+        android:title="@string/delete_selected_from_cache"/>
+    <item
+        android:id="@+id/delete_from_my_audios"
+        android:title="@string/delete_from_my_audios"/>
 </menu>

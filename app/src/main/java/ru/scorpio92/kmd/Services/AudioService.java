@@ -60,6 +60,7 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     public final static int ACTION_STOP = 4;
     public final static int ACTION_ERROR = 5;
     public final static int ACTION_PLAY_STARTED = 6;
+    public final static int ACTION_TRACK_DELETED = 7;
     public final static String PARAM_RESULT = "result";
 
     public final static int PLAY_PREV_OK = 0;
@@ -583,6 +584,19 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
         } catch (Exception e) {e.printStackTrace();}
     }
 
+    public void deleteAndPlayNext(Track track) {
+        Log.w(LOG_TAG, "deleteAndPlayNext");
+        nextTrack();
+        try {
+            multiTrackList.getTrackList(MultiTrackList.CURRENT_TRACKLIST).removeTrack(track);
+            multiTrackList.getTrackList(MultiTrackList.MAIN_TRACKLIST).removeTrack(track);
+            Intent intent_error = new Intent(BROADCAST_ACTION);
+            intent_error.putExtra(PARAM_ACTION, ACTION_TRACK_DELETED);
+            sendBroadcast(intent_error);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     class TimerTask extends java.util.TimerTask {
 

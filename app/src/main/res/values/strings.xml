@@ -18,7 +18,7 @@
     <string name="close">Закрыть</string>
     <string name="select_unselect_all">Выбрать все (отменить выбор)</string>
     <string name="download_selected">Скачать выбранные треки</string>
-    <string name="delete_selected">Удалить выбранные треки</string>
+    <string name="delete_selected_from_cache">Удалить из кэша</string>
     <string name="select_all">Выбрать все</string>
     <string name="unselect_all">Отменить выбор</string>
     <string name="play_error">Возникла ошибка при воспроизведении</string>
@@ -81,4 +81,5 @@
     <string name="track_was_added">Аудиозапись успешно добавлена</string>
     <string name="delete_this_track">Удалить из моих аудиозаписей</string>
     <string name="track_was_deleted">Аудиозапись успешно удалена</string>
+    <string name="delete_from_my_audios">Удалить из моих аудиозаписей</string>
 </resources>

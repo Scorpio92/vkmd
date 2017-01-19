@@ -24,7 +24,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import ru.scorpio92.kmd.Constants;
 import ru.scorpio92.kmd.Interfaces.ActivityWatcher;
 import ru.scorpio92.kmd.Interfaces.FooterFragmentWatcher;
 import ru.scorpio92.kmd.Operations.AddTrack;
@@ -194,6 +193,9 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
                         playButton.setVisibility(View.GONE);
                         pauseButton.setVisibility(View.VISIBLE);
                         footerFragmentWatcher.onStartPlay(audioService.getCurrentTrackID());
+                        break;
+                    case AudioService.ACTION_TRACK_DELETED:
+                        footerFragmentWatcher.onDeleteTrackFromAdapter(false, null);
                         break;
                 }
             }
@@ -408,6 +410,17 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
 
         //создаем биндинг к сервису и запускаем его автоматически после инициализации соединения
         initAndStartBindingWithAudioService(null, false);
+    }
+
+    @Override
+    public void onDeleteTrack(Track track) {
+        Log.w(LOG_TAG, "onDeleteTrack");
+        if(!isHidden() && audioService != null) {
+            audioService.deleteAndPlayNext(track);
+        } else {
+            Log.w(LOG_TAG, "audio service not running, direct call onDeleteTrackFromAdapter()");
+            footerFragmentWatcher.onDeleteTrackFromAdapter(true, track);
+        }
     }
 
     /*
