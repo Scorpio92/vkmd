@@ -4,6 +4,9 @@
         android:id="@+id/add_this_track"
         android:title="@string/add_this_track" />
     <item
+        android:id="@+id/delete_this_track"
+        android:title="@string/delete_this_track" />
+    <item
         android:id="@+id/download_its_track"
         android:title="@string/download_its_track" />
     <item

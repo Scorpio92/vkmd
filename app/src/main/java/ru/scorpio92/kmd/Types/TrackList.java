@@ -107,6 +107,10 @@ public class TrackList implements Parcelable {
         return null;
     }
 
+    public void removeTrack(Track track) {
+        tracks.remove(track);
+    }
+
     public Track containsTrack(String name) {
         for (Track track:tracks) {
             if(track.getFullTrackName().equals(name) || track.getShortTrackName().equals(name))

@@ -28,6 +28,7 @@ import ru.scorpio92.kmd.Constants;
 import ru.scorpio92.kmd.Interfaces.ActivityWatcher;
 import ru.scorpio92.kmd.Interfaces.FooterFragmentWatcher;
 import ru.scorpio92.kmd.Operations.AddTrack;
+import ru.scorpio92.kmd.Operations.DeleteTrack;
 import ru.scorpio92.kmd.Operations.UpdateDownloadInfo;
 import ru.scorpio92.kmd.R;
 import ru.scorpio92.kmd.Services.AudioService;
@@ -42,7 +43,7 @@ import static ru.scorpio92.kmd.Utils.CommonUtils.getHumanTimeFromMilliseconds;
  * Created by scorpio92 on 23.10.16.
  */
 
-public class MusicListFooterFragment extends Fragment implements ActivityWatcher, AddTrack.AddTrackCallback {
+public class MusicListFooterFragment extends Fragment implements ActivityWatcher {
 
     final String LOG_TAG = "MusicListFooterFragment";
 
@@ -232,8 +233,20 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
         popupMenu.inflate(R.menu.more_button_footer_menu);
 
         MenuItem add_track = popupMenu.getMenu().findItem(R.id.add_this_track);
-        Track track = audioService.getMultiTrackList().getTrackList(MultiTrackList.MAIN_TRACKLIST).containsTrack(audioService.getCurrentTrack().getFullTrackName());
-        add_track.setVisible(track == null && !audioService.getToken().equals(TrackList.EMPTY_TOKEN));
+        MenuItem delete_track = popupMenu.getMenu().findItem(R.id.delete_this_track);
+        if(!audioService.getToken().equals(TrackList.EMPTY_TOKEN)) {
+            Track track = audioService.getMultiTrackList().getTrackList(MultiTrackList.MAIN_TRACKLIST).containsTrack(audioService.getCurrentTrack().getFullTrackName());
+            if(track == null) {
+                add_track.setVisible(true);
+                delete_track.setVisible(false);
+            } else {
+                add_track.setVisible(false);
+                delete_track.setVisible(true);
+            }
+        } else {
+            add_track.setVisible(false);
+            delete_track.setVisible(false);
+        }
 
         MenuItem random_mode = popupMenu.getMenu().findItem(R.id.random_mode);
         random_mode.setChecked(audioService.getRandomMode());
@@ -245,7 +258,10 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
                 switch (item.getItemId()) {
 
                     case R.id.add_this_track:
-                        new AddTrack(MusicListFooterFragment.this, audioService.getCurrentTrack(), audioService.getToken());
+                        new AddTrack((AddTrack.AddTrackCallback) getActivity(), audioService.getCurrentTrack(), audioService.getToken());
+                        break;
+                    case R.id.delete_this_track:
+                        new DeleteTrack((DeleteTrack.DeleteTrackCallback) getActivity(), audioService.getCurrentTrack(), audioService.getToken());
                         break;
                     case R.id.download_its_track:
                         ArrayList<Track> tracks = new ArrayList<>();
@@ -394,6 +410,7 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
         initAndStartBindingWithAudioService(null, false);
     }
 
+    /*
     @Override
     public void OnAddTrack(int code, Track track) {
         switch (code) {
@@ -411,4 +428,21 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
         }
     }
 
+    @Override
+    public void OnDeleteTrack(int code, Track track) {
+        switch (code) {
+            case DeleteTrack.DELETE_TRACK_STATUS_OK:
+                Log.w(LOG_TAG, "track with ID " + track.ID + " was deleted from user tracks");
+                //audioService.getMultiTrackList().getTrackList(MultiTrackList.MAIN_TRACKLIST).removeTrack(track);
+                Toast.makeText(getActivity(), R.string.track_was_deleted, Toast.LENGTH_SHORT).show();
+                break;
+            case DeleteTrack.DELETE_TRACK_STATUS_FAIL:
+                Toast.makeText(getActivity(), R.string.problems_with_parsing_response, Toast.LENGTH_SHORT).show();
+                break;
+            case DeleteTrack.DELETE_TRACK_NO_INTERNET:
+                Toast.makeText(getActivity(), R.string.problems_with_internet, Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
+    */
 }

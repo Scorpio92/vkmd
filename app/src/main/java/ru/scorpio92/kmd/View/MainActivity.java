@@ -37,6 +37,7 @@ import ru.scorpio92.kmd.Interfaces.ActivityWatcher;
 import ru.scorpio92.kmd.Interfaces.FooterFragmentWatcher;
 import ru.scorpio92.kmd.Interfaces.OperationsCallbacks;
 import ru.scorpio92.kmd.Operations.AddTrack;
+import ru.scorpio92.kmd.Operations.DeleteTrack;
 import ru.scorpio92.kmd.Operations.GetTrackListFromResponseOrDB;
 import ru.scorpio92.kmd.Operations.ScanForSavedTracks;
 import ru.scorpio92.kmd.Operations.SearchTracks;
@@ -50,7 +51,7 @@ import ru.scorpio92.kmd.Types.Track;
 import ru.scorpio92.kmd.Types.TrackList;
 import ru.scorpio92.kmd.Utils.CommonUtils;
 
-public class MainActivity extends Activity implements OperationsCallbacks, TracksListAdapter.TracksListAdapterCallbacks, FooterFragmentWatcher, SearchTracks.SearchTracksCallback {
+public class MainActivity extends Activity implements OperationsCallbacks, TracksListAdapter.TracksListAdapterCallbacks, FooterFragmentWatcher, SearchTracks.SearchTracksCallback, AddTrack.AddTrackCallback, DeleteTrack.DeleteTrackCallback {
 
     final String LOG_TAG = "MainActivity";
 
@@ -810,4 +811,40 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
         }
     }
 
+    @Override
+    public void OnAddTrack(int code, Track track) {
+        switch (code) {
+            case AddTrack.ADD_TRACK_STATUS_OK:
+                Log.w(LOG_TAG, "track with ID " + track.ID + " was added to user tracks");
+                //audioService.getMultiTrackList().getTrackList(MultiTrackList.MAIN_TRACKLIST).addTrackToTop(track);
+                adapter.getMainTrackList().addTrackToTop(track);
+                Toast.makeText(this, R.string.track_was_added, Toast.LENGTH_SHORT).show();
+                break;
+            case AddTrack.ADD_TRACK_STATUS_FAIL:
+                Toast.makeText(this, R.string.problems_with_parsing_response, Toast.LENGTH_SHORT).show();
+                break;
+            case AddTrack.ADD_TRACK_NO_INTERNET:
+                Toast.makeText(this, R.string.problems_with_internet, Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
+
+    @Override
+    public void OnDeleteTrack(int code, Track track) {
+        switch (code) {
+            case DeleteTrack.DELETE_TRACK_STATUS_OK:
+                Log.w(LOG_TAG, "track with ID " + track.ID + " was deleted from user tracks");
+                //audioService.getMultiTrackList().getTrackList(MultiTrackList.MAIN_TRACKLIST).removeTrack(track);
+                adapter.getCurrentTrackList().removeTrack(track);
+                adapter.notifyDataSetChanged2();
+                Toast.makeText(this, R.string.track_was_deleted, Toast.LENGTH_SHORT).show();
+                break;
+            case DeleteTrack.DELETE_TRACK_STATUS_FAIL:
+                Toast.makeText(this, R.string.problems_with_parsing_response, Toast.LENGTH_SHORT).show();
+                break;
+            case DeleteTrack.DELETE_TRACK_NO_INTERNET:
+                Toast.makeText(this, R.string.problems_with_internet, Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
 }

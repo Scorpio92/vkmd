@@ -79,4 +79,6 @@
     <string name="sd_permissions_warning">Без данных разрешений приложение работать не может!</string>
     <string name="add_this_track">Добавить к себе</string>
     <string name="track_was_added">Аудиозапись успешно добавлена</string>
+    <string name="delete_this_track">Удалить из моих аудиозаписей</string>
+    <string name="track_was_deleted">Аудиозапись успешно удалена</string>
 </resources>
