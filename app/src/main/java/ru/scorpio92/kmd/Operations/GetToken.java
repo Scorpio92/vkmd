@@ -29,7 +29,8 @@ public class GetToken implements InternetUtils.InternetConnectionCallback {
 
     public static final int GET_TOKEN_STATUS_OK = 0;
     public static final int GET_TOKEN_STATUS_FAIL = 1;
-    public static final int GET_TOKEN_NO_INTERNET = 2;
+    public static final int GET_TOKEN_STATUS_CAPTCHA_NEED = 2;
+    public static final int GET_TOKEN_NO_INTERNET = 3;
 
     private final int TIMEOUT = 10000;
 
@@ -105,8 +106,13 @@ public class GetToken implements InternetUtils.InternetConnectionCallback {
                     String userId = getUserIdFromRespone(jobj);
                     if(token.length() > 0 && userId.length() > 0)
                         callback.onGetTokenComplete(GET_TOKEN_STATUS_OK, token, userId);
-                    else
-                        callback.onGetTokenComplete(GET_TOKEN_STATUS_FAIL, null, null);
+                    else {
+                        if(RESPONSE.contains("Captcha needed")) {
+                            callback.onGetTokenComplete(GET_TOKEN_STATUS_CAPTCHA_NEED, null, null);
+                        } else {
+                            callback.onGetTokenComplete(GET_TOKEN_STATUS_FAIL, null, null);
+                        }
+                    }
                 } else {
                     callback.onGetTokenComplete(GET_TOKEN_STATUS_FAIL, null, null);
                 }

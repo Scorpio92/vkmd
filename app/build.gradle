@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    buildToolsVersion '24.0.3'
     defaultConfig {
         applicationId 'ru.scorpio92.kmd'
         minSdkVersion 15
         targetSdkVersion 24
-        versionCode 11
-        versionName "1.6.0"
+        versionCode 12
+        versionName "1.6.1"
     }
     buildTypes {
         release {

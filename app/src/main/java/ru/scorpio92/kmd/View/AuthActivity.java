@@ -399,6 +399,10 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
                 this.token = token;
                 new GetTrackCount(AuthActivity.this, USER_ID, token);
                 break;
+            case GetToken.GET_TOKEN_STATUS_CAPTCHA_NEED:
+                lock_unlock_GUI(false);
+                Toast.makeText(this, R.string.captcha_needed, Toast.LENGTH_SHORT).show();
+                break;
             case GetToken.GET_TOKEN_STATUS_FAIL:
                 Log.w(LOG_TAG, "onGetTokenFailed");
                 lock_unlock_GUI(false);
