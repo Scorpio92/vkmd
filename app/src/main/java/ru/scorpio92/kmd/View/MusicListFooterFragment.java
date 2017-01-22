@@ -234,6 +234,9 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
         PopupMenu popupMenu = new PopupMenu(getActivity(), v);
         popupMenu.inflate(R.menu.more_button_footer_menu);
 
+        MenuItem download_its_track = popupMenu.getMenu().findItem(R.id.download_its_track);
+        download_its_track.setVisible(!audioService.getCurrentTrack().IS_DOWNLOADED);
+
         MenuItem add_track = popupMenu.getMenu().findItem(R.id.add_this_track);
         MenuItem delete_track = popupMenu.getMenu().findItem(R.id.delete_this_track);
         if(!audioService.getToken().equals(TrackList.EMPTY_TOKEN)) {

@@ -333,6 +333,18 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.inflate(R.menu.track_operations_menu);
 
+        final ArrayList<Integer> selectedIDs = new ArrayList<>(adapter.getSelectedTracksID());
+
+        MenuItem download_selected = popupMenu.getMenu().findItem(R.id.download_selected);
+        boolean showDownload = false;
+        for (int id: selectedIDs) {
+            if(!adapter.getCurrentTrackList().getAllTracks().get(id).IS_DOWNLOADED) {
+                showDownload = true;
+                break;
+            }
+        }
+        download_selected.setVisible(showDownload);
+
         MenuItem add_this_track = popupMenu.getMenu().findItem(R.id.add_this_track);
         MenuItem delete_from_my_audios = popupMenu.getMenu().findItem(R.id.delete_from_my_audios);
 
@@ -361,7 +373,7 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
             @Override
             public boolean onMenuItemClick(MenuItem item) {
 
-                ArrayList<Integer> selectedIDs;
+                //ArrayList<Integer> selectedIDs;
 
                 switch (item.getItemId()) {
 
@@ -374,7 +386,7 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                         showSelectedTracksCount();
                         break;
                     case R.id.download_selected:
-                        selectedIDs = new ArrayList<>(adapter.getSelectedTracksID());
+                        //selectedIDs = new ArrayList<>(adapter.getSelectedTracksID());
                         new UpdateDownloadInfo(MainActivity.this, adapter.getCurrentTrackList().getTracksArrayByArrayID(selectedIDs), UpdateDownloadInfo.ACTION_INSERT);
                         adapter.getSelectedTracksID().clear();
                         adapter.notifyDataSetChanged2();
@@ -384,7 +396,7 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                         new AddTrack(MainActivity.this, currentTrack, token);
                         break;
                     case R.id.delete_selected_from_cache:
-                        selectedIDs = new ArrayList<>(adapter.getSelectedTracksID());
+                        //selectedIDs = new ArrayList<>(adapter.getSelectedTracksID());
                         new UpdateDownloadInfo(MainActivity.this, adapter.getCurrentTrackList().getTracksArrayByArrayID(selectedIDs), UpdateDownloadInfo.ACTION_DELETE);
                         adapter.getCurrentTrackList().setWasDownloadedToFalse(selectedIDs);
                         adapter.getSelectedTracksID().clear();
