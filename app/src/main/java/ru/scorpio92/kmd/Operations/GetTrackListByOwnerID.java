@@ -31,7 +31,7 @@ public class GetTrackListByOwnerID implements InternetUtils.InternetConnectionCa
     public static final int GET_MUSIC_LIST_NO_INTERNET = 2;
 
     private final int CONNECTION_TIMEOUT = 15000;
-    private final int REQUEST_INTERVAL = 1000;
+    private final int REQUEST_INTERVAL = 500;
     private final String versionAPI = "3.0";
     public static final int DEFAULT_TRACKS_COUNT = 500;
 
