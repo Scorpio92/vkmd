@@ -77,6 +77,8 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
     AlertDialog searchDialog;
     boolean stopSearch;
 
+    boolean isRelogin = false;
+
 
     void initGUI() {
         fragmentManager = getFragmentManager();
@@ -444,6 +446,8 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
     void relogin(boolean isManualRelogin) {
         Log.w(LOG_TAG, "relogin!!! isManualRelogin: " + isManualRelogin);
 
+        isRelogin = true;
+
         if(isManualRelogin) {
             initAndStartBindingWithAudioService(BIND_WITH_AUDIO_SERVICE_ON_MANUAL_RELOGIN);
         } else {
@@ -808,7 +812,8 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
         super.onStop();
         Log.w(LOG_TAG, "onStop");
 
-        initAndStartBindingWithAudioService(BIND_WITH_AUDIO_SERVICE_ON_STOP);
+        if(!isRelogin)
+            initAndStartBindingWithAudioService(BIND_WITH_AUDIO_SERVICE_ON_STOP);
 
         /*
         try {
