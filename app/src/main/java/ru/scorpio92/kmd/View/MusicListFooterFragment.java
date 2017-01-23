@@ -256,6 +256,9 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
         MenuItem random_mode = popupMenu.getMenu().findItem(R.id.random_mode);
         random_mode.setChecked(audioService.getRandomMode());
 
+        MenuItem circuralPlaying_mode = popupMenu.getMenu().findItem(R.id.circuralPlaying_mode);
+        circuralPlaying_mode.setChecked(audioService.getCircularPaying());
+
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -278,6 +281,13 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
                             Toast.makeText(getActivity(), R.string.random_mode_enabled, Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(getActivity(), R.string.random_mode_disabled, Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case R.id.circuralPlaying_mode:
+                        if(audioService.setCircularPaying()) {
+                            Toast.makeText(getActivity(), R.string.circuralPlaying_mode_enabled, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity(), R.string.circuralPlaying_mode_disabled, Toast.LENGTH_SHORT).show();
                         }
                         break;
                 }

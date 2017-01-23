@@ -83,4 +83,7 @@
     <string name="track_was_deleted">Аудиозапись успешно удалена</string>
     <string name="delete_from_my_audios">Удалить из моих аудиозаписей</string>
     <string name="captcha_needed">VK выпендривается и просит ввести символы с капчи!</string>
+    <string name="circuralPlaying_mode">Режим кругового проигрывания</string>
+    <string name="circuralPlaying_mode_enabled">Режим кругового воспроизведения включен</string>
+    <string name="circuralPlaying_mode_disabled">Режим кругового воспроизведения выключен</string>
 </resources>

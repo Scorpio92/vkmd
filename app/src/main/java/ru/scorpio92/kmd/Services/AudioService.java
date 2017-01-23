@@ -82,6 +82,7 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     private boolean stopPlay;
     private boolean loopActivated;
     private boolean randomMode;
+    private boolean circularPaying;
 
     private HeadsetPlugReceiver headsetPlugReceiver;
 
@@ -126,6 +127,7 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
 
         isStarted = true;
         mMainActivityIsStopped = false;
+        circularPaying = true;
 
         return Service.START_NOT_STICKY;
     }
@@ -371,6 +373,7 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     }
 
 
+
     //set/get data from binder
     public class MyBinder extends Binder {
         public AudioService getService() {
@@ -553,7 +556,10 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
                 if (currentTrackPositionInTrackList < multiTrackList.getTrackList(MultiTrackList.CURRENT_TRACKLIST).getAllTracks().size() - 1) {
                     currentTrackID = multiTrackList.getTrackList(MultiTrackList.CURRENT_TRACKLIST).getAllTracks().get(currentTrackPositionInTrackList + 1).ID;
                 } else {
-                    return PLAY_NEXT_END_LIST;
+                    if(circularPaying) {
+                        currentTrackID = multiTrackList.getTrackList(MultiTrackList.CURRENT_TRACKLIST).getAllTracks().get(0).ID;
+                    } else
+                        return PLAY_NEXT_END_LIST;
                 }
             }
         }
@@ -573,6 +579,15 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
 
     public boolean getRandomMode() {
         return randomMode;
+    }
+
+    public boolean setCircularPaying() {
+        circularPaying = !circularPaying;
+        return circularPaying;
+    }
+
+    public boolean getCircularPaying() {
+        return circularPaying;
     }
 
     public void seekTo(int value) {

@@ -13,4 +13,8 @@
         android:id="@+id/random_mode"
         android:title="@string/random_mode"
         android:checkable="true"/>
+    <item
+        android:id="@+id/circuralPlaying_mode"
+        android:title="@string/circuralPlaying_mode"
+        android:checkable="true"/>
 </menu>
