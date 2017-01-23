@@ -86,4 +86,5 @@
     <string name="circuralPlaying_mode">Режим кругового проигрывания</string>
     <string name="circuralPlaying_mode_enabled">Режим кругового воспроизведения включен</string>
     <string name="circuralPlaying_mode_disabled">Режим кругового воспроизведения выключен</string>
+    <string name="exit_dialog_title">Вы хотите выйти?</string>
 </resources>

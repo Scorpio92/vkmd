@@ -15,6 +15,7 @@ import android.os.IBinder;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -78,6 +79,7 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
     boolean stopSearch;
 
     boolean isRelogin = false;
+    boolean isExit = false;
 
 
     void initGUI() {
@@ -443,6 +445,33 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
         dialog.show();
     }
 
+    void showExitDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+        alertDialog.setTitle(getString(R.string.exit_dialog_title));
+
+
+        alertDialog.setPositiveButton(getString(android.R.string.ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        isExit = true;
+                        relogin(true);
+                    }
+                });
+
+        alertDialog.setNegativeButton(getString(android.R.string.no),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        isExit = false;
+                        dialog.cancel();
+                    }
+                });
+
+        final AlertDialog dialog = alertDialog.create();
+        dialog.show();
+    }
+
     void relogin(boolean isManualRelogin) {
         Log.w(LOG_TAG, "relogin!!! isManualRelogin: " + isManualRelogin);
 
@@ -473,10 +502,12 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
 
             MainActivity.this.finish();
 
-            Intent intent = new Intent(MainActivity.this, AuthActivity.class);
-            intent.putExtra("autoCheckMediaLibrary", false);
-            intent.putExtra("isRelogin", true);
-            startActivity(intent);
+            if(!isExit) {
+                Intent intent = new Intent(MainActivity.this, AuthActivity.class);
+                intent.putExtra("autoCheckMediaLibrary", false);
+                intent.putExtra("isRelogin", true);
+                startActivity(intent);
+            }
         }
     }
 
@@ -904,5 +935,11 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                 Toast.makeText(this, R.string.problems_with_internet, Toast.LENGTH_SHORT).show();
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        showExitDialog();
     }
 }
