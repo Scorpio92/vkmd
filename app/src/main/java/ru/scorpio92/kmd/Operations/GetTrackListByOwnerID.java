@@ -30,7 +30,7 @@ public class GetTrackListByOwnerID implements InternetUtils.InternetConnectionCa
     public static final int GET_MUSIC_LIST_STATUS_FAIL = 1;
     public static final int GET_MUSIC_LIST_NO_INTERNET = 2;
 
-    private final int CONNECTION_TIMEOUT = 15000;
+    private final int CONNECTION_TIMEOUT = 5000;
     private final int REQUEST_INTERVAL = 500;
     private final String versionAPI = "3.0";
     public static final int DEFAULT_TRACKS_COUNT = 500;
@@ -81,6 +81,7 @@ public class GetTrackListByOwnerID implements InternetUtils.InternetConnectionCa
                 HttpGet httpget = new HttpGet("https://api.vk.com/method/audio.get?oid=" + USER_ID + "&need_user=0&count=" + Integer.valueOf(DEFAULT_TRACKS_COUNT) + "&offset=" + offset + "&access_token=" + ACCESS_TOKEN + "&v=" + versionAPI);
                 HttpParams httpParams = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParams, CONNECTION_TIMEOUT);
+                HttpConnectionParams.setSoTimeout(httpParams, CONNECTION_TIMEOUT);
                 HttpClient httpclient = new DefaultHttpClient(httpParams);
                 HttpResponse response = httpclient.execute(httpget);
                 HttpEntity entity = response.getEntity();

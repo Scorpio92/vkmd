@@ -28,7 +28,7 @@ public class SearchTracks implements InternetUtils.InternetConnectionCallback {
     public static final int SEARCH_TRACKS_STATUS_FAIL = 1;
     public static final int SEARCH_TRACKS_NO_INTERNET = 2;
 
-    private final int CONNECTION_TIMEOUT = 15000;
+    private final int CONNECTION_TIMEOUT = 3000;
     private final String versionAPI = "3.0";
     public static final int DEFAULT_TRACKS_COUNT = 500;
 
@@ -67,6 +67,7 @@ public class SearchTracks implements InternetUtils.InternetConnectionCallback {
                 HttpGet httpget = new HttpGet("https://api.vk.com/method/audio.search?q=" + URLEncoder.encode(searchString, "UTF-8") + "&performer_only=" + performer_only + "&count=" + DEFAULT_TRACKS_COUNT + "&v=" + versionAPI + "&access_token=" + ACCESS_TOKEN);
                 HttpParams httpParams = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParams, CONNECTION_TIMEOUT);
+                HttpConnectionParams.setSoTimeout(httpParams, CONNECTION_TIMEOUT);
                 HttpClient httpclient = new DefaultHttpClient(httpParams);
                 HttpResponse response = httpclient.execute(httpget);
                 HttpEntity entity = response.getEntity();

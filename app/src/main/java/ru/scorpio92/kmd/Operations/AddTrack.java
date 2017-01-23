@@ -30,7 +30,7 @@ public class AddTrack implements InternetUtils.InternetConnectionCallback {
     public static final int ADD_TRACK_STATUS_FAIL = 1;
     public static final int ADD_TRACK_NO_INTERNET = 2;
 
-    private final int CONNECTION_TIMEOUT = 15000;
+    private final int CONNECTION_TIMEOUT = 3000;
     private final String versionAPI = "3.0";
     private final int TRACK_ID_LENGTH = 9;
 
@@ -65,6 +65,7 @@ public class AddTrack implements InternetUtils.InternetConnectionCallback {
                 HttpGet httpget = new HttpGet("https://api.vk.com/method/audio.add?audio_id=" + track.ID + "&owner_id=" + track.OWNER_ID + "&access_token=" + token + "&v=" + versionAPI);
                 HttpParams httpParams = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParams, CONNECTION_TIMEOUT);
+                HttpConnectionParams.setSoTimeout(httpParams, CONNECTION_TIMEOUT);
                 HttpClient httpclient = new DefaultHttpClient(httpParams);
                 HttpResponse response = httpclient.execute(httpget);
                 HttpEntity entity = response.getEntity();

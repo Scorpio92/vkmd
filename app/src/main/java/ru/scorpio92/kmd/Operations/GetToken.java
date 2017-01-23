@@ -32,7 +32,7 @@ public class GetToken implements InternetUtils.InternetConnectionCallback {
     public static final int GET_TOKEN_STATUS_CAPTCHA_NEED = 2;
     public static final int GET_TOKEN_NO_INTERNET = 3;
 
-    private final int TIMEOUT = 10000;
+    private final int TIMEOUT = 3000;
 
     private OperationsCallbacks callback;
 
@@ -67,6 +67,7 @@ public class GetToken implements InternetUtils.InternetConnectionCallback {
                 HttpGet httpget = new HttpGet(GENERATE_TOKEN_URL);
                 HttpParams httpParams = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParams, TIMEOUT);
+                HttpConnectionParams.setSoTimeout(httpParams, TIMEOUT);
                 HttpClient httpclient = new DefaultHttpClient(httpParams);
                 HttpResponse response = httpclient.execute(httpget);
                 HttpEntity entity = response.getEntity();

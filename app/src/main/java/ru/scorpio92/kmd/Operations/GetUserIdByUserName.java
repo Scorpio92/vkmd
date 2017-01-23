@@ -30,7 +30,7 @@ public class GetUserIdByUserName implements InternetUtils.InternetConnectionCall
     public static final int GET_USER_ID_NO_INTERNET = 2;
 
     private final String versionAPI = "3.0";
-    private final int TIMEOUT = 15000;
+    private final int TIMEOUT = 3000;
 
     private GetUserIdByUserNameCallback callback;
     private String username;
@@ -64,6 +64,7 @@ public class GetUserIdByUserName implements InternetUtils.InternetConnectionCall
                 HttpGet httpget = new HttpGet("https://api.vk.com/method/users.search?q=" + username + "&count=1&access_token=" + ACCESS_TOKEN + "&v=" + versionAPI);
                 HttpParams httpParams = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParams, TIMEOUT);
+                HttpConnectionParams.setSoTimeout(httpParams, TIMEOUT);
                 HttpClient httpclient = new DefaultHttpClient(httpParams);
                 HttpResponse response = httpclient.execute(httpget);
                 HttpEntity entity = response.getEntity();

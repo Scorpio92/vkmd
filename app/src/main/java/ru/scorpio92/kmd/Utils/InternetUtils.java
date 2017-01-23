@@ -14,7 +14,7 @@ public class InternetUtils {
 
     private final String LOG_TAG = "InternetUtils";
     private final String TEST_HOST = "https://www.vk.com";
-    private final int DEFAULT_CONNECTION_TIMEOUT = 9999; //ms
+    private final int DEFAULT_CONNECTION_TIMEOUT = 5000; //ms
 
     private InternetConnectionCallback callback;
 

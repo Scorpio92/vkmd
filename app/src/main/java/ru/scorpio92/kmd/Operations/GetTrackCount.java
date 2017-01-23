@@ -30,7 +30,7 @@ public class GetTrackCount implements InternetUtils.InternetConnectionCallback {
     public static final int GET_TRACKS_COUNT_NO_INTERNET = 2;
 
     private final String versionAPI = "3.0";
-    private final int TIMEOUT = 15000;
+    private final int TIMEOUT = 3000;
 
     private GetTrackCountCallback callback;
     private String userID;
@@ -64,6 +64,7 @@ public class GetTrackCount implements InternetUtils.InternetConnectionCallback {
                 HttpGet httpget = new HttpGet("https://api.vk.com/method/audio.getCount?oid=" + userID + "&access_token=" + ACCESS_TOKEN + "&v=" + versionAPI);
                 HttpParams httpParams = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParams, TIMEOUT);
+                HttpConnectionParams.setSoTimeout(httpParams, TIMEOUT);
                 HttpClient httpclient = new DefaultHttpClient(httpParams);
                 HttpResponse response = httpclient.execute(httpget);
                 HttpEntity entity = response.getEntity();
