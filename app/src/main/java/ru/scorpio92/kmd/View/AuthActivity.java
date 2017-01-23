@@ -486,19 +486,19 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
     @Override
     public void onGetUserIDByUserName(String id, int responseCode) {
         switch (responseCode) {
-            case GetTrackListByOwnerID.GET_MUSIC_LIST_STATUS_OK:
+            case GetUserIdByUserName.GET_USER_ID_STATUS_OK:
                 Log.w(LOG_TAG, "user id: " + id);
                 USER_ID = id;
                 Toast.makeText(this, getString(R.string.get_user_id_ok) + " " + USER_ID, Toast.LENGTH_SHORT).show();
                 //new GetTrackListByOwnerID(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
                 new GetTrackCount(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
                 break;
-            case GetTrackListByOwnerID.GET_MUSIC_LIST_STATUS_FAIL:
+            case GetUserIdByUserName.GET_USER_ID_STATUS_FAIL:
                 Log.w(LOG_TAG, "user id: fail");
                 lock_unlock_GUI(false);
                 Toast.makeText(this, getString(R.string.get_user_id_fail), Toast.LENGTH_SHORT).show();
                 break;
-            case GetTrackListByOwnerID.GET_MUSIC_LIST_NO_INTERNET:
+            case GetUserIdByUserName.GET_USER_ID_NO_INTERNET:
                 lock_unlock_GUI(false);
                 Toast.makeText(this, R.string.problems_with_internet, Toast.LENGTH_SHORT).show();
                 break;
