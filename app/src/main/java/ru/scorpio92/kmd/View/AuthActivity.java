@@ -395,6 +395,10 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
             case GetToken.GET_TOKEN_STATUS_OK:
                 Log.w(LOG_TAG, "token is " + token + " user_id is " + userID);
                 //new GetTrackListByOwnerID(AuthActivity.this, userID, token);
+
+                if(GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_LP)
+                    KMDUtils.writeCurrentLogin(AuthActivity.this, USER_ID, autoEnter.isChecked(), GET_TRACK_LIST_METHOD); //записываем в БД введенный логин
+
                 this.USER_ID = userID;
                 this.token = token;
                 new GetTrackCount(AuthActivity.this, USER_ID, token);
@@ -419,11 +423,6 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
     public void onGetTrackListComplete(int status, String response) {
         switch (status) {
             case GetTrackListByOwnerID.GET_MUSIC_LIST_STATUS_OK:
-                if(GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_UID ||
-                        GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_GID ||
-                        GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_LP) {
-                    KMDUtils.writeCurrentLogin(AuthActivity.this, USER_ID, autoEnter.isChecked(), GET_TRACK_LIST_METHOD); //записываем в БД введенный логин
-                }
                 new GetTrackListFromResponseOrDB(GetTrackListFromResponseOrDB.IS_GET_TRACKLIST_FROM_RESPONSE, AuthActivity.this, response);
                 break;
             case GetTrackListByOwnerID.GET_MUSIC_LIST_STATUS_FAIL:
@@ -489,6 +488,10 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
             case GetUserIdByUserName.GET_USER_ID_STATUS_OK:
                 Log.w(LOG_TAG, "user id: " + id);
                 USER_ID = id;
+
+                if(GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_UID)
+                    KMDUtils.writeCurrentLogin(AuthActivity.this, USER_ID, autoEnter.isChecked(), GET_TRACK_LIST_METHOD); //записываем в БД введенный логин
+
                 Toast.makeText(this, getString(R.string.get_user_id_ok) + " " + USER_ID, Toast.LENGTH_SHORT).show();
                 //new GetTrackListByOwnerID(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
                 new GetTrackCount(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
@@ -510,6 +513,13 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
         switch (responseCode) {
             case GetTrackCount.GET_TRACKS_COUNT_STATUS_OK:
                 Log.w(LOG_TAG, "count tracks: " + count);
+
+                if(GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_UID ||
+                        GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_GID ||
+                        GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_LP) {
+                    KMDUtils.writeCurrentLogin(AuthActivity.this, USER_ID, autoEnter.isChecked(), GET_TRACK_LIST_METHOD); //записываем в БД введенный логин
+                }
+
                 tracksCount = count;
                 currentOffset = 0;
                 generalTrackList = new TrackList();
