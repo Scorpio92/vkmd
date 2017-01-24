@@ -331,14 +331,18 @@ public class MainActivity extends Activity implements
         final ArrayList<Integer> selectedIDs = new ArrayList<>(adapter.getSelectedTracksID());
 
         MenuItem download_selected = popupMenu.getMenu().findItem(R.id.download_selected);
+        MenuItem delete_selected_from_cache = popupMenu.getMenu().findItem(R.id.delete_selected_from_cache);
         boolean showDownload = false;
+        boolean showDeleteFromCache = false;
         for (int id: selectedIDs) {
             if(!adapter.getCurrentTrackList().getAllTracks().get(id).IS_DOWNLOADED) {
                 showDownload = true;
-                break;
-            }
+                //break;
+            } else
+                showDeleteFromCache = true;
         }
         download_selected.setVisible(showDownload);
+        delete_selected_from_cache.setVisible(showDeleteFromCache);
 
         MenuItem add_this_track = popupMenu.getMenu().findItem(R.id.add_this_track);
         MenuItem delete_from_my_audios = popupMenu.getMenu().findItem(R.id.delete_from_my_audios);
