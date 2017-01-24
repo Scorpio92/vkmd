@@ -8,7 +8,6 @@ import android.util.Log;
 import java.io.File;
 import java.util.ArrayList;
 
-import ru.scorpio92.kmd.Interfaces.OperationsCallbacks;
 import ru.scorpio92.kmd.Types.MainDB;
 import ru.scorpio92.kmd.Types.Track;
 import ru.scorpio92.kmd.Utils.DBUtils;
@@ -26,12 +25,12 @@ public class UpdateDownloadInfo {
     private int action;
 
     private Context context;
-    private OperationsCallbacks callback;
+    private UpdateDownloadInfoCallback callback;
     private ArrayList<Track> tracks;
 
     public UpdateDownloadInfo(Context context, ArrayList<Track> tracks, int action) {
         this.context = context;
-        callback = (OperationsCallbacks) context;
+        callback = (UpdateDownloadInfoCallback) context;
         this.tracks = tracks;
         this.action = action;
         try {
@@ -117,5 +116,9 @@ public class UpdateDownloadInfo {
             super.onPostExecute(result);
             callback.onUpdateDownloadInfoComplete(result, action);
         }
+    }
+
+    public interface UpdateDownloadInfoCallback {
+        void onUpdateDownloadInfoComplete(int count, int action);
     }
 }

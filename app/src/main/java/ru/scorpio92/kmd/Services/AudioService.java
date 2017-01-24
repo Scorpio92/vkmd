@@ -35,7 +35,6 @@ import ru.scorpio92.kmd.Receivers.HeadsetPlugReceiver;
 import ru.scorpio92.kmd.Receivers.LockScreenReceiver;
 import ru.scorpio92.kmd.Types.MultiTrackList;
 import ru.scorpio92.kmd.Types.Track;
-import ru.scorpio92.kmd.Types.TrackList;
 import ru.scorpio92.kmd.View.MainActivity;
 
 /**

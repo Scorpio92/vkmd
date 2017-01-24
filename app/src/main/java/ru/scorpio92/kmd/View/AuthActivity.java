@@ -23,26 +23,25 @@ import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 import ru.scorpio92.kmd.Constants;
-import ru.scorpio92.kmd.Interfaces.OperationsCallbacks;
 import ru.scorpio92.kmd.Operations.GetToken;
-import ru.scorpio92.kmd.Operations.GetTrackCount;
-import ru.scorpio92.kmd.Operations.GetTrackListByOwnerID;
 import ru.scorpio92.kmd.Operations.GetTrackListFromResponseOrDB;
+import ru.scorpio92.kmd.Operations.GetTracks;
 import ru.scorpio92.kmd.Operations.GetUserIdByUserName;
 import ru.scorpio92.kmd.R;
 import ru.scorpio92.kmd.Services.AudioService;
 import ru.scorpio92.kmd.Services.StoreService;
 import ru.scorpio92.kmd.Types.MainDB;
-import ru.scorpio92.kmd.Types.Track;
 import ru.scorpio92.kmd.Types.TrackList;
 import ru.scorpio92.kmd.Utils.CommonUtils;
 import ru.scorpio92.kmd.Utils.KMDUtils;
 
 
-public class AuthActivity extends Activity implements OperationsCallbacks, GetUserIdByUserName.GetUserIdByUserNameCallback, GetTrackCount.GetTrackCountCallback {
+public class AuthActivity extends Activity implements
+        GetToken.GetTokenCallback,
+        GetUserIdByUserName.GetUserIdByUserNameCallback,
+        GetTracks.GetTrackListCallback,
+        GetTrackListFromResponseOrDB.GetTrackListFromResponseOrDBCallback {
 
     String LOG_TAG = "AuthActivity";
 
@@ -71,9 +70,6 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
     StoreService storeService;
 
     private String token;
-    private int tracksCount;
-    private int currentOffset;
-    private TrackList generalTrackList;
 
 
     void onCreateInit() {
@@ -155,7 +151,9 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
                 try {
                     USER_ID = uid_login.getText().toString().trim();
 
-                    if(GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_UID || GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_GID || GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_LP) {
+                    if(GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_UID ||
+                            GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_GID ||
+                            GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_LP) {
                         if (USER_ID.isEmpty()) {
                             Toast.makeText(AuthActivity.this, R.string.empty_field_warning, Toast.LENGTH_SHORT).show();
                             return;
@@ -174,10 +172,7 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
                         try {
                             Integer.valueOf(USER_ID);
                             getByNumericID = true;
-                        } catch (Exception e) {
-                            //Toast.makeText(AuthActivity.this, R.string.string_not_is_id, Toast.LENGTH_SHORT).show();
-                            //return;
-                        }
+                        } catch (Exception e) {}
                     }
 
                     if(GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_GID) {
@@ -197,8 +192,7 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
                         case GET_TRACK_LIST_METHOD_BY_GID:
                             token = Constants.ACCESS_TOKEN_PUBLIC;
                             if(getByNumericID) {
-                                //new GetTrackListByOwnerID(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
-                                new GetTrackCount(AuthActivity.this, USER_ID, token);
+                                new GetTracks(AuthActivity.this, USER_ID, token);
                             } else {
                                 new GetUserIdByUserName(AuthActivity.this, USER_ID, token);
                             }
@@ -262,9 +256,8 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
                         if(USER_ID != null) {
                             uid_login.setText(USER_ID);
                             autoEnter.setChecked(true);
-                            //new GetTrackListByOwnerID(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
                             token = Constants.ACCESS_TOKEN_PUBLIC;
-                            new GetTrackCount(AuthActivity.this, USER_ID, token);
+                            new GetTracks(AuthActivity.this, USER_ID, token);
                         } else {
                             lock_unlock_GUI(false);
                         }
@@ -394,14 +387,13 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
         switch (status) {
             case GetToken.GET_TOKEN_STATUS_OK:
                 Log.w(LOG_TAG, "token is " + token + " user_id is " + userID);
-                //new GetTrackListByOwnerID(AuthActivity.this, userID, token);
 
                 if(GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_LP)
                     KMDUtils.writeCurrentLogin(AuthActivity.this, USER_ID, autoEnter.isChecked(), GET_TRACK_LIST_METHOD); //записываем в БД введенный логин
 
                 this.USER_ID = userID;
                 this.token = token;
-                new GetTrackCount(AuthActivity.this, USER_ID, token);
+                new GetTracks(AuthActivity.this, USER_ID, token);
                 break;
             case GetToken.GET_TOKEN_STATUS_CAPTCHA_NEED:
                 lock_unlock_GUI(false);
@@ -420,66 +412,13 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
     }
 
     @Override
-    public void onGetTrackListComplete(int status, String response) {
-        switch (status) {
-            case GetTrackListByOwnerID.GET_MUSIC_LIST_STATUS_OK:
-                new GetTrackListFromResponseOrDB(GetTrackListFromResponseOrDB.IS_GET_TRACKLIST_FROM_RESPONSE, AuthActivity.this, response);
-                break;
-            case GetTrackListByOwnerID.GET_MUSIC_LIST_STATUS_FAIL:
-                lock_unlock_GUI(false);
-                Toast.makeText(this, R.string.problems_with_get_music_list, Toast.LENGTH_SHORT).show();
-                break;
-            case GetTrackListByOwnerID.GET_MUSIC_LIST_NO_INTERNET:
-                lock_unlock_GUI(false);
-                Toast.makeText(this, R.string.problems_with_internet, Toast.LENGTH_SHORT).show();
-                break;
-        }
-    }
-
-    @Override
     public void onResponseParseComplete(TrackList tracks) {
-        generalTrackList.getAllTracks().addAll(tracks.getAllTracks());
-        if(tracks.getAllTracks().isEmpty() && currentOffset == 0) {
-            lock_unlock_GUI(false);
-            Toast.makeText(this, R.string.problems_with_parsing_response, Toast.LENGTH_SHORT).show();
-        } else {
-            currentOffset = currentOffset + GetTrackListByOwnerID.DEFAULT_TRACKS_COUNT;
-            if(currentOffset < tracksCount) {
-                Log.w(LOG_TAG, "GetTrackListByOwnerID, currentOffset: " + currentOffset);
-                new GetTrackListByOwnerID(AuthActivity.this, USER_ID, token, currentOffset);
-            }  else {
-                if(GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_LP) {
-                    Log.w(LOG_TAG, "LP get method. save ownerId: " + USER_ID + " and token: " + token + " to TrackList");
-                    generalTrackList.setOwnerID(USER_ID);
-                    generalTrackList.setToken(token);
-                }
-                showMainActivity(generalTrackList);
-            }
-        }
+
     }
 
     @Override
     public void onGetSavedTracksComplete(TrackList tracks) {
         showMainActivity(tracks);
-    }
-
-    @Override
-    public void onWriteTrackListToDBComplete(int count) {
-        if(count < 0) {
-            Toast.makeText(getApplicationContext(), R.string.write_track_to_db_error, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        Log.w(LOG_TAG, "onWriteTrackListToDBComplete. Writed " + Integer.toString(count) + " tracks");
-    }
-
-    @Override
-    public void onUpdateDownloadInfoComplete(int count, int action) {
-
-    }
-
-    @Override
-    public void onScanTaskComplete(ArrayList<Track> tracks) {
-
     }
 
     @Override
@@ -493,8 +432,7 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
                     KMDUtils.writeCurrentLogin(AuthActivity.this, USER_ID, autoEnter.isChecked(), GET_TRACK_LIST_METHOD); //записываем в БД введенный логин
 
                 Toast.makeText(this, getString(R.string.get_user_id_ok) + " " + USER_ID, Toast.LENGTH_SHORT).show();
-                //new GetTrackListByOwnerID(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
-                new GetTrackCount(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
+                new GetTracks(AuthActivity.this, USER_ID, Constants.ACCESS_TOKEN_PUBLIC);
                 break;
             case GetUserIdByUserName.GET_USER_ID_STATUS_FAIL:
                 Log.w(LOG_TAG, "user id: fail");
@@ -509,33 +447,29 @@ public class AuthActivity extends Activity implements OperationsCallbacks, GetUs
     }
 
     @Override
-    public void onGetTrackCount(int count, int responseCode) {
-        switch (responseCode) {
-            case GetTrackCount.GET_TRACKS_COUNT_STATUS_OK:
-                Log.w(LOG_TAG, "count tracks: " + count);
+    public void onGetTrackListComplete(int status, TrackList trackList) {
+        switch (status) {
+            case GetTracks.GET_TRACKS_STATUS_OK:
+                Log.w(LOG_TAG, "get tracks list. OK");
 
+                Log.w(LOG_TAG, "save user ID to DB");
                 if(GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_UID ||
                         GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_GID ||
                         GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_LP) {
                     KMDUtils.writeCurrentLogin(AuthActivity.this, USER_ID, autoEnter.isChecked(), GET_TRACK_LIST_METHOD); //записываем в БД введенный логин
                 }
 
-                tracksCount = count;
-                currentOffset = 0;
-                generalTrackList = new TrackList();
-                Log.w(LOG_TAG, "GetTrackListByOwnerID, currentOffset: " + currentOffset);
-                new GetTrackListByOwnerID(AuthActivity.this, USER_ID, token, currentOffset);
+                showMainActivity(trackList);
                 break;
-            case GetTrackCount.GET_TRACKS_COUNT_STATUS_FAIL:
-                Log.w(LOG_TAG, "count tracks: fail");
+            case GetTracks.GET_TRACKS_STATUS_FAIL:
+                Log.w(LOG_TAG, "get tracks list. FAIL");
                 lock_unlock_GUI(false);
                 Toast.makeText(this, getString(R.string.problems_with_parsing_response), Toast.LENGTH_SHORT).show();
                 break;
-            case GetTrackCount.GET_TRACKS_COUNT_NO_INTERNET:
+            case GetTracks.GET_TRACKS_NO_INTERNET:
                 lock_unlock_GUI(false);
                 Toast.makeText(this, R.string.problems_with_internet, Toast.LENGTH_SHORT).show();
                 break;
         }
-
     }
 }

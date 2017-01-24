@@ -8,7 +8,6 @@ import android.util.Log;
 import java.io.File;
 import java.util.ArrayList;
 
-import ru.scorpio92.kmd.Interfaces.OperationsCallbacks;
 import ru.scorpio92.kmd.Services.DownloadService;
 import ru.scorpio92.kmd.Types.MainDB;
 import ru.scorpio92.kmd.Types.Track;
@@ -25,7 +24,7 @@ public class ScanForSavedTracks {
     private final String LOG_TAG = "ScanForSavedTracks";
 
     private Context context;
-    OperationsCallbacks callback;
+    private ScanForSavedTracksCallback callback;
     private TrackList trackList;
     private ArrayList<Track> tracks;
 
@@ -33,7 +32,7 @@ public class ScanForSavedTracks {
         tracks = new ArrayList<>();
         if(context != null && trackList != null) {
             this.context = context;
-            callback = (OperationsCallbacks) context;
+            callback = (ScanForSavedTracksCallback) context;
             this.trackList = trackList;
             new ScanTask().execute();
         }
@@ -83,5 +82,9 @@ public class ScanForSavedTracks {
             super.onPostExecute(result);
             callback.onScanTaskComplete(tracks);
         }
+    }
+
+    public interface ScanForSavedTracksCallback {
+        void onScanTaskComplete(ArrayList<Track> tracks);
     }
 }

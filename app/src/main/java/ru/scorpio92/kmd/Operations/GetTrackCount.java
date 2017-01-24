@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 
 import com.loopj.android.http.HttpGet;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;

@@ -10,7 +10,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import ru.scorpio92.kmd.Interfaces.OperationsCallbacks;
 import ru.scorpio92.kmd.Types.MainDB;
 import ru.scorpio92.kmd.Types.Track;
 import ru.scorpio92.kmd.Types.TrackList;
@@ -29,14 +28,28 @@ public class GetTrackListFromResponseOrDB {
     private int operation;
 
     private Context context;
-    private OperationsCallbacks callback;
+    private GetTrackListFromResponseOrDBCallback callback;
     private String response;
     private TrackList tracks;
 
     public GetTrackListFromResponseOrDB(int operation, Context context, String response) {
         this.operation = operation;
         this.context = context;
-        callback = (OperationsCallbacks) context;
+        callback = (GetTrackListFromResponseOrDBCallback) context;
+        this.response = response;
+        tracks = new TrackList();
+        try {
+            new Task().execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+            callback.onResponseParseComplete(tracks);
+        }
+    }
+
+    public GetTrackListFromResponseOrDB(int operation, Context context, GetTrackListFromResponseOrDBCallback callback, String response) {
+        this.operation = operation;
+        this.context = context;
+        this.callback = callback;
         this.response = response;
         tracks = new TrackList();
         try {
@@ -169,5 +182,10 @@ public class GetTrackListFromResponseOrDB {
         }
 
         return tracks;
+    }
+
+    public interface GetTrackListFromResponseOrDBCallback {
+        void onResponseParseComplete(TrackList tracks);
+        void onGetSavedTracksComplete(TrackList tracks);
     }
 }

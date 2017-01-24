@@ -15,7 +15,6 @@ import android.os.IBinder;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,7 +35,6 @@ import ru.scorpio92.kmd.Adapters.TracksListAdapter;
 import ru.scorpio92.kmd.Constants;
 import ru.scorpio92.kmd.Interfaces.ActivityWatcher;
 import ru.scorpio92.kmd.Interfaces.FooterFragmentWatcher;
-import ru.scorpio92.kmd.Interfaces.OperationsCallbacks;
 import ru.scorpio92.kmd.Operations.AddTrack;
 import ru.scorpio92.kmd.Operations.DeleteTrack;
 import ru.scorpio92.kmd.Operations.GetTrackListFromResponseOrDB;
@@ -52,7 +50,15 @@ import ru.scorpio92.kmd.Types.Track;
 import ru.scorpio92.kmd.Types.TrackList;
 import ru.scorpio92.kmd.Utils.CommonUtils;
 
-public class MainActivity extends Activity implements OperationsCallbacks, TracksListAdapter.TracksListAdapterCallbacks, FooterFragmentWatcher, SearchTracks.SearchTracksCallback, AddTrack.AddTrackCallback, DeleteTrack.DeleteTrackCallback {
+public class MainActivity extends Activity implements
+        TracksListAdapter.TracksListAdapterCallbacks,
+        FooterFragmentWatcher,
+        SearchTracks.SearchTracksCallback,
+        AddTrack.AddTrackCallback,
+        DeleteTrack.DeleteTrackCallback,
+        GetTrackListFromResponseOrDB.GetTrackListFromResponseOrDBCallback,
+        UpdateDownloadInfo.UpdateDownloadInfoCallback,
+        ScanForSavedTracks.ScanForSavedTracksCallback {
 
     final String LOG_TAG = "MainActivity";
 
@@ -141,7 +147,6 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                     fragmentManager.beginTransaction()
                             .show(fragmentManager.findFragmentById(R.id.footer))
                             .commit();
-                    //activityWatcher.onItemSelected(adapter.getMainTrackList(), adapter.getMultiTrackList().getAllTracks().get(i).ID);
                     activityWatcher.onItemSelected(adapter.getMultiTrackList(), adapter.getCurrentTrackList().getAllTracks().get(i).ID);
                 } catch (Exception e) {e.printStackTrace();}
 
@@ -319,20 +324,6 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
     }
 
 
-    /*protected boolean shouldAskPermissions() {
-        return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
-    }
-
-    @TargetApi(23)
-    protected void askPermissions() {
-        String[] permissions = {
-                "android.permission.READ_EXTERNAL_STORAGE",
-                "android.permission.WRITE_EXTERNAL_STORAGE"
-        };
-        int requestCode = 200;
-        requestPermissions(permissions, requestCode);
-    }*/
-
     void showTrackContextMenu(View v, final int i) {
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.inflate(R.menu.track_operations_menu);
@@ -377,8 +368,6 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
             @Override
             public boolean onMenuItemClick(MenuItem item) {
 
-                //ArrayList<Integer> selectedIDs;
-
                 switch (item.getItemId()) {
 
                     case R.id.select_all:
@@ -390,7 +379,6 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                         showSelectedTracksCount();
                         break;
                     case R.id.download_selected:
-                        //selectedIDs = new ArrayList<>(adapter.getSelectedTracksID());
                         new UpdateDownloadInfo(MainActivity.this, adapter.getCurrentTrackList().getTracksArrayByArrayID(selectedIDs), UpdateDownloadInfo.ACTION_INSERT);
                         adapter.getSelectedTracksID().clear();
                         adapter.notifyDataSetChanged2();
@@ -400,7 +388,6 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
                         new AddTrack(MainActivity.this, currentTrack, token);
                         break;
                     case R.id.delete_selected_from_cache:
-                        //selectedIDs = new ArrayList<>(adapter.getSelectedTracksID());
                         new UpdateDownloadInfo(MainActivity.this, adapter.getCurrentTrackList().getTracksArrayByArrayID(selectedIDs), UpdateDownloadInfo.ACTION_DELETE);
                         adapter.getCurrentTrackList().setWasDownloadedToFalse(selectedIDs);
                         adapter.getSelectedTracksID().clear();
@@ -720,20 +707,6 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
         initGUI();
 
         registerDownloadBroadcastReceiver();
-
-        /*if (shouldAskPermissions()) {
-            askPermissions();
-        }*/
-    }
-
-    @Override
-    public void onGetTokenComplete(int status, String token, String userID) {
-
-    }
-
-    @Override
-    public void onGetTrackListComplete(int status, String response) {
-
     }
 
     @Override
@@ -754,10 +727,6 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
         } else {
             Toast.makeText(getApplicationContext(), R.string.nothing_founded, Toast.LENGTH_SHORT).show();
         }
-    }
-
-    @Override
-    public void onWriteTrackListToDBComplete(int count) {
     }
 
     @Override
@@ -845,17 +814,6 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
 
         if(!isRelogin)
             initAndStartBindingWithAudioService(BIND_WITH_AUDIO_SERVICE_ON_STOP);
-
-        /*
-        try {
-            if(sConn != null) {
-                unbindService(sConn);
-            }
-        } catch (Exception e) {e.printStackTrace();}
-
-        sConn = null;
-        audioService = null;
-        */
     }
 
     @Override
@@ -922,9 +880,6 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
         switch (code) {
             case DeleteTrack.DELETE_TRACK_STATUS_OK:
                 Log.w(LOG_TAG, "track with ID " + track.ID + " was deleted from user tracks");
-                //audioService.getMultiTrackList().getTrackList(MultiTrackList.MAIN_TRACKLIST).removeTrack(track);
-                //adapter.getCurrentTrackList().removeTrack(track);
-                //adapter.notifyDataSetChanged2();
                 Toast.makeText(this, R.string.track_was_deleted, Toast.LENGTH_SHORT).show();
                 activityWatcher.onDeleteTrack(track);
                 break;
@@ -939,7 +894,6 @@ public class MainActivity extends Activity implements OperationsCallbacks, Track
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         showExitDialog();
     }
 }

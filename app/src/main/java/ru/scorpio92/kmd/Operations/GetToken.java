@@ -18,7 +18,6 @@ import cz.msebera.android.httpclient.params.BasicHttpParams;
 import cz.msebera.android.httpclient.params.HttpConnectionParams;
 import cz.msebera.android.httpclient.params.HttpParams;
 import ru.scorpio92.kmd.Constants;
-import ru.scorpio92.kmd.Interfaces.OperationsCallbacks;
 import ru.scorpio92.kmd.Utils.InternetUtils;
 
 /**
@@ -34,14 +33,14 @@ public class GetToken implements InternetUtils.InternetConnectionCallback {
 
     private final int TIMEOUT = 3000;
 
-    private OperationsCallbacks callback;
+    private GetTokenCallback callback;
 
     private String GENERATE_TOKEN_URL = "";
 
     private String RESPONSE;
 
 
-    public GetToken(OperationsCallbacks callback, String user, String password) {
+    public GetToken(GetTokenCallback callback, String user, String password) {
         this.callback = callback;
         GENERATE_TOKEN_URL = Constants.GENERATE_TOKEN_URL.concat("&username=" + user).concat("&password=" + password);
         RESPONSE = "";
@@ -138,5 +137,9 @@ public class GetToken implements InternetUtils.InternetConnectionCallback {
             user_id = jobj.getString("user_id").trim();
         } catch (Exception e) {e.printStackTrace();}
         return user_id;
+    }
+
+    public interface GetTokenCallback {
+        void onGetTokenComplete(int status, String token, String userID);
     }
 }

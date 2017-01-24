@@ -15,7 +15,6 @@ import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.params.BasicHttpParams;
 import cz.msebera.android.httpclient.params.HttpConnectionParams;
 import cz.msebera.android.httpclient.params.HttpParams;
-import ru.scorpio92.kmd.Interfaces.OperationsCallbacks;
 import ru.scorpio92.kmd.Utils.InternetUtils;
 
 /**
@@ -35,7 +34,7 @@ public class GetTrackListByOwnerID implements InternetUtils.InternetConnectionCa
     private final String versionAPI = "3.0";
     public static final int DEFAULT_TRACKS_COUNT = 500;
 
-    private OperationsCallbacks callback;
+    private GetTrackListByOwnerIDCallback callback;
     private String USER_ID, ACCESS_TOKEN;
     private String offset;
 
@@ -50,7 +49,7 @@ public class GetTrackListByOwnerID implements InternetUtils.InternetConnectionCa
         new InternetUtils().checkInternetConnectionAsync(GetTrackListByOwnerID.this);
     }*/
 
-    public GetTrackListByOwnerID(OperationsCallbacks callback, String USER_ID, String ACCESS_TOKEN, int offset) {
+    public GetTrackListByOwnerID(GetTrackListByOwnerIDCallback callback, String USER_ID, String ACCESS_TOKEN, int offset) {
         this.callback = callback;
         this.USER_ID = USER_ID;
         this.ACCESS_TOKEN = ACCESS_TOKEN;
@@ -109,5 +108,9 @@ public class GetTrackListByOwnerID implements InternetUtils.InternetConnectionCa
             Log.w("RESPONSE", RESPONSE);
             callback.onGetTrackListComplete(responseCode, RESPONSE);
         }
+    }
+
+    public interface GetTrackListByOwnerIDCallback {
+        void onGetTrackListComplete(int status, String response);
     }
 }

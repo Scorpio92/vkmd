@@ -18,7 +18,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import ru.scorpio92.kmd.Adapters.DownloadManagerListAdapter;
-import ru.scorpio92.kmd.Interfaces.OperationsCallbacks;
 import ru.scorpio92.kmd.Operations.GetTrackListFromResponseOrDB;
 import ru.scorpio92.kmd.Operations.UpdateDownloadInfo;
 import ru.scorpio92.kmd.R;
@@ -30,7 +29,10 @@ import ru.scorpio92.kmd.Types.TrackList;
  * Created by scorpio92 on 25.12.16.
  */
 
-public class DownloadManagerActivity extends Activity implements OperationsCallbacks, DownloadManagerListAdapter.DownloadManagerListAdapterCallbacks {
+public class DownloadManagerActivity extends Activity implements
+        DownloadManagerListAdapter.DownloadManagerListAdapterCallbacks,
+        GetTrackListFromResponseOrDB.GetTrackListFromResponseOrDBCallback,
+        UpdateDownloadInfo.UpdateDownloadInfoCallback {
 
     final String LOG_TAG = "DownloadManagerActivity";
 
@@ -225,17 +227,6 @@ public class DownloadManagerActivity extends Activity implements OperationsCallb
     }
 
 
-
-    @Override
-    public void onGetTokenComplete(int status, String token, String userID) {
-
-    }
-
-    @Override
-    public void onGetTrackListComplete(int status, String response) {
-
-    }
-
     @Override
     public void onResponseParseComplete(TrackList tracks) {
 
@@ -252,20 +243,10 @@ public class DownloadManagerActivity extends Activity implements OperationsCallb
     }
 
     @Override
-    public void onWriteTrackListToDBComplete(int count) {
-
-    }
-
-    @Override
     public void onUpdateDownloadInfoComplete(int count, int action) {
         Log.w(LOG_TAG, "deleted " + count + " tracks from download table, refresh adapter");
         sendBroadcast(new Intent(DownloadService.NOTIFICATION_ACTION_RESCAN));
         new GetTrackListFromResponseOrDB(GetTrackListFromResponseOrDB.IS_GET_TRACKLIST_FOR_DOWNLOAD_FROM_DB, DownloadManagerActivity.this, null);
-    }
-
-    @Override
-    public void onScanTaskComplete(ArrayList<Track> tracks) {
-
     }
 
     @Override
