@@ -191,7 +191,7 @@ public class AuthActivity extends Activity implements
                         case GET_TRACK_LIST_METHOD_BY_UID:
                         case GET_TRACK_LIST_METHOD_BY_GID:
                             token = Constants.ACCESS_TOKEN_PUBLIC;
-                            if(getByNumericID) {
+                            if(getByNumericID || GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_GID) {
                                 new GetTracks(AuthActivity.this, USER_ID, token);
                             } else {
                                 new GetUserIdByUserName(AuthActivity.this, USER_ID, token);
@@ -426,8 +426,14 @@ public class AuthActivity extends Activity implements
         switch (responseCode) {
             case GetUserIdByUserName.GET_USER_ID_STATUS_OK:
                 Log.w(LOG_TAG, "user id: " + id);
+
+                //записываем строковый логин
+                if(GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_UID)
+                    KMDUtils.writeCurrentLogin(AuthActivity.this, USER_ID, autoEnter.isChecked(), GET_TRACK_LIST_METHOD); //записываем в БД введенный логин
+
                 USER_ID = id;
 
+                //записываем числовой логин
                 if(GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_UID)
                     KMDUtils.writeCurrentLogin(AuthActivity.this, USER_ID, autoEnter.isChecked(), GET_TRACK_LIST_METHOD); //записываем в БД введенный логин
 
@@ -456,7 +462,7 @@ public class AuthActivity extends Activity implements
                 if(GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_UID ||
                         GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_GID ||
                         GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_LP) {
-                    KMDUtils.writeCurrentLogin(AuthActivity.this, USER_ID, autoEnter.isChecked(), GET_TRACK_LIST_METHOD); //записываем в БД введенный логин
+                    KMDUtils.writeCurrentLogin(AuthActivity.this, USER_ID.replace("-", ""), autoEnter.isChecked(), GET_TRACK_LIST_METHOD); //записываем в БД введенный логин
                 }
 
                 showMainActivity(trackList);
