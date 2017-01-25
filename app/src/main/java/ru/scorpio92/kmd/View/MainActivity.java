@@ -777,13 +777,16 @@ public class MainActivity extends Activity implements
 
     @Override
     public void onStartPlay(int trackID) {
+        Log.w(LOG_TAG, "onStartPlay");
         adapter.notifyDataSetChanged(trackID, TracksListAdapter.ON_PLAY_TRACK);
         if(CommonUtils.getBooleanSetting(MainActivity.this, Settings.SETTING_FOLLOW_ON_PLAY, false) && !isManualTrackSelect) {
             try {
                 tracksList.setSelection(adapter.getCurrentTrackList().getTrackPositionByID(trackID));
+                Log.w(LOG_TAG, "onStartPlay. setSelection");
             } catch (Exception e) {}
         }
         isManualTrackSelect = false;
+        Log.w(LOG_TAG, "onStartPlay. isManualTrackSelect = false");
     }
 
     @Override
