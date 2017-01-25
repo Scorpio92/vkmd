@@ -52,7 +52,7 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
 
     TextView currentTrackName, timePlay, timeDuration;
     SeekBar progressBar;
-    ImageButton repeatButton, previousButton, stopButton, pauseButton, playButton, nextButton, moreButton;
+    ImageButton repeatButton, previousButton, playPauseButton, nextButton, moreButton;
 
     FooterFragmentWatcher footerFragmentWatcher;
 
@@ -66,9 +66,7 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
         progressBar = (SeekBar) view.findViewById(R.id.progressBar);
         repeatButton = (ImageButton) view.findViewById(R.id.repeatButton);
         previousButton = (ImageButton) view.findViewById(R.id.previousButton);
-        stopButton = (ImageButton) view.findViewById(R.id.stopButton);
-        pauseButton = (ImageButton) view.findViewById(R.id.pauseButton);
-        playButton = (ImageButton) view.findViewById(R.id.playButton);
+        playPauseButton = (ImageButton) view.findViewById(R.id.playPauseButton);
         nextButton = (ImageButton) view.findViewById(R.id.nextButton);
         moreButton = (ImageButton) view.findViewById(R.id.moreButton);
 
@@ -108,34 +106,25 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
             }
         });
 
-        stopButton.setOnClickListener(new View.OnClickListener() {
+        playPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(audioService.getMediaPlayer() != null) {
+                    audioService.pauseOrPlayTrack();
+                }
+            }
+        });
+
+        playPauseButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
                 try {
                     audioService.stopService(getActivity().getApplicationContext());
                     audioService = null;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
-        });
-        pauseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(audioService.getMediaPlayer() != null) {
-                    if(audioService.getMediaPlayer().isPlaying()) {
-                        audioService.pauseOrPlayTrack();
-                    }
-                }
-            }
-        });
-
-        playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(audioService.getMediaPlayer() != null) {
-                    audioService.pauseOrPlayTrack();
-                }
+                return true;
             }
         });
 
@@ -172,12 +161,10 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
                         timePlay.setText(getHumanTimeFromMilliseconds(result));
                         break;
                     case AudioService.ACTION_PAUSE:
-                        pauseButton.setVisibility(View.GONE);
-                        playButton.setVisibility(View.VISIBLE);
+                        playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.play));
                         break;
                     case AudioService.ACTION_PLAY:
-                        playButton.setVisibility(View.GONE);
-                        pauseButton.setVisibility(View.VISIBLE);
+                        playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.pause));
                         break;
                     case AudioService.ACTION_STOP:
                         footerFragmentWatcher.onStopTrack();
@@ -190,8 +177,7 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
                         Toast.makeText(getActivity().getApplicationContext(), R.string.play_error, Toast.LENGTH_SHORT).show();
                         break;
                     case AudioService.ACTION_PLAY_STARTED:
-                        playButton.setVisibility(View.GONE);
-                        pauseButton.setVisibility(View.VISIBLE);
+                        playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.pause));
                         footerFragmentWatcher.onStartPlay(audioService.getCurrentTrackID());
                         break;
                     case AudioService.ACTION_TRACK_DELETED:
@@ -311,19 +297,16 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
             timePlay.setText(getHumanTimeFromMilliseconds(currentProgress));
             if (audioService.getMediaPlayer().isPlaying()) {
                 Log.w(LOG_TAG, "setGuiForPlay, play now");
-                playButton.setVisibility(View.GONE);
-                pauseButton.setVisibility(View.VISIBLE);
+                playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.pause));
             } else {
                 Log.w(LOG_TAG, "setGuiForPlay, not play now");
-                playButton.setVisibility(View.VISIBLE);
-                pauseButton.setVisibility(View.GONE);
+                playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.play));
             }
         } else {
             Log.w(LOG_TAG, "setGuiForPlay, not play now (first run)");
             progressBar.setProgress(0);
             timePlay.setText(getHumanTimeFromMilliseconds(0));
-            playButton.setVisibility(View.VISIBLE);
-            pauseButton.setVisibility(View.GONE);
+            playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.play));
         }
     }
 
@@ -435,40 +418,4 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
             footerFragmentWatcher.onDeleteTrackFromAdapter(true, track);
         }
     }
-
-    /*
-    @Override
-    public void OnAddTrack(int code, Track track) {
-        switch (code) {
-            case AddTrack.ADD_TRACK_STATUS_OK:
-                Log.w(LOG_TAG, "track with ID " + track.ID + " was added to user tracks");
-                audioService.getMultiTrackList().getTrackList(MultiTrackList.MAIN_TRACKLIST).addTrackToTop(track);
-                Toast.makeText(getActivity(), R.string.track_was_added, Toast.LENGTH_SHORT).show();
-                break;
-            case AddTrack.ADD_TRACK_STATUS_FAIL:
-                Toast.makeText(getActivity(), R.string.problems_with_parsing_response, Toast.LENGTH_SHORT).show();
-                break;
-            case AddTrack.ADD_TRACK_NO_INTERNET:
-                Toast.makeText(getActivity(), R.string.problems_with_internet, Toast.LENGTH_SHORT).show();
-                break;
-        }
-    }
-
-    @Override
-    public void OnDeleteTrack(int code, Track track) {
-        switch (code) {
-            case DeleteTrack.DELETE_TRACK_STATUS_OK:
-                Log.w(LOG_TAG, "track with ID " + track.ID + " was deleted from user tracks");
-                //audioService.getMultiTrackList().getTrackList(MultiTrackList.MAIN_TRACKLIST).removeTrack(track);
-                Toast.makeText(getActivity(), R.string.track_was_deleted, Toast.LENGTH_SHORT).show();
-                break;
-            case DeleteTrack.DELETE_TRACK_STATUS_FAIL:
-                Toast.makeText(getActivity(), R.string.problems_with_parsing_response, Toast.LENGTH_SHORT).show();
-                break;
-            case DeleteTrack.DELETE_TRACK_NO_INTERNET:
-                Toast.makeText(getActivity(), R.string.problems_with_internet, Toast.LENGTH_SHORT).show();
-                break;
-        }
-    }
-    */
 }

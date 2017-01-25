@@ -96,27 +96,10 @@
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/stopButton"
-                android:src="@drawable/stop"
-                android:background="@android:color/transparent"
-                android:layout_weight="1"/>
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/pauseButton"
-                android:src="@drawable/pause"
-                android:background="@android:color/transparent"
-                android:layout_weight="1"/>
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/playButton"
+                android:id="@+id/playPauseButton"
                 android:src="@drawable/play"
                 android:background="@android:color/transparent"
-                android:visibility="gone"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <ImageButton
                 android:layout_width="wrap_content"
