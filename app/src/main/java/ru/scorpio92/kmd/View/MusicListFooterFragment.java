@@ -50,7 +50,7 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
     BroadcastReceiver br;
     ServiceConnection sConn;
 
-    TextView currentTrackName, timePlay, timeDuration;
+    TextView currentTrackArtist, currentTrackName, timePlay, timeDuration;
     SeekBar progressBar;
     ImageButton repeatButton, previousButton, playPauseButton, nextButton, moreButton;
 
@@ -60,6 +60,7 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
 
 
     void initGUI(View view) {
+        currentTrackArtist = (TextView) view.findViewById(R.id.currentTrackArtist);
         currentTrackName = (TextView) view.findViewById(R.id.currentTrackName);
         timePlay = (TextView) view.findViewById(R.id.timePlay);
         timeDuration = (TextView) view.findViewById(R.id.timeDuration);
@@ -297,7 +298,8 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
     void setGuiForPlay() {
         Track track = audioService.getCurrentTrack();
         footerFragmentWatcher.onPrepareStart(audioService.getCurrentTrackID());
-        currentTrackName.setText(track.ARTIST + " - " + track.TITLE);
+        currentTrackArtist.setText(track.ARTIST);
+        currentTrackName.setText(track.TITLE);
         progressBar.setMax(track.DURATION * 1000);
         timeDuration.setText(getHumanTimeFromMilliseconds(track.DURATION * 1000));
         if(audioService.getMediaPlayer() != null) {

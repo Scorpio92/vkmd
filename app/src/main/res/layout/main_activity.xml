@@ -7,14 +7,15 @@
     <include layout="@layout/music_list_header"/>
 
     <View
-        android:layout_height="1dp"
-        android:background="@android:color/black" />
+        android:layout_height="2dp"
+        android:background="@color/colorPrimaryDark" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:background="@android:color/white">
 
         <ListView
             android:id="@+id/trackList"
@@ -27,7 +28,7 @@
 
     <View
         android:layout_height="1dp"
-        android:background="@android:color/black" />
+        android:background="@color/colorPrimaryDark" />
 
     <fragment
         class="ru.scorpio92.kmd.View.MusicListFooterFragment"
@@ -37,19 +38,22 @@
 
     <View
         android:layout_height="1dp"
-        android:background="@android:color/black" />
+        android:background="@color/colorPrimaryDark" />
 
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/selectedInfo"
         android:textSize="14sp"
         android:paddingLeft="10dp"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        android:textColor="@android:color/white"
+        android:background="@color/colorPrimary"
+        android:gravity="center" />
 
     <View
         android:layout_height="1dp"
-        android:background="@android:color/black" />
+        android:background="@color/colorPrimaryDark" />
 
 </TableLayout>

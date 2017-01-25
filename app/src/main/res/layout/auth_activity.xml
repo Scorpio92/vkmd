@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -28,7 +29,8 @@
             android:linksClickable="false"
             android:background="@android:color/transparent"
             android:paddingStart="8dp"
-            android:paddingLeft="8dp" />
+            android:paddingLeft="8dp"
+            android:textColor="?attr/colorAccent" />
 
     </TableRow>
 
@@ -69,7 +71,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:textColorHint="@color/colorPrimaryDark"
+            android:textColor="@color/colorAccent" />
 
     </TableRow>
 
@@ -85,7 +89,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center" />
+            android:gravity="center"
+            android:textColorHint="@color/colorPrimaryDark"
+            android:textColor="@color/colorAccent" />
 
     </TableRow>
 
@@ -101,7 +107,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:elevation="1dp"
-            android:text="@string/go" />
+            android:text="@string/go"
+            android:background="@color/colorPrimary"
+            android:textColor="@android:color/white" />
 
     </TableRow>
 
@@ -117,7 +125,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/auto_enter"
-            android:checked="false"/>
+            android:checked="false"
+            android:textColor="@color/fieldColor1" />
 
     </TableRow>
 
@@ -134,7 +143,8 @@
             style="@style/Widget.AppCompat.ProgressBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="invisible" />
+            android:visibility="invisible"
+            android:progressDrawable="@color/colorAccent" />
 
     </TableRow>
 

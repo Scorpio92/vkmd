@@ -1,7 +1,8 @@
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:focusableInTouchMode="true" >
+    android:focusableInTouchMode="true"
+    android:background="@color/colorPrimary">
 
     <TableRow
         android:layout_width="match_parent"
