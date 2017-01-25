@@ -87,4 +87,6 @@
     <string name="circuralPlaying_mode_enabled">Режим кругового воспроизведения включен</string>
     <string name="circuralPlaying_mode_disabled">Режим кругового воспроизведения выключен</string>
     <string name="exit_dialog_title">Вы хотите выйти?</string>
+    <string name="settings_follow_on_play">Режим следования</string>
+    <string name="settings_follow_on_play_summary">Текущий проигрываемый трек будет отображаться вверху списка</string>
 </resources>

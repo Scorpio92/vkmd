@@ -86,6 +86,7 @@ public class MainActivity extends Activity implements
 
     boolean isRelogin = false;
     boolean isExit = false;
+    boolean isManualTrackSelect = false;
 
 
     void initGUI() {
@@ -144,11 +145,15 @@ public class MainActivity extends Activity implements
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 try {
+                    isManualTrackSelect = true;
                     fragmentManager.beginTransaction()
                             .show(fragmentManager.findFragmentById(R.id.footer))
                             .commit();
                     activityWatcher.onItemSelected(adapter.getMultiTrackList(), adapter.getCurrentTrackList().getAllTracks().get(i).ID);
-                } catch (Exception e) {e.printStackTrace();}
+                } catch (Exception e) {
+                    //isManualTrackSelect = false;
+                    e.printStackTrace();
+                }
 
             }
         });
@@ -771,13 +776,19 @@ public class MainActivity extends Activity implements
     }
 
     @Override
-    public void onStartPlay(int position) {
-        adapter.notifyDataSetChanged(position, TracksListAdapter.ON_PLAY_TRACK);
+    public void onStartPlay(int trackID) {
+        adapter.notifyDataSetChanged(trackID, TracksListAdapter.ON_PLAY_TRACK);
+        if(CommonUtils.getBooleanSetting(MainActivity.this, Settings.SETTING_FOLLOW_ON_PLAY, false) && !isManualTrackSelect) {
+            try {
+                tracksList.setSelection(adapter.getCurrentTrackList().getTrackPositionByID(trackID));
+            } catch (Exception e) {}
+        }
+        isManualTrackSelect = false;
     }
 
     @Override
-    public void onPrepareStart(int position) {
-        adapter.notifyDataSetChanged(position, TracksListAdapter.ON_PREPARE_TRACK);
+    public void onPrepareStart(int trackID) {
+        adapter.notifyDataSetChanged(trackID, TracksListAdapter.ON_PREPARE_TRACK);
     }
 
     @Override

@@ -14,6 +14,7 @@ public class Settings extends PreferenceActivity {
     public static final String SETTING_KMD_FOLDER_KEY = "settings_kmd_dir";
     public static final String SETTING_AUTO_OPEN_SAVED_KEY = "settings_auto_open_saved";
     public static final String SETTING_AUTO_SCAN_SAVED_KEY = "settings_auto_scan_saved";
+    public static final String SETTING_FOLLOW_ON_PLAY = "settings_follow_on_play";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)

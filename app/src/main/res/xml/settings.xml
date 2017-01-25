@@ -22,4 +22,11 @@
         android:defaultValue="kmd">
     </EditTextPreference>
 
+    <CheckBoxPreference
+        android:title="@string/settings_follow_on_play"
+        android:summary="@string/settings_follow_on_play_summary"
+        android:key="settings_follow_on_play"
+        android:defaultValue="false">
+    </CheckBoxPreference>
+
 </PreferenceScreen>
