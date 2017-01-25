@@ -91,10 +91,19 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
         repeatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(audioService.getMediaPlayer().isPlaying())
+                    audioService.seekTo(0);
+            }
+        });
+
+        repeatButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
                 if(audioService.setLoop())
                     Toast.makeText(getActivity(), R.string.loop_is_enabled, Toast.LENGTH_SHORT).show();
                 else
                     Toast.makeText(getActivity(), R.string.loop_is_disabled, Toast.LENGTH_SHORT).show();
+                return true;
             }
         });
 
