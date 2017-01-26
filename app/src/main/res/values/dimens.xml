@@ -9,9 +9,24 @@
     <dimen name="button_radius">24sp</dimen>
 
     <dimen name="title_text_size">18sp</dimen>
+    <dimen name="hint_text_size">16sp</dimen>
     <dimen name="main_text_size">14sp</dimen>
+    <dimen name="track_list_text_size">14sp</dimen>
+    <dimen name="secondary_text_size">12sp</dimen>
+    <dimen name="small_text_size">10sp</dimen>
 
     <dimen name="paddingTextViewAndOther">5dp</dimen>
-    <dimen name="paddingOtherAndOther">20dp</dimen>
+    <dimen name="paddingOtherAndOther">14dp</dimen>
+
+    <dimen name="big_progressbar_width_height">96dip</dimen>
+    <dimen name="small_progressbar_width_height">36dip</dimen>
+
+    <dimen name="big_track_list_padding">8dp</dimen>
+    <dimen name="small_track_list_padding">5dp</dimen>
+
+    <dimen name="standard_obj_size">36dp</dimen>
+
+    <dimen name="footer_artist_text_size">16sp</dimen>
+    <dimen name="footer_track_name_text_size">12sp</dimen>
 
 </resources>

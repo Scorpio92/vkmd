@@ -6,8 +6,8 @@
     android:orientation="vertical"
     android:focusableInTouchMode="true"
     android:gravity="center_vertical|center_horizontal"
-    android:paddingLeft="50dp"
-    android:paddingRight="50dp">
+    android:paddingLeft="@dimen/global_layout_padding_left_right"
+    android:paddingRight="@dimen/global_layout_padding_left_right">
 
 
     <TableRow
@@ -30,7 +30,8 @@
             android:background="@android:color/transparent"
             android:paddingStart="8dp"
             android:paddingLeft="8dp"
-            android:textColor="?attr/colorAccent" />
+            android:textColor="?attr/colorAccent"
+            android:textSize="@dimen/title_text_size" />
 
     </TableRow>
 
@@ -72,8 +73,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:textColorHint="@color/colorPrimaryDark"
-            android:textColor="@color/colorAccent" />
+            android:textColorHint="@color/fieldColor1"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/hint_text_size"/>
 
     </TableRow>
 
@@ -90,8 +92,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:textColorHint="@color/colorPrimaryDark"
-            android:textColor="@color/colorAccent" />
+            android:textColorHint="@color/fieldColor1"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/hint_text_size"/>
 
     </TableRow>
 
@@ -106,10 +109,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:elevation="1dp"
             android:text="@string/go"
-            android:background="@color/colorPrimary"
-            android:textColor="@android:color/white" />
+            android:textSize="@dimen/title_text_size"/>
 
     </TableRow>
 
@@ -126,7 +127,8 @@
             android:layout_weight="1"
             android:text="@string/auto_enter"
             android:checked="false"
-            android:textColor="@color/fieldColor1" />
+            android:textColor="@color/fieldColor1"
+            android:textSize="@dimen/secondary_text_size"/>
 
     </TableRow>
 
@@ -140,11 +142,9 @@
 
         <ProgressBar
             android:id="@+id/auth_progress"
-            style="@style/Widget.AppCompat.ProgressBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
-            android:progressDrawable="@color/colorAccent" />
+            android:visibility="invisible" />
 
     </TableRow>
 

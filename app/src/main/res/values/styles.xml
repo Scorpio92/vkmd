@@ -1,15 +1,11 @@
 <resources>
 
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <!--<item name="android:buttonStyle">@style/ButtonStyle</item>
-        <item name="android:textViewStyle">@style/TextViewStyle</item>
-        <item name="android:editTextStyle">@style/EditTextStyle</item>
-        <item name="android:spinnerStyle">@style/SpinnerStyle</item>-->
+        <item name="android:buttonStyle">@style/ButtonStyle</item>
+       <item name="android:progressBarStyle">@style/ProgressBarStyle</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -25,6 +21,7 @@
         <item name="android:minHeight">@dimen/min_button_height</item>
         <item name="android:textSize">@dimen/min_button_text_size</item>
         <item name="android:background">@drawable/custom_button_style</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <style name="TextViewStyle" parent="android:Widget.TextView">
@@ -38,6 +35,22 @@
 
     <style name="SpinnerStyle" parent="android:Widget.Spinner">
         <item name="android:background">@drawable/spinner_style</item>
+    </style>
+
+    <style name="ProgressBarStyle" parent="Widget.AppCompat.ProgressBar">
+        <item name="android:indeterminateDrawable">@drawable/circle_progress</item>
+        <item name="android:minWidth">@dimen/big_progressbar_width_height</item>
+        <item name="android:maxWidth">@dimen/big_progressbar_width_height</item>
+        <item name="android:minHeight">@dimen/big_progressbar_width_height</item>
+        <item name="android:maxHeight">@dimen/big_progressbar_width_height</item>
+    </style>
+
+    <style name="ProgressBarStyleForTrackList" parent="Widget.AppCompat.ProgressBar">
+        <item name="android:indeterminateDrawable">@drawable/circle_progress</item>
+        <item name="android:minWidth">@dimen/small_progressbar_width_height</item>
+        <item name="android:maxWidth">@dimen/small_progressbar_width_height</item>
+        <item name="android:minHeight">@dimen/small_progressbar_width_height</item>
+        <item name="android:maxHeight">@dimen/small_progressbar_width_height</item>
     </style>
 
 </resources>

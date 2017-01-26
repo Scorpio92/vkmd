@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="global_layout_padding_left_right">50dp</dimen>
+    <dimen name="title_text_size">42sp</dimen>
+</resources>
