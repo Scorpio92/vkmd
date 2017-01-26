@@ -413,7 +413,7 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
     public void onFooterRestore() {
         Log.w(LOG_TAG, "onFooterRestore");
         //создаем BroadcastReceiver для сервиса AudioService
-        registerBroadcastReceiver();
+        //registerBroadcastReceiver();
 
         //создаем биндинг к сервису и запускаем его автоматически после инициализации соединения
         initAndStartBindingWithAudioService(null, false);
