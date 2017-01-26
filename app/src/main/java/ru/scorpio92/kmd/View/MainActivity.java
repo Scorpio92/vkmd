@@ -213,10 +213,10 @@ public class MainActivity extends Activity implements
                         }
                         break;
                     case BIND_WITH_AUDIO_SERVICE_ON_MANUAL_RELOGIN:
-                        if(audioService.isStarted()) {
+                        //if(audioService.isStarted()) {
                             Log.w(LOG_TAG, "manual relogin. stop service");
                             audioService.stopService(MainActivity.this);
-                        }
+                        //}
                         relogin(false);
                         break;
                 }
@@ -498,12 +498,12 @@ public class MainActivity extends Activity implements
 
             MainActivity.this.finish();
 
-            if(!isExit) {
+            /*if(!isExit) {
                 Intent intent = new Intent(MainActivity.this, AuthActivity.class);
                 intent.putExtra("autoCheckMediaLibrary", false);
                 intent.putExtra("isRelogin", true);
                 startActivity(intent);
-            }
+            }*/
         }
     }
 
@@ -779,14 +779,18 @@ public class MainActivity extends Activity implements
     public void onStartPlay(int trackID) {
         Log.w(LOG_TAG, "onStartPlay");
         adapter.notifyDataSetChanged(trackID, TracksListAdapter.ON_PLAY_TRACK);
-        if(CommonUtils.getBooleanSetting(MainActivity.this, Settings.SETTING_FOLLOW_ON_PLAY, false) && !isManualTrackSelect) {
+        boolean b = CommonUtils.getBooleanSetting(MainActivity.this, Settings.SETTING_FOLLOW_ON_PLAY, false);
+        Log.w(LOG_TAG, "b: " + b + ", isManualTrackSelect: " + isManualTrackSelect);
+        if(b && !isManualTrackSelect) {
             try {
                 tracksList.setSelection(adapter.getCurrentTrackList().getTrackPositionByID(trackID));
                 Log.w(LOG_TAG, "onStartPlay. setSelection");
             } catch (Exception e) {}
         }
         isManualTrackSelect = false;
-        Log.w(LOG_TAG, "onStartPlay. isManualTrackSelect = false");
+        //Log.w(LOG_TAG, "onStartPlay. isManualTrackSelect = false");
+        Log.w(LOG_TAG, "b: " + b + ", isManualTrackSelect: " + isManualTrackSelect);
+
     }
 
     @Override
@@ -820,9 +824,11 @@ public class MainActivity extends Activity implements
         super.onResume();
         Log.w(LOG_TAG, "onResume");
 
-        showFooterFragment(false);
+        if(!isRelogin) {
+            showFooterFragment(false);
 
-        initAndStartBindingWithAudioService(BIND_WITH_AUDIO_SERVICE_ON_RESUME);
+            initAndStartBindingWithAudioService(BIND_WITH_AUDIO_SERVICE_ON_RESUME);
+        }
     }
 
     @Override
@@ -836,14 +842,20 @@ public class MainActivity extends Activity implements
 
     @Override
     protected void onDestroy() {
-
         super.onDestroy();
+        Log.w(LOG_TAG, "onDestroy");
 
         try {
             if(br != null)
                 unregisterReceiver(br);
         } catch (Exception e) {e.printStackTrace();}
 
+        if(!isExit && isRelogin) {
+            Intent intent = new Intent(MainActivity.this, AuthActivity.class);
+            intent.putExtra("autoCheckMediaLibrary", false);
+            intent.putExtra("isRelogin", true);
+            startActivity(intent);
+        }
     }
 
     @Override
