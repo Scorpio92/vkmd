@@ -72,8 +72,7 @@
                 android:layout_weight="1"
                 android:gravity="right"
                 android:paddingRight="10dp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textStyle="normal|bold" />
+                android:textColor="@color/colorPrimaryDark" />
 
         </TableRow>
 
