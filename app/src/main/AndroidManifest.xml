@@ -25,11 +25,13 @@
 
         <activity
             android:name="ru.scorpio92.kmd.View.MainActivity"
+            android:launchMode="singleTask"
             android:label="@string/app_name" >
         </activity>
 
         <activity
             android:name="ru.scorpio92.kmd.View.DownloadManagerActivity"
+            android:launchMode="singleTask"
             android:label="@string/app_name" >
         </activity>
 

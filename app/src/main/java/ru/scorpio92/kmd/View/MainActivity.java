@@ -497,13 +497,6 @@ public class MainActivity extends Activity implements
             }
 
             MainActivity.this.finish();
-
-            /*if(!isExit) {
-                Intent intent = new Intent(MainActivity.this, AuthActivity.class);
-                intent.putExtra("autoCheckMediaLibrary", false);
-                intent.putExtra("isRelogin", true);
-                startActivity(intent);
-            }*/
         }
     }
 
