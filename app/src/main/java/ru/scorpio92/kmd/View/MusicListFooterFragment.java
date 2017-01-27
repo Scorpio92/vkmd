@@ -296,28 +296,34 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
     }
 
     void setGuiForPlay() {
-        Track track = audioService.getCurrentTrack();
-        footerFragmentWatcher.onPrepareStart(audioService.getCurrentTrackID());
-        currentTrackArtist.setText(track.ARTIST);
-        currentTrackName.setText(track.TITLE);
-        progressBar.setMax(track.DURATION * 1000);
-        timeDuration.setText(getHumanTimeFromMilliseconds(track.DURATION * 1000));
-        if(audioService.getMediaPlayer() != null) {
-            int currentProgress = audioService.getMediaPlayer().getCurrentPosition();
-            progressBar.setProgress(currentProgress);
-            timePlay.setText(getHumanTimeFromMilliseconds(currentProgress));
-            if (audioService.getMediaPlayer().isPlaying()) {
-                Log.w(LOG_TAG, "setGuiForPlay, play now");
-                playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.pause));
+        try {
+            Track track = audioService.getCurrentTrack();
+            footerFragmentWatcher.onPrepareStart(audioService.getCurrentTrackID());
+            currentTrackArtist.setText(track.ARTIST);
+            currentTrackName.setText(track.TITLE);
+            progressBar.setMax(track.DURATION * 1000);
+            timeDuration.setText(getHumanTimeFromMilliseconds(track.DURATION * 1000));
+            if (audioService.getMediaPlayer() != null) {
+                int currentProgress = audioService.getMediaPlayer().getCurrentPosition();
+                progressBar.setProgress(currentProgress);
+                timePlay.setText(getHumanTimeFromMilliseconds(currentProgress));
+                if (audioService.getMediaPlayer().isPlaying()) {
+                    Log.w(LOG_TAG, "setGuiForPlay, play now");
+                    playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.pause));
+                } else {
+                    Log.w(LOG_TAG, "setGuiForPlay, not play now");
+                    playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.play));
+                }
             } else {
-                Log.w(LOG_TAG, "setGuiForPlay, not play now");
+                Log.w(LOG_TAG, "setGuiForPlay, not play now (first run)");
+                progressBar.setProgress(0);
+                timePlay.setText(getHumanTimeFromMilliseconds(0));
                 playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.play));
             }
-        } else {
-            Log.w(LOG_TAG, "setGuiForPlay, not play now (first run)");
-            progressBar.setProgress(0);
-            timePlay.setText(getHumanTimeFromMilliseconds(0));
-            playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.play));
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getActivity(), R.string.audio_service_error, Toast.LENGTH_SHORT).show();
+            audioService.stopService(getActivity());
         }
     }
 
