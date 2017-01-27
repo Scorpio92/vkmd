@@ -159,13 +159,17 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
                 mediaPlayer.release();
         } catch (Exception e) {e.printStackTrace();}
 
-        if (headsetPlugReceiver != null) {
-            unregisterReceiver(headsetPlugReceiver);
-        }
+        try {
+            if (headsetPlugReceiver != null) {
+                unregisterReceiver(headsetPlugReceiver);
+            }
+        } catch (Exception e) {e.printStackTrace();}
 
-        if (downloadBr != null) {
-            unregisterReceiver(downloadBr);
-        }
+        try {
+            if (downloadBr != null) {
+                unregisterReceiver(downloadBr);
+            }
+        } catch (Exception e) {e.printStackTrace();}
 
         try {
             if(audioManager!=null)
