@@ -3,6 +3,7 @@ package ru.scorpio92.kmd.View;
 
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -146,9 +147,10 @@ public class MainActivity extends Activity implements
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 try {
                     isManualTrackSelect = true;
-                    fragmentManager.beginTransaction()
+                    /*fragmentManager.beginTransaction()
                             .show(fragmentManager.findFragmentById(R.id.footer))
-                            .commit();
+                            .commit();*/
+                    showFooterFragment(true);
                     activityWatcher.onItemSelected(adapter.getMultiTrackList(), adapter.getCurrentTrackList().getAllTracks().get(i).ID);
                 } catch (Exception e) {
                     //isManualTrackSelect = false;
@@ -670,15 +672,18 @@ public class MainActivity extends Activity implements
     }
 
     void showFooterFragment(boolean showFooter) {
+        Log.w(LOG_TAG, "showFooter: " + showFooter);
         try {
             if (showFooter) {
                 fragmentManager.beginTransaction()
                         .show(fragmentManager.findFragmentById(R.id.footer))
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .commit();
                 activityWatcher.onFooterRestore();
             } else {
                 fragmentManager.beginTransaction()
                         .hide(fragmentManager.findFragmentById(R.id.footer))
+                        //.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
                         .commit();
             }
         } catch (Exception e) {e.printStackTrace();}

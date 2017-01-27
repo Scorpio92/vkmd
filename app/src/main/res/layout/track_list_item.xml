@@ -31,7 +31,9 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        android:paddingStart="@dimen/small_track_list_padding"
+        android:paddingLeft="@dimen/small_track_list_padding">
 
 
         <TableRow
@@ -71,7 +73,7 @@
                 android:textSize="@dimen/small_text_size"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:paddingRight="10dp"
+                android:paddingRight="@dimen/big_track_list_padding"
                 android:textColor="@color/colorPrimaryDark" />
 
         </TableRow>

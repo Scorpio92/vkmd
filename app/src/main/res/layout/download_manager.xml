@@ -14,7 +14,7 @@
         <ImageButton
             android:id="@+id/tracksSelector"
             android:layout_width="0dp"
-            android:layout_height="36dp"
+            android:layout_height="@dimen/standard_obj_size"
             android:src="@drawable/add_check"
             android:background="@android:color/transparent"
             android:layout_weight="1" />
@@ -22,7 +22,7 @@
         <ImageButton
             android:id="@+id/stop_download"
             android:layout_width="0dp"
-            android:layout_height="36dp"
+            android:layout_height="@dimen/standard_obj_size"
             android:src="@drawable/stop"
             android:background="@android:color/transparent"
             android:layout_weight="1" />
@@ -30,7 +30,7 @@
         <ImageButton
             android:id="@+id/start_pause_download"
             android:layout_width="0dp"
-            android:layout_height="36dp"
+            android:layout_height="@dimen/standard_obj_size"
             android:src="@drawable/play"
             android:background="@android:color/transparent"
             android:layout_weight="1" />
@@ -38,7 +38,7 @@
         <ImageButton
             android:id="@+id/delete_from_download"
             android:layout_width="0dp"
-            android:layout_height="36dp"
+            android:layout_height="@dimen/standard_obj_size"
             android:src="@drawable/delete_forever"
             android:background="@android:color/transparent"
             android:layout_weight="1" />
@@ -55,24 +55,25 @@
         android:id="@+id/currentDownloadContainer"
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/generalDownloadProgressText"
-            android:textSize="14sp"
+            android:textSize="@dimen/main_text_size"
             android:gravity="center_horizontal"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textStyle="normal|bold" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/currentDownloadTrack"
-            android:textSize="14sp"
+            android:textSize="@dimen/track_list_text_size"
             android:gravity="center_horizontal"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textStyle="normal|bold" />
 
         <TableRow
@@ -80,7 +81,6 @@
             android:layout_height="wrap_content">
 
             <android.support.v7.widget.AppCompatSeekBar
-                style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/downloadProgress"
@@ -92,11 +92,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/currentDownloadTrackPercent"
-                android:textSize="14sp"
+                android:textSize="@dimen/main_text_size"
                 android:gravity="center_horizontal"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:textColor="@color/colorAccent"
+                android:paddingLeft="@dimen/big_track_list_padding"
+                android:paddingRight="@dimen/big_track_list_padding"
+                android:textColor="@android:color/white"
                 android:textStyle="normal|bold" />
 
         </TableRow>
@@ -131,8 +131,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/track_for_download_count"
-        android:textSize="14sp"
-        android:paddingLeft="10dp"
+        android:textSize="@dimen/main_text_size"
+        android:paddingLeft="@dimen/big_track_list_padding"
         android:background="@color/colorPrimary"
         android:textColor="@android:color/white"
         android:gravity="center" />

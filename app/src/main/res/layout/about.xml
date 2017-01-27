@@ -14,14 +14,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:padding="5dp" />
+            android:padding="@dimen/paddingOtherAndOther" />
 
         <TextView
             android:text="@string/about_short_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:padding="5dp" />
+            android:padding="@dimen/paddingOtherAndOther" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -29,22 +29,22 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:text="@string/author_site"
             android:autoLink="web"
-            android:paddingLeft="5dp"
-            android:paddingStart="5dp"/>
+            android:paddingLeft="@dimen/paddingOtherAndOther"
+            android:paddingStart="@dimen/paddingOtherAndOther"/>
 
         <TextView
             android:text="@string/about_general_futures"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:padding="5dp" />
+            android:padding="@dimen/paddingOtherAndOther" />
 
         <TextView
             android:text="@string/about_full_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:padding="5dp" />
+            android:padding="@dimen/paddingOtherAndOther" />
 
         <TextView
             android:text="@string/about_current_version"
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/about_current_version"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:padding="5dp"/>
+            android:padding="@dimen/paddingOtherAndOther"/>
 
     </LinearLayout>
 

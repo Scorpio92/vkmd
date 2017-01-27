@@ -10,41 +10,41 @@
 
         <ImageButton
             android:id="@+id/relogin"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@drawable/relogin"
+            android:layout_width="@dimen/standard_obj_size"
+            android:layout_height="@dimen/standard_obj_size"
+            android:src="@drawable/relogin_w"
             android:background="@android:color/transparent"
             android:layout_weight="1"/>
 
         <ImageButton
             android:id="@+id/search"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@drawable/search"
+            android:layout_width="@dimen/standard_obj_size"
+            android:layout_height="@dimen/standard_obj_size"
+            android:src="@drawable/search_w"
             android:background="@android:color/transparent"
             android:layout_weight="1"/>
 
         <ImageButton
             android:id="@+id/musicVisibility"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@drawable/visibility"
+            android:layout_width="@dimen/standard_obj_size"
+            android:layout_height="@dimen/standard_obj_size"
+            android:src="@drawable/visibility_w"
             android:background="@android:color/transparent"
             android:layout_weight="1"/>
 
         <ImageButton
             android:id="@+id/sort"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@drawable/sort"
+            android:layout_width="@dimen/standard_obj_size"
+            android:layout_height="@dimen/standard_obj_size"
+            android:src="@drawable/sort_w"
             android:background="@android:color/transparent"
             android:layout_weight="1"/>
 
         <ImageButton
             android:id="@+id/moreActions"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@drawable/more"
+            android:layout_width="@dimen/standard_obj_size"
+            android:layout_height="@dimen/standard_obj_size"
+            android:src="@drawable/more_w"
             android:background="@android:color/transparent"
             android:layout_weight="1"
             android:visibility="visible"/>

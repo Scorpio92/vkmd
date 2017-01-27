@@ -5,22 +5,22 @@
     android:orientation="horizontal"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:paddingBottom="8dp"
-    android:paddingTop="8dp"
-    android:paddingEnd="5dp"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp"
-    android:paddingStart="5dp">
+    android:paddingBottom="@dimen/big_track_list_padding"
+    android:paddingTop="@dimen/big_track_list_padding"
+    android:paddingEnd="@dimen/small_track_list_padding"
+    android:paddingLeft="@dimen/small_track_list_padding"
+    android:paddingRight="@dimen/small_track_list_padding"
+    android:paddingStart="@dimen/small_track_list_padding">
 
     <CheckBox
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="@dimen/standard_obj_size"
+        android:layout_height="@dimen/standard_obj_size"
         android:id="@+id/objectSelector" />
 
     <ImageView
         android:id="@+id/trackIcon"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="@dimen/standard_obj_size"
+        android:layout_height="@dimen/standard_obj_size"
         android:src="@drawable/track"
         android:background="@android:color/transparent"/>
 
@@ -31,7 +31,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textIsSelectable="false"
         android:clickable="false"
-        android:textSize="14sp"
+        android:textSize="@dimen/track_list_text_size"
         android:textColor="@android:color/black"
         android:maxLines="1" />
 
