@@ -596,10 +596,17 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
 
     public void seekTo(int value) {
         try {
-            if(mediaPlayer.isPlaying()) {
                 Log.w(LOG_TAG, "seekTo " + value);
                 mediaPlayer.seekTo(value);
-            }
+        } catch (Exception e) {e.printStackTrace();}
+    }
+
+    public void replay() {
+        try {
+            mediaPlayer.seekTo(0);
+            if(mediaPlayer.isPlaying())
+                mediaPlayer.pause();
+            pauseOrPlayTrack();
         } catch (Exception e) {e.printStackTrace();}
     }
 
