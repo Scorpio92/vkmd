@@ -187,6 +187,7 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
         audioManager = null;
         mediaPlayer = null;
         telephonyManager = null;
+        multiTrackList = null;
 
         context.stopService(new Intent(context, AudioService.class));
     }

@@ -147,10 +147,10 @@ public class MainActivity extends Activity implements
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 try {
                     isManualTrackSelect = true;
-                    /*fragmentManager.beginTransaction()
+                    fragmentManager.beginTransaction()
                             .show(fragmentManager.findFragmentById(R.id.footer))
-                            .commit();*/
-                    showFooterFragment(true);
+                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                            .commit();
                     activityWatcher.onItemSelected(adapter.getMultiTrackList(), adapter.getCurrentTrackList().getAllTracks().get(i).ID);
                 } catch (Exception e) {
                     //isManualTrackSelect = false;
