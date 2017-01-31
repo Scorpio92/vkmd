@@ -362,7 +362,8 @@ public class AuthActivity extends Activity implements
     protected void askPermissions() {
         String[] permissions = {
                 "android.permission.READ_EXTERNAL_STORAGE",
-                "android.permission.WRITE_EXTERNAL_STORAGE"
+                "android.permission.WRITE_EXTERNAL_STORAGE",
+                "android.permission.READ_PHONE_STATE"
         };
         int requestCode = SDCARD_PERMISSIONS_REQUST_CODE;
         requestPermissions(permissions, requestCode);

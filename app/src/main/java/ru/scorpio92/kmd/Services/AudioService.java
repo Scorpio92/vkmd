@@ -206,13 +206,15 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
                 try {
                     if (state == TelephonyManager.CALL_STATE_RINGING) {
                         //Incoming call: Pause music
-                        mediaPlayer.pause();
+                        //mediaPlayer.pause();
+                        pauseOrPlayTrack();
                     } else if (state == TelephonyManager.CALL_STATE_IDLE) {
                         //Not in call: Play music
                         //mediaPlayer.start();
                     } else if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
                         //A call is dialing, active or on hold
-                        mediaPlayer.pause();
+                        //mediaPlayer.pause();
+                        pauseOrPlayTrack();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
