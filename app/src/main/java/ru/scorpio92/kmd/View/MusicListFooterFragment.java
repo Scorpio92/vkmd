@@ -154,51 +154,55 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
     }
 
     void registerBroadcastReceiver() {
-        br = new BroadcastReceiver() {
-            // действия при получении сообщений
-            public void onReceive(Context context, Intent intent) {
-                int action = intent.getIntExtra(AudioService.PARAM_ACTION, -1);
-                //Log.w(LOG_TAG, "status = " + action);
+        if(br == null) {
+            br = new BroadcastReceiver() {
+                // действия при получении сообщений
+                public void onReceive(Context context, Intent intent) {
+                    int action = intent.getIntExtra(AudioService.PARAM_ACTION, -1);
+                    //Log.w(LOG_TAG, "status = " + action);
 
-                switch (action) {
-                    case AudioService.ACTION_SET_NEW_PLAY:
-                        setGuiForPlay();
-                        break;
-                    case AudioService.ACTION_UPDATE_PROGRESS:
-                        int result = intent.getIntExtra(AudioService.PARAM_RESULT, 0);
-                        progressBar.setProgress(result);
-                        timePlay.setText(getHumanTimeFromMilliseconds(result));
-                        break;
-                    case AudioService.ACTION_PAUSE:
-                        playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.play));
-                        break;
-                    case AudioService.ACTION_PLAY:
-                        playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.pause));
-                        break;
-                    case AudioService.ACTION_STOP:
-                        footerFragmentWatcher.onStopTrack();
-                        try {
-                            getActivity().unregisterReceiver(br);
-                        } catch (Exception e) {e.printStackTrace();}
-                        audioService = null;
-                        break;
-                    case AudioService.ACTION_ERROR:
-                        Toast.makeText(getActivity().getApplicationContext(), R.string.play_error, Toast.LENGTH_SHORT).show();
-                        break;
-                    case AudioService.ACTION_PLAY_STARTED:
-                        playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.pause));
-                        footerFragmentWatcher.onStartPlay(audioService.getCurrentTrackID());
-                        break;
-                    case AudioService.ACTION_TRACK_DELETED:
-                        footerFragmentWatcher.onDeleteTrackFromAdapter(false, null);
-                        break;
+                    switch (action) {
+                        case AudioService.ACTION_SET_NEW_PLAY:
+                            setGuiForPlay();
+                            break;
+                        case AudioService.ACTION_UPDATE_PROGRESS:
+                            int result = intent.getIntExtra(AudioService.PARAM_RESULT, 0);
+                            progressBar.setProgress(result);
+                            timePlay.setText(getHumanTimeFromMilliseconds(result));
+                            break;
+                        case AudioService.ACTION_PAUSE:
+                            playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.play));
+                            break;
+                        case AudioService.ACTION_PLAY:
+                            playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.pause));
+                            break;
+                        case AudioService.ACTION_STOP:
+                            footerFragmentWatcher.onStopTrack();
+                            try {
+                                getActivity().unregisterReceiver(br);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            audioService = null;
+                            break;
+                        case AudioService.ACTION_ERROR:
+                            Toast.makeText(getActivity().getApplicationContext(), R.string.play_error, Toast.LENGTH_SHORT).show();
+                            break;
+                        case AudioService.ACTION_PLAY_STARTED:
+                            playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.pause));
+                            footerFragmentWatcher.onStartPlay(audioService.getCurrentTrackID());
+                            break;
+                        case AudioService.ACTION_TRACK_DELETED:
+                            footerFragmentWatcher.onDeleteTrackFromAdapter(false, null);
+                            break;
+                    }
                 }
-            }
-        };
-        // создаем фильтр для BroadcastReceiver
-        IntentFilter intFilt = new IntentFilter(AudioService.BROADCAST_ACTION);
-        // регистрируем (включаем) BroadcastReceiver
-        getActivity().registerReceiver(br, intFilt);
+            };
+            // создаем фильтр для BroadcastReceiver
+            IntentFilter intFilt = new IntentFilter(AudioService.BROADCAST_ACTION);
+            // регистрируем (включаем) BroadcastReceiver
+            getActivity().registerReceiver(br, intFilt);
+        }
     }
 
     void initAndStartBindingWithAudioService(final MultiTrackList multiTrackList, final boolean startPlayAfterServiceConnected) {
@@ -321,7 +325,7 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(getActivity(), R.string.audio_service_error, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(), R.string.audio_service_error, Toast.LENGTH_SHORT).show();
             audioService.stopService(getActivity());
         }
     }
@@ -417,8 +421,7 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
     @Override
     public void onFooterRestore() {
         Log.w(LOG_TAG, "onFooterRestore");
-        //создаем BroadcastReceiver для сервиса AudioService
-        //registerBroadcastReceiver();
+        registerBroadcastReceiver();
 
         //создаем биндинг к сервису и запускаем его автоматически после инициализации соединения
         initAndStartBindingWithAudioService(null, false);

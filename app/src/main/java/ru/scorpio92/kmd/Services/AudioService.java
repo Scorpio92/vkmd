@@ -117,8 +117,8 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.w(LOG_TAG, "service started with startID: " + startId);
 
-        registerPhoneStateListener();
-        registerHeadsetPlugReceiver();
+        //registerPhoneStateListener();
+        //registerHeadsetPlugReceiver();
         registerRemoteClient();
         registerDownloadBroadcastReceiver();
 
@@ -189,7 +189,9 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
         telephonyManager = null;
         multiTrackList = null;
 
-        context.stopService(new Intent(context, AudioService.class));
+        //context.stopService(new Intent(context, AudioService.class));
+        stopForeground(true);
+        stopSelf();
     }
 
     @Override
@@ -199,32 +201,36 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
 
 
     void registerPhoneStateListener() {
-        //регистрируем слушатель для регистрации событий телефонных звонков
-        PhoneStateListener phoneStateListener = new PhoneStateListener() {
-            @Override
-            public void onCallStateChanged(int state, String incomingNumber) {
-                try {
-                    if (state == TelephonyManager.CALL_STATE_RINGING) {
-                        //Incoming call: Pause music
-                        //mediaPlayer.pause();
-                        pauseOrPlayTrack();
-                    } else if (state == TelephonyManager.CALL_STATE_IDLE) {
-                        //Not in call: Play music
-                        //mediaPlayer.start();
-                    } else if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
-                        //A call is dialing, active or on hold
-                        //mediaPlayer.pause();
-                        pauseOrPlayTrack();
+        if (telephonyManager == null) {
+            //регистрируем слушатель для регистрации событий телефонных звонков
+            PhoneStateListener phoneStateListener = new PhoneStateListener() {
+                @Override
+                public void onCallStateChanged(int state, String incomingNumber) {
+                    try {
+                        if (state == TelephonyManager.CALL_STATE_RINGING) {
+                            //Incoming call: Pause music
+                            //mediaPlayer.pause();
+                            pauseOrPlayTrack();
+                        } else if (state == TelephonyManager.CALL_STATE_IDLE) {
+                            //Not in call: Play music
+                            //mediaPlayer.start();
+                        } else if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
+                            //A call is dialing, active or on hold
+                            //mediaPlayer.pause();
+                            pauseOrPlayTrack();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    super.onCallStateChanged(state, incomingNumber);
                 }
-                super.onCallStateChanged(state, incomingNumber);
+            };
+            telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+            try {
+                telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        };
-        telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-        if (telephonyManager != null) {
-            telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
         }
 
 
@@ -526,6 +532,8 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
             intent_error.putExtra(PARAM_ACTION, ACTION_ERROR);
             sendBroadcast(intent_error);
         }
+
+        registerPhoneStateListener();
     }
 
     public int prevTrack() {
