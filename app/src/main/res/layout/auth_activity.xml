@@ -1,152 +1,212 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:focusableInTouchMode="true"
-    android:gravity="center_vertical|center_horizontal"
-    android:paddingLeft="@dimen/global_layout_padding_left_right"
-    android:paddingRight="@dimen/global_layout_padding_left_right">
+    android:baselineAligned="false">
 
 
-    <TableRow
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:baselineAligned="false"
-        android:minHeight="0dp">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/appName"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textIsSelectable="false"
+        android:clickable="false"
+        android:textSize="@dimen/title_text_size"
+        android:textColor="@color/colorPrimaryDark"
+        android:gravity="center"
+        android:padding="@dimen/paddingOtherAndOther"
+        android:textStyle="normal|bold" />
 
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/select_auth_method"
-            android:gravity="start"
-            android:clickable="false"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:enabled="false"
-            android:linksClickable="false"
-            android:background="@android:color/transparent"
-            android:paddingStart="8dp"
-            android:paddingLeft="8dp"
-            android:textColor="?attr/colorAccent"
-            android:textSize="@dimen/title_text_size" />
-
-    </TableRow>
-
-
-    <TableRow
+    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:baselineAligned="false"
-        android:paddingTop="@dimen/paddingTextViewAndOther">
-
-        <Spinner
-            android:id="@+id/method_selector"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:entries="@array/methodsItems"
-            android:gravity="start"
-            android:layout_weight="1"
-            android:paddingLeft="0dp"
-            android:paddingRight="0dp"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginRight="0dp"
-            android:layout_marginLeft="0dp"
-            android:paddingStart="0dp"
-            android:paddingEnd="0dp" />
-
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/uidTableRow"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:baselineAligned="false"
-        android:paddingTop="@dimen/paddingOtherAndOther">
-
-        <AutoCompleteTextView
-            android:id="@+id/uid_login"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textColorHint="@color/fieldColor1"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="@dimen/hint_text_size"/>
-
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/passwordTableRow"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:baselineAligned="false"
-        android:paddingTop="@dimen/paddingOtherAndOther">
-
-        <EditText
-            android:id="@+id/password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textColorHint="@color/fieldColor1"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="@dimen/hint_text_size"/>
-
-    </TableRow>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:baselineAligned="false"
-        android:paddingTop="@dimen/paddingOtherAndOther">
-
-        <Button
-            android:id="@+id/go_button"
-            style="@style/ButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/go"
-            android:textSize="@dimen/title_text_size"/>
-
-    </TableRow>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:baselineAligned="false"
-        android:paddingTop="@dimen/paddingOtherAndOther">
-
-        <CheckBox
-            android:id="@+id/autoEnter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/auto_enter"
-            android:checked="false"
-            android:textColor="@color/fieldColor1"
-            android:textSize="@dimen/secondary_text_size"/>
-
-    </TableRow>
-
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:baselineAligned="false"
+        android:orientation="vertical"
+        android:focusableInTouchMode="true"
         android:gravity="center_vertical|center_horizontal"
-        android:paddingTop="@dimen/paddingOtherAndOther">
+        android:paddingLeft="@dimen/global_layout_padding_left_right"
+        android:paddingRight="@dimen/global_layout_padding_left_right"
+        android:layout_weight="1">
 
-        <ProgressBar
-            android:id="@+id/auth_progress"
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:baselineAligned="false"
+            android:minHeight="0dp">
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/select_auth_method"
+                android:gravity="start"
+                android:clickable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:enabled="false"
+                android:linksClickable="false"
+                android:background="@android:color/transparent"
+                android:paddingStart="8dp"
+                android:paddingLeft="8dp"
+                android:textColor="?attr/colorAccent"
+                android:textSize="@dimen/title_text_size" />
+
+        </TableRow>
+
+
+        <TableRow
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="invisible" />
+            android:layout_height="match_parent"
+            android:baselineAligned="false"
+            android:paddingTop="@dimen/paddingTextViewAndOther">
 
-    </TableRow>
+            <Spinner
+                android:id="@+id/method_selector"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:entries="@array/methodsItems"
+                android:gravity="start"
+                android:layout_weight="1"
+                android:paddingLeft="0dp"
+                android:paddingRight="0dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginLeft="0dp"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp" />
 
-</TableLayout>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/uidTableRow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:baselineAligned="false"
+            android:paddingTop="@dimen/paddingOtherAndOther">
+
+            <AutoCompleteTextView
+                android:id="@+id/uid_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColorHint="@color/fieldColor1"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/hint_text_size"/>
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/passwordTableRow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:baselineAligned="false"
+            android:paddingTop="@dimen/paddingOtherAndOther">
+
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColorHint="@color/fieldColor1"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/hint_text_size"/>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:baselineAligned="false"
+            android:paddingTop="@dimen/paddingOtherAndOther">
+
+            <Button
+                android:id="@+id/go_button"
+                style="@style/ButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/go"
+                android:textSize="@dimen/title_text_size"/>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:baselineAligned="false"
+            android:paddingTop="@dimen/paddingOtherAndOther">
+
+            <CheckBox
+                android:id="@+id/autoEnter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/auto_enter"
+                android:checked="false"
+                android:textColor="@color/fieldColor1"
+                android:textSize="@dimen/secondary_text_size"/>
+
+        </TableRow>
+
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:baselineAligned="false"
+            android:gravity="center_vertical|center_horizontal"
+            android:paddingTop="@dimen/paddingOtherAndOther">
+
+            <ProgressBar
+                android:id="@+id/auth_progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="invisible" />
+
+        </TableRow>
+
+    </TableLayout>
+
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/paddingOtherAndOther">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:text="@string/help"
+                android:gravity="center"
+                android:padding="@dimen/paddingTextViewAndOther"/>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:text="@string/author_site"
+                android:autoLink="web"
+                android:gravity="center" />
+        </TableRow>
+
+    </TableLayout>
+
+</LinearLayout>

@@ -21,8 +21,10 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import ru.scorpio92.kmd.BuildConfig;
 import ru.scorpio92.kmd.Constants;
 import ru.scorpio92.kmd.Operations.GetToken;
 import ru.scorpio92.kmd.Operations.GetTrackListFromResponseOrDB;
@@ -53,6 +55,7 @@ public class AuthActivity extends Activity implements
     private final int GET_TRACK_LIST_METHOD_OFFLINE = 3;
     private int GET_TRACK_LIST_METHOD;
 
+    TextView appName;
     TableRow uidTableRow, passwordTableRow;
     Spinner method_selector;
     AutoCompleteTextView uid_login;
@@ -85,6 +88,9 @@ public class AuthActivity extends Activity implements
     }
 
     void initGUI() {
+
+        appName = (TextView) findViewById(R.id.appName);
+        appName.setText(getString(R.string.app_name) + " " + BuildConfig.VERSION_NAME);
 
         uidTableRow = (TableRow) findViewById(R.id.uidTableRow);
 

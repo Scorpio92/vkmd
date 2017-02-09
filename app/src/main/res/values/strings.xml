@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">kmd</string>
+    <string name="app_name">KMD</string>
     <string name="title_activity_result">ResultActivity</string>
     <string name="select_auth_method">Как получаем аудиозаписи?</string>
     <string name="methodsItemsUID">По id пользователя</string>
@@ -67,7 +67,7 @@
     <string name="about_current_version">Текущая версия</string>
     <string name="problems_with_internet">Проверьте соединение с сетью интернет</string>
     <string name="about_general_futures">Основные возможности</string>
-    <string name="author_site">www.scorpio92.ru</string>
+    <string name="author_site">scorpio92.ru</string>
     <string name="about_short_info">KMD - Open Source приложение, предназначенное для прослушивания и скачивания аудиозаписей с сайта вконтакте\n\nАвтор: scorpio92</string>
     <string name="about_full_info">* Получение списка всех доступных (как и в официальном приложении) аудиозаписей по идентификатору пользователя (группы), по логину-паролю пользователя. Пароль НЕ сохраняется на устройстве и не передается третьим лицам.\n\n* Возможность прослушивания сохраненных аудиозаписей офлайн\n\n* Удобный менеджер загрузки, работающий в фоновом режиме\n\n* Прослушивание аудиозаписей в фоновом режиме\n\n* Добавление и удаление аудиозаписей (функционал доступен только при авторизации по логину-паролю)\n\n* Сортировка, поиск по аудиозаписям (офлайн и онлайн), изменение режима просмотра аудиозаписей (все текущие, текущие несохраненные, текущие сохраненные, все сохраненные)\n\n* Возможность проигрывания аудиозаписей в произвольном порядке, в режиме повтора</string>
     <string name="settings_auto_scan_saved">Автоматическое сканирование</string>
@@ -90,4 +90,5 @@
     <string name="settings_follow_on_play">Режим следования</string>
     <string name="settings_follow_on_play_summary">Текущий проигрываемый трек будет отображаться вверху списка</string>
     <string name="audio_service_error">Ошибка аудио сервиса. Запустите проигрывание повторно</string>
+    <string name="help">Помощь</string>
 </resources>

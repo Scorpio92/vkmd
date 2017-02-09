@@ -18,7 +18,7 @@
     <dimen name="paddingTextViewAndOther">5dp</dimen>
     <dimen name="paddingOtherAndOther">14dp</dimen>
 
-    <dimen name="big_progressbar_width_height">96dip</dimen>
+    <dimen name="big_progressbar_width_height">48dip</dimen>
     <dimen name="small_progressbar_width_height">36dip</dimen>
 
     <dimen name="big_track_list_padding">8dp</dimen>
