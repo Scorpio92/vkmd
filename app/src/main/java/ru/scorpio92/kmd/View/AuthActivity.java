@@ -99,6 +99,7 @@ public class AuthActivity extends Activity implements
         method_selector = (Spinner) findViewById(R.id.method_selector);
         method_selector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                autoEnter.setVisibility(View.VISIBLE);
                 switch (position) {
                     case 0:
                         GET_TRACK_LIST_METHOD = GET_TRACK_LIST_METHOD_BY_UID;
@@ -124,11 +125,13 @@ public class AuthActivity extends Activity implements
                         passwordTableRow.setVisibility(View.VISIBLE);
                         password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                         password.setHint(getString(R.string.password_hint));
+                        autoEnter.setVisibility(View.GONE);
                         break;
                     case 3:
                         GET_TRACK_LIST_METHOD = GET_TRACK_LIST_METHOD_OFFLINE;
                         uidTableRow.setVisibility(View.GONE);
                         passwordTableRow.setVisibility(View.GONE);
+                        autoEnter.setVisibility(View.GONE);
                         break;
                 }
             }
