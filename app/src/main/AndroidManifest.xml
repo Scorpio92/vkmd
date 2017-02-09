@@ -45,6 +45,11 @@
             android:label="@string/app_name" >
         </activity>
 
+        <activity
+            android:name="ru.scorpio92.kmd.View.Help"
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar">
+        </activity>
+
         <service
             android:enabled="true"
             android:name="ru.scorpio92.kmd.Services.AudioService">

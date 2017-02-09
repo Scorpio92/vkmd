@@ -55,7 +55,7 @@ public class AuthActivity extends Activity implements
     private final int GET_TRACK_LIST_METHOD_OFFLINE = 3;
     private int GET_TRACK_LIST_METHOD;
 
-    TextView appName;
+    TextView appName, help;
     TableRow uidTableRow, passwordTableRow;
     Spinner method_selector;
     AutoCompleteTextView uid_login;
@@ -229,6 +229,14 @@ public class AuthActivity extends Activity implements
         autoEnter = (CheckBox) findViewById(R.id.autoEnter);
 
         auth_progress = (ProgressBar) findViewById(R.id.auth_progress);
+
+        help = (TextView) findViewById(R.id.help);
+        help.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(AuthActivity.this, Help.class));
+            }
+        });
     }
 
     void initAndStartBindingWithAudioService() {
