@@ -207,6 +207,19 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
                 @Override
                 public void onCallStateChanged(int state, String incomingNumber) {
                     try {
+                        switch(state) {
+                            case TelephonyManager.CALL_STATE_RINGING:
+                            case TelephonyManager.CALL_STATE_OFFHOOK:
+                                if(mediaPlayer.isPlaying()) {
+                                    mediaPlayer.pause();
+                                    Intent intent = new Intent(BROADCAST_ACTION);
+                                    intent.putExtra(PARAM_ACTION, ACTION_PAUSE);
+                                    sendBroadcast(intent);
+                                    sentNotificationInForeground();
+                                }
+                                break;
+                        }
+                        /*
                         if (state == TelephonyManager.CALL_STATE_RINGING) {
                             //Incoming call: Pause music
                             //mediaPlayer.pause();
@@ -219,6 +232,7 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
                             //mediaPlayer.pause();
                             pauseOrPlayTrack();
                         }
+                        */
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
