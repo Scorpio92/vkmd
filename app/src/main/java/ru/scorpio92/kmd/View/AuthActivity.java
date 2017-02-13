@@ -404,7 +404,7 @@ public class AuthActivity extends Activity implements
     public void onGetTokenComplete(int status, String token, String userID) {
         switch (status) {
             case GetToken.GET_TOKEN_STATUS_OK:
-                Log.w(LOG_TAG, "token is " + token + " user_id is " + userID);
+                //Log.w(LOG_TAG, "token is " + token + " user_id is " + userID);
 
                 if(GET_TRACK_LIST_METHOD == GET_TRACK_LIST_METHOD_BY_LP)
                     KMDUtils.writeCurrentLogin(AuthActivity.this, USER_ID, autoEnter.isChecked(), GET_TRACK_LIST_METHOD); //записываем в БД введенный логин

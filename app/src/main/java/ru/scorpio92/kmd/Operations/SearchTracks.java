@@ -91,8 +91,8 @@ public class SearchTracks implements InternetUtils.InternetConnectionCallback {
 
         @Override
         protected void onPostExecute(Integer responseCode) {
-            super.onPostExecute(responseCode);
             Log.w("RESPONSE", RESPONSE);
+            super.onPostExecute(responseCode);
             callback.onSearchTracksComplete(responseCode, RESPONSE);
         }
     }

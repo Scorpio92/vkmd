@@ -97,7 +97,7 @@ public class GetToken implements InternetUtils.InternetConnectionCallback {
                 return;
             }
 
-            Log.w("RESPONSE", RESPONSE);
+            //Log.w("RESPONSE", RESPONSE);
 
             try {
                 if(RESPONSE.length() > 0) {

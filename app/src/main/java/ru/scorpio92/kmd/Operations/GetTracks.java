@@ -100,7 +100,7 @@ public class GetTracks implements GetTrackCount.GetTrackCountCallback, GetTrackL
                 new GetTrackListByOwnerID(this, userID, token, currentOffset);
             }  else {
                 if(isLPAuth) {
-                    Log.w(LOG_TAG, "LP get method. save ownerId: " + userID + " and token: " + token + " to TrackList");
+                    //Log.w(LOG_TAG, "LP get method. save ownerId: " + userID + " and token: " + token + " to TrackList");
                     generalTrackList.setOwnerID(userID);
                     generalTrackList.setToken(token);
                 }
