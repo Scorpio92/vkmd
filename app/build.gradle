@@ -25,4 +25,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.loopj.android:android-async-http:1.4.9'
     compile 'com.android.support:design:24.2.1'
+    compile 'io.github.kobakei:ratethisapp:1.1.2'
 }
