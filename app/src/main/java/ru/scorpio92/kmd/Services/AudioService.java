@@ -117,8 +117,8 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.w(LOG_TAG, "service started with startID: " + startId);
 
-        //registerPhoneStateListener();
-        //registerHeadsetPlugReceiver();
+        registerPhoneStateListener();
+        registerHeadsetPlugReceiver();
         registerRemoteClient();
         registerDownloadBroadcastReceiver();
 
@@ -199,7 +199,6 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
 
     }
 
-
     void registerPhoneStateListener() {
         if (telephonyManager == null) {
             //регистрируем слушатель для регистрации событий телефонных звонков
@@ -210,29 +209,15 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
                         switch(state) {
                             case TelephonyManager.CALL_STATE_RINGING:
                             case TelephonyManager.CALL_STATE_OFFHOOK:
-                                if(mediaPlayer.isPlaying()) {
+                                try {
                                     mediaPlayer.pause();
                                     Intent intent = new Intent(BROADCAST_ACTION);
                                     intent.putExtra(PARAM_ACTION, ACTION_PAUSE);
                                     sendBroadcast(intent);
                                     sentNotificationInForeground();
-                                }
+                                } catch (Exception e) {e.printStackTrace();}
                                 break;
                         }
-                        /*
-                        if (state == TelephonyManager.CALL_STATE_RINGING) {
-                            //Incoming call: Pause music
-                            //mediaPlayer.pause();
-                            pauseOrPlayTrack();
-                        } else if (state == TelephonyManager.CALL_STATE_IDLE) {
-                            //Not in call: Play music
-                            //mediaPlayer.start();
-                        } else if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
-                            //A call is dialing, active or on hold
-                            //mediaPlayer.pause();
-                            pauseOrPlayTrack();
-                        }
-                        */
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -546,8 +531,6 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
             intent_error.putExtra(PARAM_ACTION, ACTION_ERROR);
             sendBroadcast(intent_error);
         }
-
-        registerPhoneStateListener();
     }
 
     public int prevTrack() {
