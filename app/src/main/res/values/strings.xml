@@ -83,23 +83,7 @@
     <string name="audio_service_error">Audio service error. Start playing again</string>
     <string name="help">Help</string>
     <string name="help_audio_get_method">About the methods of obtaining audio</string>
-    <string name="help_audio_get_method_summary"><b>There are 4 ways to obtain audio:</b>
-
-<b>* According to the user identifier (ID)</b>
-You must enter a numeric user ID, you can learn by looking at the address of your page in the VK (for example: https://vk.com/id<b>1234</b>).
-If a numeric ID is replaced by the string (eg: https://vk.com/<b>vkuser</b>), in the field you must enter the string identifier (<b>vkuser</b> in this case)
-
-<b>* According to the group identifier (ID)</b>
-App can accept only numeric identifier (without the minus sign)
-
-<b>* By using login and password</b>
-You must enter your username and password in the VK account. With this method of obtaining audio, the user becomes available the ability to add (to his), and delete (from his) record.
-Attention! The data you enter is transmitted only to vk.com server. Password on the device is not saved.
-
-<b>* Offline</b>
-In this case, the displayed tracks stored on the device (saved tracks)
-
-When you select audio get method as by user ID, or group ID, it provides an opportunity to automatically receive audio using the entered ID the next time the app. To activate this feature, check the box <b>Auto enter</b></string>
+    <string name="help_audio_get_method_summary"><b>There are 4 ways to obtain audio:</b>\n\n<b>* According to the user identifier (ID)</b>\nYou must enter a numeric user ID, you can learn by looking at the address of your page in the VK (for example: https://vk.com/id<b>1234</b>).If a numeric ID is replaced by the string (eg: https://vk.com/<b>vkuser</b>), in the field you must enter the string identifier (<b>vkuser</b> in this case)\n\n<b>* According to the group identifier (ID)</b>\nApp can accept only numeric identifier (without the minus sign)\n\n<b>* By using login and password</b>\nYou must enter your username and password in the VK account. With this method of obtaining audio, the user becomes available the ability to add (to his), and delete (from his) record. Attention! The data you enter is transmitted only to vk.com server. Password on the device is not saved.\n\n<b>* Offline</b>\nIn this case, the displayed tracks stored on the device (saved tracks)\n\nWhen you select audio get method as by user ID, or group ID, it provides an opportunity to automatically receive audio using the entered ID the next time the app. To activate this feature, check the box <b>Auto enter</b></string>
     <string name="about">About app</string>
     <string name="captcha_needed">VK...WTF?!</string>
     <string name="download_its_track">Download this track</string>
