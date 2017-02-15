@@ -155,11 +155,12 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
 
     void registerBroadcastReceiver() {
         if(br == null) {
+            Log.w(LOG_TAG, "registerBroadcastReceiver");
             br = new BroadcastReceiver() {
                 // действия при получении сообщений
                 public void onReceive(Context context, Intent intent) {
                     int action = intent.getIntExtra(AudioService.PARAM_ACTION, -1);
-                    //Log.w(LOG_TAG, "status = " + action);
+                    Log.w(LOG_TAG, "registerBroadcastReceiver. Action: " + action);
 
                     switch (action) {
                         case AudioService.ACTION_SET_NEW_PLAY:
@@ -183,6 +184,7 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                            br = null;
                             audioService = null;
                             break;
                         case AudioService.ACTION_ERROR:

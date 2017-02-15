@@ -803,6 +803,7 @@ public class MainActivity extends Activity implements
 
     @Override
     public void onStopTrack() {
+        Log.w(LOG_TAG, "onStopTrack");
         adapter.notifyDataSetChanged(0, TracksListAdapter.ON_STOP_TRACK);
         showFooterFragment(false);
     }
