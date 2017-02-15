@@ -118,8 +118,8 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.w(LOG_TAG, "service started with startID: " + startId);
 
-        //registerPhoneStateListener();
-        //registerHeadsetPlugReceiver();
+        registerPhoneStateListener();
+        registerHeadsetPlugReceiver();
         registerRemoteClient();
         registerDownloadBroadcastReceiver();
 
@@ -211,13 +211,7 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
                         switch(state) {
                             case TelephonyManager.CALL_STATE_RINGING:
                             case TelephonyManager.CALL_STATE_OFFHOOK:
-                                try {
-                                    mediaPlayer.pause();
-                                    Intent intent = new Intent(BROADCAST_ACTION);
-                                    intent.putExtra(PARAM_ACTION, ACTION_PAUSE);
-                                    sendBroadcast(intent);
-                                    sentNotificationInForeground();
-                                } catch (Exception e) {e.printStackTrace();}
+                                pauseTrack();
                                 break;
                         }
                     } catch (Exception e) {
@@ -563,6 +557,18 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
 
         sendBroadcast(intent);
         sentNotificationInForeground();
+    }
+
+    public void pauseTrack() {
+        try {
+            if(mediaPlayer.isPlaying()) {
+                mediaPlayer.pause();
+                Intent intent = new Intent(BROADCAST_ACTION);
+                intent.putExtra(PARAM_ACTION, ACTION_PAUSE);
+                sendBroadcast(intent);
+                sentNotificationInForeground();
+            }
+        } catch (Exception e) {e.printStackTrace();}
     }
 
     public int nextTrack() {

@@ -41,9 +41,7 @@ public class HeadsetPlugReceiver extends BroadcastReceiver {
                 Log.w(LOG_TAG, "AudioService onServiceConnected");
                 audioService = ((AudioService.MyBinder) binder).getService();
                 if(!connectedHeadphones) {
-                    if(audioService.getMediaPlayer().isPlaying()) {
-                        audioService.pauseOrPlayTrack();
-                    }
+                    audioService.pauseTrack();
                 }
                 unbind(context);
             }
