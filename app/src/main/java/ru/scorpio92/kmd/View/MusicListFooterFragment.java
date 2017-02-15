@@ -198,7 +198,8 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
                             break;
                         case AudioService.ACTION_PLAY_STARTED:
                             playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.pause));
-                            footerFragmentWatcher.onStartPlay(audioService.getCurrentTrackID());
+                            if(audioService != null)
+                                footerFragmentWatcher.onStartPlay(audioService.getCurrentTrackID());
                             break;
                         case AudioService.ACTION_TRACK_DELETED:
                             footerFragmentWatcher.onDeleteTrackFromAdapter(false, null);
