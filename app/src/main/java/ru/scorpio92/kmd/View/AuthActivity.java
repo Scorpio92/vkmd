@@ -411,7 +411,7 @@ public class AuthActivity extends Activity implements
 
                 this.USER_ID = userID;
                 this.token = token;
-                new GetTracks(AuthActivity.this, USER_ID, token);
+                new GetTracks(AuthActivity.this, USER_ID, token, true);
                 break;
             case GetToken.GET_TOKEN_STATUS_CAPTCHA_NEED:
                 lock_unlock_GUI(false);
