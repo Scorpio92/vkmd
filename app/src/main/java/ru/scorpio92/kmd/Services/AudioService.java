@@ -69,6 +69,7 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
 
     private MediaPlayer mediaPlayer;
     private TelephonyManager telephonyManager;
+    private PhoneStateListener phoneStateListener;
 
     private int currentTrackID;
 
@@ -117,8 +118,8 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.w(LOG_TAG, "service started with startID: " + startId);
 
-        registerPhoneStateListener();
-        registerHeadsetPlugReceiver();
+        //registerPhoneStateListener();
+        //registerHeadsetPlugReceiver();
         registerRemoteClient();
         registerDownloadBroadcastReceiver();
 
@@ -186,6 +187,7 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
         remoteControlClient = null;
         audioManager = null;
         mediaPlayer = null;
+        phoneStateListener = null;
         telephonyManager = null;
         multiTrackList = null;
 
@@ -200,9 +202,9 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     }
 
     void registerPhoneStateListener() {
-        if (telephonyManager == null) {
+        if(phoneStateListener == null) {
             //регистрируем слушатель для регистрации событий телефонных звонков
-            PhoneStateListener phoneStateListener = new PhoneStateListener() {
+            phoneStateListener = new PhoneStateListener() {
                 @Override
                 public void onCallStateChanged(int state, String incomingNumber) {
                     try {
@@ -224,6 +226,8 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
                     super.onCallStateChanged(state, incomingNumber);
                 }
             };
+        }
+        if (telephonyManager == null) {
             telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
             try {
                 telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
@@ -231,15 +235,15 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
                 e.printStackTrace();
             }
         }
-
-
     }
 
     void registerHeadsetPlugReceiver() {
-        headsetPlugReceiver = new HeadsetPlugReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("android.intent.action.HEADSET_PLUG");
-        registerReceiver(headsetPlugReceiver, intentFilter);
+        if(headsetPlugReceiver == null) {
+            headsetPlugReceiver = new HeadsetPlugReceiver();
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction("android.intent.action.HEADSET_PLUG");
+            registerReceiver(headsetPlugReceiver, intentFilter);
+        }
     }
 
     void registerRemoteClient(){
@@ -465,6 +469,9 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
                 @Override
                 public void onPrepared(MediaPlayer mediaPlayer) {
                     try {
+                        registerPhoneStateListener();
+                        registerHeadsetPlugReceiver();
+
                         mediaPlayer.start();
                         Log.w(LOG_TAG, "mediaPlayer started");
 
