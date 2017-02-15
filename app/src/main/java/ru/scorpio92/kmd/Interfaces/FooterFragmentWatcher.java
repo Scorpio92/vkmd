@@ -12,6 +12,7 @@ public interface FooterFragmentWatcher {
     void onPrepareStart(int id);
     void onStopTrack();
     void onDeleteTrackFromAdapter(boolean needDeleteFromAdapter, Track track);
+    void onRateAppCheck();
     /*void onNextTrackPlay(int positionOld, int positionNew);
     void onPreviousTrackPlay(int positionOld, int positionNew);*/
 }

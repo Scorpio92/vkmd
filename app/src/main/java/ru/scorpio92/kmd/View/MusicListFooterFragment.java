@@ -22,6 +22,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.kobakei.ratethisapp.RateThisApp;
+
 import java.util.ArrayList;
 
 import ru.scorpio92.kmd.Interfaces.ActivityWatcher;
@@ -112,6 +114,8 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
             public void onClick(View view) {
                 if(audioService.prevTrack() == AudioService.PLAY_PREV_HEAD_LIST)
                     Toast.makeText(getActivity(), R.string.you_in_the_head_playlist, Toast.LENGTH_SHORT).show();
+                else
+                    footerFragmentWatcher.onRateAppCheck();
             }
         });
 
@@ -142,6 +146,8 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
             public void onClick(View view) {
                 if(audioService.nextTrack() == AudioService.PLAY_NEXT_END_LIST)
                     Toast.makeText(getActivity(), R.string.you_in_the_end_playlist, Toast.LENGTH_SHORT).show();
+                else
+                    footerFragmentWatcher.onRateAppCheck();
             }
         });
 
@@ -414,6 +420,7 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
         } else {
             Log.w(LOG_TAG, "audioService is running");
             if(trackID != audioService.getCurrentTrackID()) {
+                footerFragmentWatcher.onRateAppCheck();
                 startNewPlay(multiTrackList, false, trackID);
             }
         }

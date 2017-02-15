@@ -717,7 +717,7 @@ public class MainActivity extends Activity implements
 
         registerDownloadBroadcastReceiver();
 
-        RateThisApp.Config config = new RateThisApp.Config(3, 3);
+        RateThisApp.Config config = new RateThisApp.Config(3, 6);
         RateThisApp.init(config);
     }
 
@@ -815,6 +815,15 @@ public class MainActivity extends Activity implements
             adapter.getMainTrackList().removeTrack(track);
         }
         adapter.notifyDataSetChanged2();
+    }
+
+    @Override
+    public void onRateAppCheck() {
+        Log.w(LOG_TAG, "onRateAppCheck");
+        // Monitor launch times and interval from installation
+        RateThisApp.onStart(this);
+        // If the criteria is satisfied, "Rate this app" dialog will be shown
+        RateThisApp.showRateDialogIfNeeded(this);
     }
 
     @Override
@@ -934,10 +943,8 @@ public class MainActivity extends Activity implements
     @Override
     protected void onStart() {
         super.onStart();
-
-        // Monitor launch times and interval from installation
-        RateThisApp.onStart(this);
-        // If the criteria is satisfied, "Rate this app" dialog will be shown
-        RateThisApp.showRateDialogIfNeeded(this);
+        Log.w(LOG_TAG, "onStart");
     }
+
+
 }
