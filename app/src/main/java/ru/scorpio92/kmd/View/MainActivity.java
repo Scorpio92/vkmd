@@ -154,6 +154,7 @@ public class MainActivity extends Activity implements
                             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                             .commit();
                     activityWatcher.onItemSelected(adapter.getMultiTrackList(), adapter.getCurrentTrackList().getAllTracks().get(i).ID);
+                    stopStoreService();
                 } catch (Exception e) {
                     //isManualTrackSelect = false;
                     e.printStackTrace();
@@ -259,20 +260,21 @@ public class MainActivity extends Activity implements
                         Log.w(LOG_TAG, "unbindService");
                         unbindService(sConnStoreService);
                         sConnStoreService = null;
-                        storeService = null;
+                        //storeService = null;
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    stopService(new Intent(MainActivity.this, StoreService.class));
 
                     try {
                         if (trackList.getAllTracks().size() > 0) {
                             initAdapter(new MultiTrackList(trackList));
                         } else {
+                            stopStoreService();
                             relogin(false);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
+                        stopStoreService();
                         relogin(false);
                     }
                 } catch(Exception e) {
@@ -287,6 +289,18 @@ public class MainActivity extends Activity implements
         };
 
         bindService(new Intent(this, StoreService.class), sConnStoreService, BIND_AUTO_CREATE);
+    }
+
+    void stopStoreService() {
+        try {
+            Log.w(LOG_TAG, "unbindService");
+            unbindService(sConnStoreService);
+            sConnStoreService = null;
+            //storeService = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        stopService(new Intent(MainActivity.this, StoreService.class));
     }
 
     void registerDownloadBroadcastReceiver() {
@@ -478,6 +492,7 @@ public class MainActivity extends Activity implements
         isRelogin = true;
 
         if(isManualRelogin) {
+            stopStoreService();
             initAndStartBindingWithAudioService(BIND_WITH_AUDIO_SERVICE_ON_MANUAL_RELOGIN);
         } else {
 
@@ -857,6 +872,15 @@ public class MainActivity extends Activity implements
     protected void onDestroy() {
         super.onDestroy();
         Log.w(LOG_TAG, "onDestroy");
+
+        try {
+            Log.w(LOG_TAG, "unbindService");
+            unbindService(sConnStoreService);
+            sConnStoreService = null;
+            //storeService = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         try {
             if(br != null)
