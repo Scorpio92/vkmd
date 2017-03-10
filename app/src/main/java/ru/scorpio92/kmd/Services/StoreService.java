@@ -7,6 +7,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import ru.scorpio92.kmd.Types.MultiTrackList;
 import ru.scorpio92.kmd.Types.TrackList;
 
 /**
@@ -19,6 +20,7 @@ public class StoreService extends Service {
 
     private MyBinder binder = new MyBinder();
     private TrackList trackList;
+    private MultiTrackList multiTrackList;
 
     @Nullable
     @Override
@@ -57,5 +59,14 @@ public class StoreService extends Service {
 
     public void setTrackList(TrackList trackList) {
         this.trackList = trackList;
+    }
+
+    public void setMultiTrackList(MultiTrackList multiTrackList) {
+        this.multiTrackList = multiTrackList;
+        //Log.w(LOG_TAG, "setMultiTrackList: " + multiTrackList.getTrackList(MultiTrackList.CURRENT_TRACKLIST).getAllTracks().get(0).getFullTrackName());
+    }
+
+    public MultiTrackList getMultiTrackList() {
+        return multiTrackList;
     }
 }

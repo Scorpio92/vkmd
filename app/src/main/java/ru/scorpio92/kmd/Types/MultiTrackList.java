@@ -1,5 +1,7 @@
 package ru.scorpio92.kmd.Types;
 
+import android.util.Log;
+
 import java.util.HashMap;
 
 /**

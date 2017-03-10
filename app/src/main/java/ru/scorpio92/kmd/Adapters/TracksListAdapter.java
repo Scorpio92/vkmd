@@ -2,6 +2,7 @@ package ru.scorpio92.kmd.Adapters;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -197,6 +198,7 @@ public class TracksListAdapter extends BaseAdapter {
 
     public interface TracksListAdapterCallbacks {
         void onCheckTrack();
+        void onChangeModeComplete(MultiTrackList multiTrackList);
     }
 
     public void notifyDataSetChanged2() {
@@ -262,6 +264,8 @@ public class TracksListAdapter extends BaseAdapter {
             case SHOW_ALL_SAVED_TRACKS:
                 break;
         }
+        callback.onChangeModeComplete(multiTrackList);
+        Log.w("TracksListAdapter", "onChangeModeComplete");
     }
 
     public void setSelection(boolean selectAllTracks) {

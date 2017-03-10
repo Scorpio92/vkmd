@@ -83,6 +83,7 @@ public class MainActivity extends Activity implements
     private final int BIND_WITH_AUDIO_SERVICE_ON_RESUME = 0;
     private final int BIND_WITH_AUDIO_SERVICE_ON_STOP = 1;
     private final int BIND_WITH_AUDIO_SERVICE_ON_MANUAL_RELOGIN = 2;
+    private final int BIND_WITH_AUDIO_SERVICE_ON_ADAPTER_CHANGE_MODE = 3;
 
     AlertDialog searchDialog;
     boolean stopSearch;
@@ -183,6 +184,7 @@ public class MainActivity extends Activity implements
     }
 
     void initAdapter(MultiTrackList multiTrackList) {
+        Log.w(LOG_TAG, "initAdapter");
         adapter = new TracksListAdapter(MainActivity.this, multiTrackList);
         tracksList.setAdapter(adapter);
     }
@@ -224,6 +226,11 @@ public class MainActivity extends Activity implements
                         //}
                         relogin(false);
                         break;
+                    case  BIND_WITH_AUDIO_SERVICE_ON_ADAPTER_CHANGE_MODE:
+                        if (!audioService.isStarted()) {
+
+                        }
+                        break;
                 }
 
                 try {
@@ -252,9 +259,10 @@ public class MainActivity extends Activity implements
                 Log.w(LOG_TAG, "StoreService onServiceConnected");
                 StoreService storeService = ((StoreService.MyBinder) binder).getService();
                 try {
-                    TrackList trackList = new TrackList(storeService.getTrackList().getAllTracks());
+                    /*TrackList trackList = new TrackList(storeService.getTrackList().getAllTracks());
                     trackList.setOwnerID(Integer.toString(storeService.getTrackList().getOwnerID()));
-                    trackList.setToken(storeService.getTrackList().getToken());
+                    trackList.setToken(storeService.getTrackList().getToken());*/
+                    MultiTrackList multiTrackList = new MultiTrackList(storeService.getMultiTrackList());
 
                     try {
                         Log.w(LOG_TAG, "unbindService");
@@ -266,8 +274,8 @@ public class MainActivity extends Activity implements
                     }
 
                     try {
-                        if (trackList.getAllTracks().size() > 0) {
-                            initAdapter(new MultiTrackList(trackList));
+                        if (multiTrackList.getTrackList(MultiTrackList.CURRENT_TRACKLIST).getAllTracks().size() > 0) {
+                            initAdapter(multiTrackList);
                         } else {
                             stopStoreService();
                             relogin(false);
@@ -786,6 +794,37 @@ public class MainActivity extends Activity implements
     @Override
     public void onCheckTrack() {
         showSelectedTracksCount();
+    }
+
+    @Override
+    public void onChangeModeComplete(final MultiTrackList multiTrackList) {
+        sConnStoreService = new ServiceConnection() {
+            public void onServiceConnected(ComponentName name, IBinder binder) {
+                Log.w(LOG_TAG, "StoreService onServiceConnected");
+                StoreService storeService = ((StoreService.MyBinder) binder).getService();
+                try {
+                    storeService.setMultiTrackList(multiTrackList);
+                    try {
+                        Log.w(LOG_TAG, "unbindService");
+                        unbindService(sConnStoreService);
+                        sConnStoreService = null;
+                        //storeService = null;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                } catch(Exception e) {
+                    e.printStackTrace();
+                    relogin(false);
+                }
+            }
+
+            public void onServiceDisconnected(ComponentName name) {
+                Log.w(LOG_TAG, "StoreService onServiceDisconnected");
+            }
+        };
+
+        bindService(new Intent(this, StoreService.class), sConnStoreService, BIND_AUTO_CREATE);
     }
 
     @Override

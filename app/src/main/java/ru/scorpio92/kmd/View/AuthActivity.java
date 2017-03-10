@@ -34,6 +34,7 @@ import ru.scorpio92.kmd.R;
 import ru.scorpio92.kmd.Services.AudioService;
 import ru.scorpio92.kmd.Services.StoreService;
 import ru.scorpio92.kmd.Types.MainDB;
+import ru.scorpio92.kmd.Types.MultiTrackList;
 import ru.scorpio92.kmd.Types.TrackList;
 import ru.scorpio92.kmd.Utils.CommonUtils;
 import ru.scorpio92.kmd.Utils.KMDUtils;
@@ -327,7 +328,8 @@ public class AuthActivity extends Activity implements
             public void onServiceConnected(ComponentName name, IBinder binder) {
                 Log.w(LOG_TAG, "StoreService onServiceConnected");
                 storeService = ((StoreService.MyBinder) binder).getService();
-                storeService.setTrackList(tracks);
+                //storeService.setTrackList(tracks);
+                storeService.setMultiTrackList(new MultiTrackList(tracks));
 
                 try {
                     Log.w(LOG_TAG, "unbindService");
