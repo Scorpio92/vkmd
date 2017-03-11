@@ -32,7 +32,6 @@ import ru.scorpio92.kmd.Operations.GetTracks;
 import ru.scorpio92.kmd.Operations.GetUserIdByUserName;
 import ru.scorpio92.kmd.R;
 import ru.scorpio92.kmd.Services.AudioService;
-import ru.scorpio92.kmd.Services.StoreService;
 import ru.scorpio92.kmd.Types.MainDB;
 import ru.scorpio92.kmd.Types.MultiTrackList;
 import ru.scorpio92.kmd.Types.TrackList;
@@ -67,11 +66,8 @@ public class AuthActivity extends Activity implements
 
     private String USER_ID;
 
-    ServiceConnection sConn;
+    ServiceConnection sConnAudioService;
     AudioService audioService;
-
-    ServiceConnection sConnStoreService;
-    StoreService storeService;
 
     private String token;
 
@@ -246,12 +242,11 @@ public class AuthActivity extends Activity implements
         final boolean settings_auto_open_saved = CommonUtils.getBooleanSetting(AuthActivity.this, Settings.SETTING_AUTO_OPEN_SAVED_KEY, false);
         final boolean isRelogin = getIntent().getBooleanExtra("isRelogin", false);
 
-        //при первом запуске блокируем гуи и проверяем, есть ли в БД инф о полученных ранее аудио
         lock_unlock_GUI(true);
 
-        sConn = new ServiceConnection() {
+        sConnAudioService = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder binder) {
-                Log.w(LOG_TAG, "AudioService onServiceConnected");
+                Log.w(LOG_TAG, "AudioService onServiceConnected, check it is running");
                 audioService = ((AudioService.MyBinder) binder).getService();
                 if(audioService.isStarted()) {
                     Log.w(LOG_TAG, "AudioService is running, start MainActivity");
@@ -286,8 +281,8 @@ public class AuthActivity extends Activity implements
 
                 try {
                     Log.w(LOG_TAG, "unbindService");
-                    unbindService(sConn);
-                    sConn = null;
+                    unbindService(sConnAudioService);
+                    sConnAudioService = null;
                     audioService = null;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -299,7 +294,7 @@ public class AuthActivity extends Activity implements
             }
         };
 
-        bindService(new Intent(this, AudioService.class), sConn, BIND_AUTO_CREATE);
+        bindService(new Intent(this, AudioService.class), sConnAudioService, BIND_AUTO_CREATE);
     }
 
     void lock_unlock_GUI(boolean lock) {
@@ -321,35 +316,39 @@ public class AuthActivity extends Activity implements
     }
 
     void showMainActivity(final TrackList tracks) {
+        if(tracks == null) { //если сервис уже был запущен
+            startActivity(new Intent(AuthActivity.this, MainActivity.class));
+            finish();
+        } else {
+            startService(new Intent(AuthActivity.this, AudioService.class));
 
-        startService(new Intent(AuthActivity.this, StoreService.class));
+            sConnAudioService = new ServiceConnection() {
+                public void onServiceConnected(ComponentName name, IBinder binder) {
+                    Log.w(LOG_TAG, "AudioService onServiceConnected, store tracks to service");
+                    audioService = ((AudioService.MyBinder) binder).getService();
+                    //storeService.setTrackList(tracks);
+                    audioService.setMultiTrackList(new MultiTrackList(tracks));
 
-        sConnStoreService = new ServiceConnection() {
-            public void onServiceConnected(ComponentName name, IBinder binder) {
-                Log.w(LOG_TAG, "StoreService onServiceConnected");
-                storeService = ((StoreService.MyBinder) binder).getService();
-                //storeService.setTrackList(tracks);
-                storeService.setMultiTrackList(new MultiTrackList(tracks));
+                    try {
+                        Log.w(LOG_TAG, "unbindService");
+                        unbindService(sConnAudioService);
+                        sConnAudioService = null;
+                        audioService = null;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
-                try {
-                    Log.w(LOG_TAG, "unbindService");
-                    unbindService(sConnStoreService);
-                    sConnStoreService = null;
-                    storeService = null;
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    startActivity(new Intent(AuthActivity.this, MainActivity.class));
+                    finish();
                 }
 
-                startActivity(new Intent(AuthActivity.this, MainActivity.class));
-                finish();
-            }
+                public void onServiceDisconnected(ComponentName name) {
+                    Log.w(LOG_TAG, "StoreService onServiceDisconnected");
+                }
+            };
 
-            public void onServiceDisconnected(ComponentName name) {
-                Log.w(LOG_TAG, "StoreService onServiceDisconnected");
-            }
-        };
-
-        bindService(new Intent(AuthActivity.this, StoreService.class), sConnStoreService, BIND_AUTO_CREATE);
+            bindService(new Intent(AuthActivity.this, AudioService.class), sConnAudioService, BIND_AUTO_CREATE);
+        }
     }
 
     protected boolean shouldAskPermissions() {

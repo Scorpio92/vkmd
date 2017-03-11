@@ -45,7 +45,6 @@ import ru.scorpio92.kmd.Operations.UpdateDownloadInfo;
 import ru.scorpio92.kmd.R;
 import ru.scorpio92.kmd.Services.AudioService;
 import ru.scorpio92.kmd.Services.DownloadService;
-import ru.scorpio92.kmd.Services.StoreService;
 import ru.scorpio92.kmd.Types.MultiTrackList;
 import ru.scorpio92.kmd.Types.Track;
 import ru.scorpio92.kmd.Types.TrackList;
@@ -72,8 +71,7 @@ public class MainActivity extends Activity implements
     FragmentManager fragmentManager;
     ActivityWatcher activityWatcher;
 
-    ServiceConnection sConn;
-    ServiceConnection sConnStoreService;
+    ServiceConnection sConnAudioService;
     AudioService audioService;
 
     BroadcastReceiver br;
@@ -81,7 +79,6 @@ public class MainActivity extends Activity implements
     private final int BIND_WITH_AUDIO_SERVICE_ON_RESUME = 0;
     private final int BIND_WITH_AUDIO_SERVICE_ON_STOP = 1;
     private final int BIND_WITH_AUDIO_SERVICE_ON_MANUAL_RELOGIN = 2;
-    private final int BIND_WITH_AUDIO_SERVICE_ON_ADAPTER_CHANGE_MODE = 3;
 
     AlertDialog searchDialog;
     boolean stopSearch;
@@ -152,10 +149,8 @@ public class MainActivity extends Activity implements
                             .show(fragmentManager.findFragmentById(R.id.footer))
                             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                             .commit();
-                    activityWatcher.onItemSelected(adapter.getMultiTrackList(), adapter.getCurrentTrackList().getAllTracks().get(i).ID);
-                    stopStoreService();
+                    activityWatcher.onItemSelected(adapter.getCurrentTrackList().getAllTracks().get(i).ID);
                 } catch (Exception e) {
-                    //isManualTrackSelect = false;
                     e.printStackTrace();
                 }
 
@@ -168,7 +163,7 @@ public class MainActivity extends Activity implements
                 if (!adapter.getSelectedTracksID().contains(i)) {
                     adapter.getSelectedTracksID().add(i); //добавляем в список выбранных файлов
                 }
-                adapter.notifyDataSetChanged2();
+                adapter.notifyDataSetChanged();
                 if(adapter.getSelectedTracksID().size() > 0) {
                     showTrackContextMenu(view, i);
                     showSelectedTracksCount();
@@ -188,7 +183,7 @@ public class MainActivity extends Activity implements
     }
 
     void initAndStartBindingWithAudioService(final int action) {
-        sConn = new ServiceConnection() {
+        sConnAudioService = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder binder) {
                 Log.w(LOG_TAG, "AudioService onServiceConnected");
                 audioService = ((AudioService.MyBinder) binder).getService();
@@ -196,46 +191,37 @@ public class MainActivity extends Activity implements
                 switch (action) {
                     case BIND_WITH_AUDIO_SERVICE_ON_RESUME:
                         audioService.setMainActivityIsStopped(false);
-                        if (audioService.isStarted()) {
-                            Log.w(LOG_TAG, "AudioService is running");
-                            if (adapter == null) {
-                                Log.w(LOG_TAG, "trackList == null, get tracks from service");
+                        Log.w(LOG_TAG, "BIND_WITH_AUDIO_SERVICE_ON_RESUME");
+                        if (adapter == null) {
+                            Log.w(LOG_TAG, "trackList == null, get tracks from service");
+                            try {
                                 initAdapter(audioService.getMultiTrackList());
-                            }
-                            showFooterFragment(true);
-                        } else {
-                            showFooterFragment(false);
-                            if (adapter == null) {
-                                Log.w(LOG_TAG, "trackList == null, get tracks from store service");
-                                getTracksFromStoreService();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                relogin(false);
                             }
                         }
+                        if(audioService.getMediaPlayer() != null)
+                            showFooterFragment(true);
                         break;
                     case BIND_WITH_AUDIO_SERVICE_ON_STOP:
                         if (audioService.isStarted()) {
-                            Log.w(LOG_TAG, "AudioService is running, say AudioService that MainActivity stopped");
+                            Log.w(LOG_TAG, "BIND_WITH_AUDIO_SERVICE_ON_STOP, say AudioService that MainActivity stopped");
                             audioService.setMainActivityIsStopped(true);
                         }
                         break;
                     case BIND_WITH_AUDIO_SERVICE_ON_MANUAL_RELOGIN:
-                        //if(audioService.isStarted()) {
-                            Log.w(LOG_TAG, "manual relogin. stop service");
-                            audioService.stopService(MainActivity.this);
-                        //}
+                        Log.w(LOG_TAG, "BIND_WITH_AUDIO_SERVICE_ON_MANUAL_RELOGIN. Stop service");
+                        audioService.stopService();
                         relogin(false);
-                        break;
-                    case  BIND_WITH_AUDIO_SERVICE_ON_ADAPTER_CHANGE_MODE:
-                        if (!audioService.isStarted()) {
-
-                        }
                         break;
                 }
 
                 try {
                     Log.w(LOG_TAG, "unbindService");
-                    if(sConn != null) {
-                        unbindService(sConn);
-                        sConn = null;
+                    if(sConnAudioService != null) {
+                        unbindService(sConnAudioService);
+                        sConnAudioService = null;
                     }
                     audioService = null;
                 } catch (Exception e) {
@@ -248,65 +234,7 @@ public class MainActivity extends Activity implements
             }
         };
 
-        bindService(new Intent(this, AudioService.class), sConn, BIND_AUTO_CREATE);
-    }
-
-    void getTracksFromStoreService() {
-        sConnStoreService = new ServiceConnection() {
-            public void onServiceConnected(ComponentName name, IBinder binder) {
-                Log.w(LOG_TAG, "StoreService onServiceConnected");
-                StoreService storeService = ((StoreService.MyBinder) binder).getService();
-                try {
-                    /*TrackList trackList = new TrackList(storeService.getTrackList().getAllTracks());
-                    trackList.setOwnerID(Integer.toString(storeService.getTrackList().getOwnerID()));
-                    trackList.setToken(storeService.getTrackList().getToken());*/
-                    MultiTrackList multiTrackList = new MultiTrackList(storeService.getMultiTrackList());
-
-                    try {
-                        Log.w(LOG_TAG, "unbindService");
-                        unbindService(sConnStoreService);
-                        sConnStoreService = null;
-                        //storeService = null;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    try {
-                        if (multiTrackList.getTrackList(MultiTrackList.CURRENT_TRACKLIST).getAllTracks().size() > 0) {
-                            initAdapter(multiTrackList);
-                        } else {
-                            stopStoreService();
-                            relogin(false);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        stopStoreService();
-                        relogin(false);
-                    }
-                } catch(Exception e) {
-                    e.printStackTrace();
-                    relogin(false);
-                }
-            }
-
-            public void onServiceDisconnected(ComponentName name) {
-                Log.w(LOG_TAG, "StoreService onServiceDisconnected");
-            }
-        };
-
-        bindService(new Intent(this, StoreService.class), sConnStoreService, BIND_AUTO_CREATE);
-    }
-
-    void stopStoreService() {
-        try {
-            Log.w(LOG_TAG, "unbindService");
-            unbindService(sConnStoreService);
-            sConnStoreService = null;
-            //storeService = null;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        stopService(new Intent(MainActivity.this, StoreService.class));
+        bindService(new Intent(this, AudioService.class), sConnAudioService, BIND_AUTO_CREATE);
     }
 
     void registerDownloadBroadcastReceiver() {
@@ -314,9 +242,9 @@ public class MainActivity extends Activity implements
             // действия при получении сообщений
             public void onReceive(Context context, Intent intent) {
                 int action = intent.getIntExtra(DownloadService.PARAM_ACTION, -1);
-                int num = intent.getIntExtra(DownloadService.PARAM_CURRENT_NUM, 0);
+                /*int num = intent.getIntExtra(DownloadService.PARAM_CURRENT_NUM, 0);
                 int total = intent.getIntExtra(DownloadService.PARAM_TOTAL_COUNT, 0);
-                int percentCurrent = intent.getIntExtra(DownloadService.PARAM_PERCENT_PROGRESS, 0);
+                int percentCurrent = intent.getIntExtra(DownloadService.PARAM_PERCENT_PROGRESS, 0);*/
                 int downloadedCount = intent.getIntExtra(DownloadService.PARAM_DOWNLOADED_COUNT, 0);
                 Track track = intent.getParcelableExtra(DownloadService.PARAM_TRACK);
 
@@ -328,7 +256,7 @@ public class MainActivity extends Activity implements
                             if(adapter != null) {
                                 adapter.getMainTrackList().setPathAfterDownload(track); //для сервиса
                                 if (adapter.getCurrentTrackList().setPathAfterDownload(track)) {
-                                    adapter.notifyDataSetChanged2();
+                                    adapter.notifyDataSetChanged();
                                 }
                             }
                         } catch (Exception e) {e.printStackTrace();}
@@ -414,7 +342,7 @@ public class MainActivity extends Activity implements
                     case R.id.download_selected:
                         new UpdateDownloadInfo(MainActivity.this, adapter.getCurrentTrackList().getTracksArrayByArrayID(selectedIDs), UpdateDownloadInfo.ACTION_INSERT);
                         adapter.getSelectedTracksID().clear();
-                        adapter.notifyDataSetChanged2();
+                        adapter.notifyDataSetChanged();
                         showSelectedTracksCount();
                         break;
                     case R.id.add_this_track:
@@ -424,7 +352,7 @@ public class MainActivity extends Activity implements
                         new UpdateDownloadInfo(MainActivity.this, adapter.getCurrentTrackList().getTracksArrayByArrayID(selectedIDs), UpdateDownloadInfo.ACTION_DELETE);
                         adapter.getCurrentTrackList().setWasDownloadedToFalse(selectedIDs);
                         adapter.getSelectedTracksID().clear();
-                        adapter.notifyDataSetChanged2();
+                        adapter.notifyDataSetChanged();
                         showSelectedTracksCount();
                         break;
                     case R.id.delete_from_my_audios:
@@ -498,14 +426,13 @@ public class MainActivity extends Activity implements
         isRelogin = true;
 
         if(isManualRelogin) {
-            stopStoreService();
             initAndStartBindingWithAudioService(BIND_WITH_AUDIO_SERVICE_ON_MANUAL_RELOGIN);
         } else {
 
             try {
-                if (sConn != null) {
-                    unbindService(sConn);
-                    sConn = null;
+                if (sConnAudioService != null) {
+                    unbindService(sConnAudioService);
+                    sConnAudioService = null;
                 }
                 audioService = null;
             } catch (Exception e) {
@@ -620,11 +547,11 @@ public class MainActivity extends Activity implements
 
                     case R.id.sort_by_artist:
                         adapter.getCurrentTrackList().sortByArtists();
-                        adapter.notifyDataSetChanged2();
+                        adapter.notifyDataSetChanged();
                         break;
                     case R.id.sort_by_track_name:
                         adapter.getCurrentTrackList().sortByTrackName();
-                        adapter.notifyDataSetChanged2();
+                        adapter.notifyDataSetChanged();
                         break;
                 }
 
@@ -792,37 +719,6 @@ public class MainActivity extends Activity implements
     }
 
     @Override
-    public void onChangeModeComplete(final MultiTrackList multiTrackList) {
-        sConnStoreService = new ServiceConnection() {
-            public void onServiceConnected(ComponentName name, IBinder binder) {
-                Log.w(LOG_TAG, "StoreService onServiceConnected");
-                StoreService storeService = ((StoreService.MyBinder) binder).getService();
-                try {
-                    storeService.setMultiTrackList(multiTrackList);
-                    try {
-                        Log.w(LOG_TAG, "unbindService");
-                        unbindService(sConnStoreService);
-                        sConnStoreService = null;
-                        //storeService = null;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                } catch(Exception e) {
-                    e.printStackTrace();
-                    relogin(false);
-                }
-            }
-
-            public void onServiceDisconnected(ComponentName name) {
-                Log.w(LOG_TAG, "StoreService onServiceDisconnected");
-            }
-        };
-
-        bindService(new Intent(this, StoreService.class), sConnStoreService, BIND_AUTO_CREATE);
-    }
-
-    @Override
     public void onAttached(Object object) {
         this.activityWatcher = (ActivityWatcher) object;
     }
@@ -863,7 +759,7 @@ public class MainActivity extends Activity implements
             adapter.getCurrentTrackList().removeTrack(track);
             adapter.getMainTrackList().removeTrack(track);
         }
-        adapter.notifyDataSetChanged2();
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -897,15 +793,6 @@ public class MainActivity extends Activity implements
     protected void onDestroy() {
         super.onDestroy();
         Log.w(LOG_TAG, "onDestroy");
-
-        try {
-            Log.w(LOG_TAG, "unbindService");
-            unbindService(sConnStoreService);
-            sConnStoreService = null;
-            //storeService = null;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         try {
             if(br != null)

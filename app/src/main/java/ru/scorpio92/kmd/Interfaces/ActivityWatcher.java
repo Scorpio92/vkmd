@@ -8,7 +8,7 @@ import ru.scorpio92.kmd.Types.Track;
  */
 
 public interface ActivityWatcher {
-    void onItemSelected(MultiTrackList multiTrackList, int trackID);
+    void onItemSelected(int trackID);
     void onFooterRestore();
     void onDeleteTrack(Track track);
 }

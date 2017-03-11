@@ -123,7 +123,7 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
         registerRemoteClient();
         registerDownloadBroadcastReceiver();
 
-        runNewTrackPlaying();
+        //runNewTrackPlaying();
 
         isStarted = true;
         mMainActivityIsStopped = false;
@@ -146,12 +146,12 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
         super.onDestroy();
     }
 
-    public void stopService(Context context) {
+    public void stopPlay() {
         Intent intent = new Intent(BROADCAST_ACTION);
         intent.putExtra(PARAM_ACTION, ACTION_STOP);
         sendBroadcast(intent);
 
-        Log.w(LOG_TAG, "stopService");
+        Log.w(LOG_TAG, "stop play");
 
         stopTrackPlaying();
 
@@ -189,10 +189,19 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
         mediaPlayer = null;
         phoneStateListener = null;
         telephonyManager = null;
-        multiTrackList = null;
+        //multiTrackList = null;
 
         //context.stopService(new Intent(context, AudioService.class));
         stopForeground(true);
+        //stopSelf();
+    }
+
+    public void stopService() {
+        stopPlay();
+        Log.w(LOG_TAG, "stop AudioService");
+        multiTrackList = null;
+        //context.stopService(new Intent(context, AudioService.class));
+        //stopForeground(true);
         stopSelf();
     }
 
@@ -391,9 +400,10 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     }
 
     public void setMultiTrackList(MultiTrackList multiTrackList) {
-        this.multiTrackList = new MultiTrackList(multiTrackList);
+        this.multiTrackList = multiTrackList;
+        /*this.multiTrackList = new MultiTrackList(multiTrackList);
         ownerID = this.multiTrackList.getTrackList(MultiTrackList.MAIN_TRACKLIST).getOwnerID();
-        token = this.multiTrackList.getTrackList(MultiTrackList.MAIN_TRACKLIST).getToken();
+        token = this.multiTrackList.getTrackList(MultiTrackList.MAIN_TRACKLIST).getToken();*/
     }
 
     public MultiTrackList getMultiTrackList() {
@@ -422,7 +432,7 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
 
     public void setMainActivityIsStopped (boolean b) {
         mMainActivityIsStopped = b;
-        if(isStarted) {
+        if(isStarted && mediaPlayer != null) {
             Log.w(LOG_TAG, "setMainActivityIsStopped: " + b + ", sentNotificationInForeground");
             sentNotificationInForeground();
         }
@@ -561,12 +571,14 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
 
     public void pauseTrack() {
         try {
-            if(mediaPlayer.isPlaying()) {
-                mediaPlayer.pause();
-                Intent intent = new Intent(BROADCAST_ACTION);
-                intent.putExtra(PARAM_ACTION, ACTION_PAUSE);
-                sendBroadcast(intent);
-                sentNotificationInForeground();
+            if(mediaPlayer != null) {
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.pause();
+                    Intent intent = new Intent(BROADCAST_ACTION);
+                    intent.putExtra(PARAM_ACTION, ACTION_PAUSE);
+                    sendBroadcast(intent);
+                    sentNotificationInForeground();
+                }
             }
         } catch (Exception e) {e.printStackTrace();}
     }

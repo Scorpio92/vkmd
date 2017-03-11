@@ -45,7 +45,8 @@ public class AudioServiceNotificationReceiver extends BroadcastReceiver {
                     audioService.nextTrack();
                 }
                 if(action.equals(AudioService.NOTIFICATION_ACTION_STOP)) {
-                    audioService.stopService(context);
+                    //audioService.stopService(context);
+                    audioService.stopPlay();
                 }
                 unbind(context);
             }

@@ -60,11 +60,6 @@
             android:name="ru.scorpio92.kmd.Services.DownloadService">
         </service>
 
-        <service
-            android:enabled="true"
-            android:name="ru.scorpio92.kmd.Services.StoreService">
-        </service>
-
         <receiver android:name="ru.scorpio92.kmd.Receivers.AudioServiceNotificationReceiver">
             <intent-filter>
                 <action android:name="ru.scorpio92.kmd.Services.AudioService.PREV"/>

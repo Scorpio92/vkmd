@@ -128,7 +128,8 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
             @Override
             public boolean onLongClick(View view) {
                 try {
-                    audioService.stopService(getActivity().getApplicationContext());
+                    //audioService.stopService();
+                    audioService.stopPlay();
                     audioService = null;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -208,13 +209,13 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
         }
     }
 
-    void initAndStartBindingWithAudioService(final MultiTrackList multiTrackList, final boolean startPlayAfterServiceConnected) {
+    void initAndStartBindingWithAudioService(final boolean startPlayAfterServiceConnected) {
         sConn = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder binder) {
                 Log.w(LOG_TAG, "AudioService onServiceConnected");
                 audioService = ((AudioService.MyBinder) binder).getService();
                 if(startPlayAfterServiceConnected) {
-                    startNewPlay(multiTrackList, true, trackID);
+                    startNewPlay(trackID);
                 } else {
                     setGuiForPlay();
                     footerFragmentWatcher.onStartPlay(audioService.getCurrentTrackID());
@@ -303,47 +304,42 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
 
     void setGuiForPlay() {
         try {
-            Track track = audioService.getCurrentTrack();
-            footerFragmentWatcher.onPrepareStart(audioService.getCurrentTrackID());
-            currentTrackArtist.setText(track.ARTIST);
-            currentTrackName.setText(track.TITLE);
-            progressBar.setMax(track.DURATION * 1000);
-            timeDuration.setText(getHumanTimeFromMilliseconds(track.DURATION * 1000));
-            if (audioService.getMediaPlayer() != null) {
-                int currentProgress = audioService.getMediaPlayer().getCurrentPosition();
-                progressBar.setProgress(currentProgress);
-                timePlay.setText(getHumanTimeFromMilliseconds(currentProgress));
-                if (audioService.getMediaPlayer().isPlaying()) {
-                    Log.w(LOG_TAG, "setGuiForPlay, play now");
-                    playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.pause));
+            if(audioService.getMediaPlayer() != null) {
+                Track track = audioService.getCurrentTrack();
+                footerFragmentWatcher.onPrepareStart(audioService.getCurrentTrackID());
+                currentTrackArtist.setText(track.ARTIST);
+                currentTrackName.setText(track.TITLE);
+                progressBar.setMax(track.DURATION * 1000);
+                timeDuration.setText(getHumanTimeFromMilliseconds(track.DURATION * 1000));
+                if (audioService.getMediaPlayer() != null) {
+                    int currentProgress = audioService.getMediaPlayer().getCurrentPosition();
+                    progressBar.setProgress(currentProgress);
+                    timePlay.setText(getHumanTimeFromMilliseconds(currentProgress));
+                    if (audioService.getMediaPlayer().isPlaying()) {
+                        Log.w(LOG_TAG, "setGuiForPlay, play now");
+                        playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.pause));
+                    } else {
+                        Log.w(LOG_TAG, "setGuiForPlay, not play now");
+                        playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.play));
+                    }
                 } else {
-                    Log.w(LOG_TAG, "setGuiForPlay, not play now");
+                    Log.w(LOG_TAG, "setGuiForPlay, not play now (first run)");
+                    progressBar.setProgress(0);
+                    timePlay.setText(getHumanTimeFromMilliseconds(0));
                     playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.play));
                 }
-            } else {
-                Log.w(LOG_TAG, "setGuiForPlay, not play now (first run)");
-                progressBar.setProgress(0);
-                timePlay.setText(getHumanTimeFromMilliseconds(0));
-                playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.play));
             }
         } catch (Exception e) {
             e.printStackTrace();
             //Toast.makeText(getActivity(), R.string.audio_service_error, Toast.LENGTH_SHORT).show();
-            audioService.stopService(getActivity());
+            audioService.stopService();
         }
     }
 
-    void startNewPlay(MultiTrackList multiTrackList, boolean startService, int trackID) {
-        audioService.setMultiTrackList(multiTrackList);
+    void startNewPlay(int trackID) {
         audioService.setCurrentTrackID(trackID);
-        if(startService) {
-            Log.w(LOG_TAG, "startNewPlay with startService");
-            getActivity().getBaseContext().startService(new Intent(getActivity().getBaseContext(), AudioService.class));
-        } else {
-            Log.w(LOG_TAG, "startNewPlay without startService");
-            audioService.runNewTrackPlaying();
-        }
-
+        Log.w(LOG_TAG, "startNewPlay without startService");
+        audioService.runNewTrackPlaying();
         setGuiForPlay();
     }
 
@@ -400,22 +396,22 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
     }
 
     @Override
-    public void onItemSelected(MultiTrackList multiTrackList, int trackID) {
+    public void onItemSelected(int trackID) {
 
         this.trackID = trackID;
 
         if(audioService == null) {
-            Log.w(LOG_TAG, "audioService not running");
+            Log.w(LOG_TAG, "audio play not running");
 
             //создаем BroadcastReceiver для сервиса AudioService
             registerBroadcastReceiver();
 
             //создаем биндинг к сервису и запускаем его автоматически после инициализации соединения
-            initAndStartBindingWithAudioService(multiTrackList, true);
+            initAndStartBindingWithAudioService(true);
         } else {
-            Log.w(LOG_TAG, "audioService is running");
+            Log.w(LOG_TAG, "audio play is running");
             if(trackID != audioService.getCurrentTrackID()) {
-                startNewPlay(multiTrackList, false, trackID);
+                startNewPlay(trackID);
             }
         }
 
@@ -427,7 +423,7 @@ public class MusicListFooterFragment extends Fragment implements ActivityWatcher
         registerBroadcastReceiver();
 
         //создаем биндинг к сервису и запускаем его автоматически после инициализации соединения
-        initAndStartBindingWithAudioService(null, false);
+        initAndStartBindingWithAudioService(false);
     }
 
     @Override

@@ -30,8 +30,6 @@ public class TracksListAdapter extends BaseAdapter {
     private TracksListAdapterCallbacks callback;
 
     private MultiTrackList multiTrackList;
-    //private TrackList trackList;
-    //private TrackList trackListBackup;
     private ArrayList<Integer> selectedTracksID;
 
     private int CURRENT_LIST_ITEM_MODE;
@@ -58,7 +56,8 @@ public class TracksListAdapter extends BaseAdapter {
         //trackList = multiTrackList.getCurrentTrackList(MultiTrackList.CURRENT_TRACKLIST);
         //trackListBackup = new TrackList(trackList.getAllTracks());
         //trackListBackup = multiTrackList.getCurrentTrackList(MultiTrackList.MAIN_TRACKLIST);
-        this.multiTrackList = new MultiTrackList(multiTrackList);
+        //this.multiTrackList = new MultiTrackList(multiTrackList);
+        this.multiTrackList = multiTrackList;
         selectedTracksID = new ArrayList<>();
 
         CURRENT_TRACK_LIST_MODE = SHOW_ALL_TRACKS;
@@ -198,13 +197,12 @@ public class TracksListAdapter extends BaseAdapter {
 
     public interface TracksListAdapterCallbacks {
         void onCheckTrack();
-        void onChangeModeComplete(MultiTrackList multiTrackList);
     }
 
-    public void notifyDataSetChanged2() {
+    /*public void notifyDataSetChanged2() {
         getTrackListByParam();
         notifyDataSetChanged();
-    }
+    }*/
 
     public void notifyDataSetChanged(int currentTrackID, int CURRENT_LIST_ITEM_MODE) {
         this.currentTrackID = currentTrackID;
@@ -264,8 +262,6 @@ public class TracksListAdapter extends BaseAdapter {
             case SHOW_ALL_SAVED_TRACKS:
                 break;
         }
-        callback.onChangeModeComplete(multiTrackList);
-        Log.w("TracksListAdapter", "onChangeModeComplete");
     }
 
     public void setSelection(boolean selectAllTracks) {
