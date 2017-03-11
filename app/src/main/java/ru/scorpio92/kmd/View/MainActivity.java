@@ -30,8 +30,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.kobakei.ratethisapp.RateThisApp;
-
 import java.util.ArrayList;
 
 import ru.scorpio92.kmd.Adapters.TracksListAdapter;
@@ -739,9 +737,6 @@ public class MainActivity extends Activity implements
         initGUI();
 
         registerDownloadBroadcastReceiver();
-
-        RateThisApp.Config config = new RateThisApp.Config(3, 6);
-        RateThisApp.init(config);
     }
 
     @Override
@@ -869,15 +864,6 @@ public class MainActivity extends Activity implements
             adapter.getMainTrackList().removeTrack(track);
         }
         adapter.notifyDataSetChanged2();
-    }
-
-    @Override
-    public void onRateAppCheck() {
-        Log.w(LOG_TAG, "onRateAppCheck");
-        // Monitor launch times and interval from installation
-        RateThisApp.onStart(this);
-        // If the criteria is satisfied, "Rate this app" dialog will be shown
-        RateThisApp.showRateDialogIfNeeded(this);
     }
 
     @Override
