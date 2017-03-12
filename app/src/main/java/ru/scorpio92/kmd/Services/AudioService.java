@@ -74,8 +74,6 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     private int currentTrackID;
 
     private MultiTrackList multiTrackList;
-    private int ownerID;
-    private String token;
 
     private Timer mTimer;
     private TimerTask mTimerTask;
@@ -439,11 +437,11 @@ public class AudioService extends Service implements AudioManager.OnAudioFocusCh
     }
 
     public int getOwnerID() {
-        return ownerID;
+        return multiTrackList.getTrackList(MultiTrackList.MAIN_TRACKLIST).getOwnerID();
     }
 
     public String getToken() {
-        return token;
+        return multiTrackList.getTrackList(MultiTrackList.MAIN_TRACKLIST).getToken();
     }
 
 
